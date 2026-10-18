@@ -20,3 +20,4 @@ def intro(doc, tema, contexto, general, especificos, organizacion):
     doc.h2('Contexto'); doc.p(contexto)
     doc.h2('Objetivos'); doc.p('**Objetivo general.** ' + general); doc.p('**Objetivos específicos:**', after=2); doc.bullets(especificos)
     doc.h2('Organización del texto'); doc.p(organizacion)
+    doc.callout('Uso de Inteligencia Artificial', 'Este documento se elaboró con apoyo de IA (Claude, Anthropic). En los Anexos se detalla qué hizo la herramienta y qué debe revisar una persona, y en las Referencias se indica qué fuentes están verificadas.')

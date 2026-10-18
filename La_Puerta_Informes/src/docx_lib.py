@@ -255,10 +255,15 @@ def bibliografia(doc, subset=None):
 
 def declaracion_ia(doc, rol):
     doc.h2('Declaración sobre el uso de Inteligencia Artificial')
-    doc.callout('Este documento se elaboró con apoyo de Inteligencia Artificial',
-        [f'Se utilizó **Claude (Anthropic), modelo de IA generativa**, como herramienta de apoyo para: (1) limpiar y calcular los resultados de la base de datos con código reproducible; (2) {rol}; (3) redactar, organizar y diseñar los gráficos y diagramas; y (4) clasificar preliminarmente las respuestas abiertas por temas.',
-         '**La IA no reemplaza el juicio experto.** La codificación temática automática es preliminar y debe ser validada por una persona (idealmente con doble codificación). Las interpretaciones, decisiones y recomendaciones deben ser revisadas y asumidas por el equipo responsable del Proyecto La Puerta antes de su difusión institucional.',
-         'No se incluyeron nombres, correos ni códigos de estudiantes. Las citas textuales son anónimas.'])
+    doc.p('Este documento se elaboró con apoyo de **Claude (Anthropic)**, un modelo de Inteligencia Artificial generativa, entre octubre de 2026. A continuación se indica con transparencia qué hizo la herramienta y qué debe revisar una persona.', 10.5)
+    doc.table(['Tarea', 'Qué hizo la IA', 'Qué debe revisar o decidir una persona'], [
+     ['**Datos y cálculos**', 'Limpió la base y calculó promedios, porcentajes, comparaciones y gráficos con código (Python) guardado en la carpeta `src` del repositorio.', 'Revisar los scripts y repetir los cálculos ante cualquier duda. Los resultados son reproducibles.'],
+     ['**Tarea específica de este documento**', rol[0].upper() + rol[1:] + '.', 'Validar que el enfoque y las conclusiones correspondan al propósito del proyecto.'],
+     ['**Respuestas abiertas**', 'Las agrupó por temas de forma automática (clasificación preliminar).', 'Doble lectura humana y libro de códigos antes de citar conteos.'],
+     ['**Redacción y diseño**', 'Redactó, organizó y diseñó tablas, gráficos, diagramas e infografías (ilustraciones propias, sin fotografías de personas).', 'Revisar el tono, el contenido y la adecuación institucional (por ejemplo, insertar el logo oficial).'],
+     ['**Bibliografía**', 'Seleccionó las referencias a partir de su conocimiento de la literatura y, cuando se indica, de resúmenes encontrados en la web.', 'Verificar autores, volumen, páginas y DOI en la fuente antes de publicar. Lo no verificado está marcado.'],
+     ['**Datos personales**', 'No se incluyeron nombres, correos ni códigos de estudiantes; las citas textuales son anónimas.', 'Mantener la confidencialidad al difundir.']], [3.4, 7.0, 6.1], size=8.8)
+    doc.callout('Responsabilidad', ['La IA **no reemplaza el juicio experto** ni asume responsabilidad por las decisiones. Las interpretaciones y recomendaciones deben ser revisadas y asumidas por el equipo responsable del Proyecto La Puerta antes de su difusión institucional.', 'Si algún dato de este documento no coincide con las fuentes, prevalecen las fuentes originales.'])
 
 def aviso_datos(doc):
     c = R['campos_vacios']
