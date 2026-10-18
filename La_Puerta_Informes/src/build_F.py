@@ -1,15 +1,20 @@
 from comun import *
 D = Doc('Manual explicativo de resultados', 'Qué significan los números de la encuesta, en palabras simples y con ejemplos de todos los días', 'PRODUCTO F · GUÍA PARA PÚBLICO NO ESPECIALIZADO', G + 'portada_puerta.png', 'Proyecto La Puerta · Manual explicativo de resultados')
 g = R['global']; O = OF; fo = {r['var']: r for r in O['filas']}; S = O['semaforo_estudiantes']; h4 = R['H4']; h5 = R['H5']
-contenido(D, ['Cómo usar este manual', 'Siete ideas para leer números sin enredarse', 'Los resultados, uno por uno (fichas)', 'Qué significa esto para cada persona', 'Preguntas frecuentes', 'Glosario', 'Antes de citar un resultado: lista de verificación', 'Declaración de uso de IA y fuentes'])
 
-D.h1('1. Cómo usar este manual')
+intro(D, 'La interpretación, en lenguaje cotidiano, de los resultados de la encuesta de percepción y competencias del Proyecto La Puerta (n = 184).',
+ 'Los informes técnicos usan términos estadísticos que dificultan su uso por docentes, jefaturas, empresas y estudiantes. Este manual traduce los resultados y los acompaña con ejemplos de todos los días.',
+ 'Explicar los resultados de la encuesta a un público no especializado, de modo que pueda interpretarlos y usarlos para decidir.',
+ ['Entregar ideas básicas para leer números sin errores.', 'Interpretar cada resultado principal con una ficha estándar.', 'Señalar las implicancias para cada actor.', 'Responder preguntas frecuentes y definir los términos.'],
+ 'El documento se organiza en cinco partes: la Introducción (cómo usar el manual); el Desarrollo (ideas para leer números, fichas de resultados, implicancias, preguntas frecuentes y glosario); la Conclusión (lista de verificación antes de citar un resultado); las Referencias; y los Anexos (declaración de uso de IA).')
+D.h1('Cómo usar este manual')
 D.p('Este manual está escrito para quien **no es estadístico ni investigador**: directoras y directores de carrera, docentes, tutores de empresas, equipos de apoyo y también estudiantes. Explica, resultado por resultado, **qué se encontró, qué significa en simple y qué implica** para quien debe tomar decisiones.')
 D.p('No necesita leerlo de corrido. Puede ir directo a la **ficha** que le interesa (Sección 3) y volver a la Sección 2 si alguna palabra le queda dudosa. Cada ficha tiene la misma estructura:')
 D.table(['Parte de la ficha', 'Qué responde'], [['**Lo que muestran los datos**', 'La cifra o hallazgo, sin adornos.'], ['**Dicho simple**', 'Qué quiere decir en lenguaje cotidiano.'], ['**Un ejemplo de todos los días**', 'Una comparación que ayuda a imaginarlo.'], ['**Qué implica para la organización**', 'Qué decisión o conversación abre.'], ['**Cuánta confianza darle**', 'Qué tan sólido es el hallazgo: alta, media o baja.']], [5.2, 11.4], size=9.5)
 D.callout('De dónde vienen los números', f"Una encuesta confidencial respondida por **{N} estudiantes** de Duoc UC Sede San Bernardo entre el 13 y el 16 de octubre de 2026. Cada persona dijo qué tan de acuerdo estaba (de 1 a 5) con 15 afirmaciones sobre su preparación para el trabajo y respondió dos preguntas abiertas. **Son opiniones sobre uno mismo**, no pruebas ni evaluaciones de desempeño.", SKY, 'EEF4FB')
 aviso_datos(D)
 
+D.part('DESARROLLO')
 D.h1('2. Siete ideas para leer números sin enredarse')
 ideas = [
  ('1. La escala de 1 a 5', 'Cada afirmación se respondió así: **1** = muy en desacuerdo, **2** = en desacuerdo, **3** = ni de acuerdo ni en desacuerdo, **4** = de acuerdo, **5** = muy de acuerdo.', 'Es como calificar un restaurante con estrellas: un 4 significa «bien», un 5 «excelente», un 3 «ni fu ni fa».'),
@@ -27,7 +32,7 @@ def ficha(titulo, datos, simple, ejemplo, implica, conf, color=TEAL, fig=None, c
     D.h2(titulo)
     if fig: D.fig(fig, cap, w)
     t = D.d.add_table(rows=0, cols=2); borders(t)
-    for lab, txt, c in (('Lo que muestran los datos', datos, NAVY), ('Dicho simple', simple, NAVY), ('Un ejemplo de todos los días', ejemplo, NAVY), ('Qué implica para la organización', implica, NAVY), ('Cuánta confianza darle', conf, color)):
+    for lab, txt, c in (('Lo que muestran los datos', datos, NAVY), ('Dicho simple', simple, NAVY), ('Un ejemplo de todos los días', ejemplo, NAVY), ('Qué implica para la organización', implica, NAVY), ('Cuánta confianza darle', conf, NAVY)):
         r = t.add_row(); keep_row(r); a, b = r.cells; shade(a, 'F3F6FA'); cell_margins(a); cell_margins(b)
         runs(a.paragraphs[0], lab, 9.2, c, bold=True); runs(b.paragraphs[0], txt, 9.8)
         a.paragraphs[0].paragraph_format.space_after = Pt(0); b.paragraphs[0].paragraph_format.space_after = Pt(0)
@@ -79,8 +84,11 @@ gl = [('Alfa de Cronbach', 'Número entre 0 y 1 que indica si las afirmaciones d
  ('Pretest / postest', 'Medición antes y después de una intervención.'), ('Semáforo', 'Clasificación en verde, amarillo y rojo según puntajes.'), ('Shock de transición', 'Dificultad inicial al pasar de estudiar a trabajar.'), ('Valor p', 'Probabilidad de ver una diferencia así si en realidad no hubiera ninguna. Menor a 0,05 se suele considerar «significativa».'), ('Variable', 'Cualquier característica que se mide (por ejemplo, año de estudio).')]
 D.table(['Término', 'Qué significa'], gl, [4.2, 12.4], size=9.3)
 
-D.h1('7. Antes de citar un resultado: lista de verificación')
+D.part('CONCLUSIÓN')
+D.h1('Antes de citar un resultado: lista de verificación')
 D.callout('Cinco preguntas antes de usar una cifra en un documento o una reunión', ['**1. ¿Es una opinión o un hecho?** Casi todo aquí son opiniones de los propios estudiantes.', '**2. ¿Es una diferencia pequeña o grande?** Mire el tamaño, no solo si es «significativa».', '**3. ¿Con quiénes se compara?** Evite comparar grupos muy distintos en tamaño (por ejemplo, 5 personas).', '**4. ¿Se está diciendo «causa» donde solo hay «relación»?** Cuide el verbo: «se asocia con», no «provoca».', '**5. ¿Se cita la limitación?** Una sola medición, muestra voluntaria, 98 % de una escuela.'], AMB, 'FFF7E0')
-declaracion_ia(D, 'traducir los resultados técnicos a lenguaje cotidiano, proponer ejemplos y organizar el manual')
 bibliografia(D, [1, 5, 13, 15, 16, 18, 0, 7, 19, 20])
+D.part('ANEXOS')
+D.h1('Declaración de uso de IA y fuentes')
+declaracion_ia(D, 'traducir los resultados técnicos a lenguaje cotidiano, proponer ejemplos y organizar el manual')
 D.save('/home/user/Perfil_investigador/La_Puerta_Informes/informes/F_Manual_Explicativo_Resultados.docx'); print('F ok')

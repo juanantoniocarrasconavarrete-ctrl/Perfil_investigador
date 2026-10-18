@@ -1,66 +1,92 @@
-import json, re, io
+"""Librería de documentos con formato Duoc UC (norma Bibliotecas Duoc UC): carta, Calibri, 1,5, justificado,
+paleta negro/amarillo/gris, portada, índice con páginas, Introducción-Desarrollo-Conclusión-Referencias-Anexos."""
+import json, re, os
 from docx import Document
-from docx.shared import Pt, Cm, RGBColor, Emu
-from docx.enum.text import WD_ALIGN_PARAGRAPH, WD_BREAK
+from docx.shared import Pt, Cm, RGBColor
+from docx.enum.text import WD_ALIGN_PARAGRAPH, WD_BREAK, WD_TAB_ALIGNMENT, WD_TAB_LEADER
 from docx.enum.table import WD_TABLE_ALIGNMENT, WD_CELL_VERTICAL_ALIGNMENT
-from docx.enum.section import WD_ORIENT
 from docx.oxml.ns import qn, nsdecls
 from docx.oxml import parse_xml, OxmlElement
-import numpy as np
-from PIL import Image, ImageDraw
 
-R = json.load(open('/home/user/Perfil_investigador/La_Puerta_Informes/src/resultados.json'))
-G = '/home/user/Perfil_investigador/La_Puerta_Informes/graficos/'
-NAVY, AMB, TEAL, CORAL, GRAY, LG, SKY = '1B2A49', 'F2A900', '1F8A8A', 'E4572E', '8892A6', 'EEF1F6', '4C8BD6'
-FONT = 'Calibri'
+BASE = '/home/user/Perfil_investigador/La_Puerta_Informes/'
+R = json.load(open(BASE + 'src/resultados.json'))
+G = BASE + 'graficos/'
+# Paleta oficial Duoc UC (más tintes de amarillo/gris). Color de escuela Administración (#AC4FC6) no se usa.
+NAVY, AMB, TEAL, CORAL, GRAY, LG, SKY = '1A1A1A', 'FFB800', '1A1A1A', 'FFB800', '666666', 'EEEEEE', '666666'
+DARK_FILLS = ('1A1A1A', '666666')
+FONT = 'Calibri'; W_TXT = 16.5
+ORD = {
+ 'tblPr': ['tblStyle', 'tblpPr', 'tblOverlap', 'bidiVisual', 'tblStyleRowBandSize', 'tblStyleColBandSize', 'tblW', 'jc', 'tblCellSpacing', 'tblInd', 'tblBorders', 'shd', 'tblLayout', 'tblCellMar', 'tblLook', 'tblCaption', 'tblDescription'],
+ 'tcPr': ['cnfStyle', 'tcW', 'gridSpan', 'hMerge', 'vMerge', 'tcBorders', 'shd', 'noWrap', 'tcMar', 'textDirection', 'tcFitText', 'vAlign', 'hideMark'],
+ 'pPr': ['pStyle', 'keepNext', 'keepLines', 'pageBreakBefore', 'framePr', 'widowControl', 'numPr', 'suppressLineNumbers', 'pBdr', 'shd', 'tabs', 'suppressAutoHyphens', 'kinsoku', 'wordWrap', 'overflowPunct', 'topLinePunct', 'autoSpaceDE', 'autoSpaceDN', 'bidi', 'adjustRightInd', 'snapToGrid', 'spacing', 'ind', 'contextualSpacing', 'mirrorIndents', 'suppressOverlap', 'jc', 'textDirection', 'textAlignment', 'textboxTightWrap', 'outlineLvl', 'divId', 'cnfStyle', 'rPr', 'sectPr', 'pPrChange']}
+def put(parent, el, kind):
+    order = ORD[kind]; tag = el.tag.split('}')[1]
+    for old in parent.findall(qn('w:' + tag)): parent.remove(old)
+    idx = order.index(tag)
+    for ch in parent:
+        t = ch.tag.split('}')[1]
+        if t in order and order.index(t) > idx: ch.addprevious(el); return el
+    parent.append(el); return el
 
-def n(x, d=2):  # número con coma decimal
-    return f'{x:.{d}f}'.replace('.', ',')
+def n(x, d=2): return f'{x:.{d}f}'.replace('.', ',')
 def pc(x, d=0): return n(x, d) + ' %'
-def pv(p):
-    return 'p < 0,001' if p < 0.001 else 'p = ' + n(p, 3 if p < 0.01 else 2)
+def pv(p): return 'p < 0,001' if p < 0.001 else 'p = ' + n(p, 3 if p < 0.01 else 2)
+def text_on(fill): return 'FFFFFF' if fill in DARK_FILLS else NAVY
 
 def shade(cell, hexcolor):
-    cell._tc.get_or_add_tcPr().append(parse_xml(f'<w:shd {nsdecls("w")} w:val="clear" w:color="auto" w:fill="{hexcolor}"/>'))
+    put(cell._tc.get_or_add_tcPr(), parse_xml(f'<w:shd {nsdecls("w")} w:val="clear" w:color="auto" w:fill="{hexcolor}"/>'), 'tcPr')
 def cell_margins(cell, top=80, bottom=80, left=120, right=120):
-    tcPr = cell._tc.get_or_add_tcPr(); m = OxmlElement('w:tcMar')
+    m = OxmlElement('w:tcMar')
     for k, v in (('top', top), ('left', left), ('bottom', bottom), ('right', right)):
         e = OxmlElement(f'w:{k}'); e.set(qn('w:w'), str(v)); e.set(qn('w:type'), 'dxa'); m.append(e)
-    tcPr.append(m)
-def borders(table, color='D5DAE3', sz=4, inside=True):
-    tbl = table._tbl; tblPr = tbl.tblPr; b = OxmlElement('w:tblBorders')
+    put(cell._tc.get_or_add_tcPr(), m, 'tcPr')
+def cell_border(cell, **sides):  # lado=(sz, color)
+    b = OxmlElement('w:tcBorders')
+    for k in ('top', 'left', 'bottom', 'right'):
+        e = OxmlElement(f'w:{k}')
+        if k in sides: e.set(qn('w:val'), 'single'); e.set(qn('w:sz'), str(sides[k][0])); e.set(qn('w:color'), sides[k][1])
+        else: e.set(qn('w:val'), 'nil')
+        b.append(e)
+    put(cell._tc.get_or_add_tcPr(), b, 'tcPr')
+def borders(table, color='CCCCCC', sz=4, inside=True):
+    b = OxmlElement('w:tblBorders')
     for k in ['top', 'left', 'bottom', 'right'] + (['insideH', 'insideV'] if inside else []):
-        e = OxmlElement(f'w:{k}'); e.set(qn('w:val'), 'single'); e.set(qn('w:sz'), str(sz)); e.set(qn('w:color'), color); b.append(e)
-    tblPr.append(b)
+        e = OxmlElement(f'w:{k}'); e.set(qn('w:val'), 'single'); e.set(qn('w:sz'), str(sz)); e.set(qn('w:space'), '0'); e.set(qn('w:color'), color); b.append(e)
+    put(table._tbl.tblPr, b, 'tblPr')
 def no_borders(table):
-    tblPr = table._tbl.tblPr; b = OxmlElement('w:tblBorders')
+    b = OxmlElement('w:tblBorders')
     for k in ['top', 'left', 'bottom', 'right', 'insideH', 'insideV']:
         e = OxmlElement(f'w:{k}'); e.set(qn('w:val'), 'nil'); b.append(e)
-    tblPr.append(b)
+    put(table._tbl.tblPr, b, 'tblPr')
 def set_col_widths(table, widths):
+    tot = sum(widths)
+    if tot > W_TXT: widths = [w * W_TXT / tot for w in widths]
     table.autofit = False
     tbl = table._tbl; tblPr = tbl.tblPr
-    lay = OxmlElement('w:tblLayout'); lay.set(qn('w:type'), 'fixed'); tblPr.append(lay)
-    tw = tblPr.find(qn('w:tblW'))
-    if tw is None: tw = OxmlElement('w:tblW'); tblPr.append(tw)
-    tw.set(qn('w:type'), 'dxa'); tw.set(qn('w:w'), str(int(sum(widths) * 567)))
+    lay = OxmlElement('w:tblLayout'); lay.set(qn('w:type'), 'fixed'); put(tblPr, lay, 'tblPr')
+    tw = OxmlElement('w:tblW'); tw.set(qn('w:type'), 'dxa'); tw.set(qn('w:w'), str(int(sum(widths) * 567))); put(tblPr, tw, 'tblPr')
     grid = tbl.tblGrid
     for gc in list(grid): grid.remove(gc)
     for w in widths:
         gc = OxmlElement('w:gridCol'); gc.set(qn('w:w'), str(int(w * 567))); grid.append(gc)
     for row in table.rows:
         for i, w in enumerate(widths): row.cells[i].width = Cm(w)
-def keep_row(row):
-    trPr = row._tr.get_or_add_trPr(); e = OxmlElement('w:cantSplit'); trPr.append(e)
+def keep_row(row): row._tr.get_or_add_trPr().append(OxmlElement('w:cantSplit'))
 def repeat_header(row):
-    trPr = row._tr.get_or_add_trPr(); e = OxmlElement('w:tblHeader'); e.set(qn('w:val'), 'true'); trPr.append(e)
+    e = OxmlElement('w:tblHeader'); e.set(qn('w:val'), 'true'); row._tr.get_or_add_trPr().append(e)
+def cellp(p, align='l', after=0, line=1.0):
+    p.alignment = WD_ALIGN_PARAGRAPH.LEFT if align == 'l' else WD_ALIGN_PARAGRAPH.CENTER
+    p.paragraph_format.space_after = Pt(after); p.paragraph_format.space_before = Pt(0); p.paragraph_format.line_spacing = line
+def pborder(p, side, color=AMB, sz=36, space=8):
+    pPr = p._p.get_or_add_pPr(); b = OxmlElement('w:pBdr'); e = OxmlElement(f'w:{side}')
+    e.set(qn('w:val'), 'single'); e.set(qn('w:sz'), str(sz)); e.set(qn('w:space'), str(space)); e.set(qn('w:color'), color); b.append(e); put(pPr, b, 'pPr')
 
 def runs(p, text, size=None, color=None, bold=None, italic=None):
-    """Soporta **negrita** y _cursiva_ simples."""
+    """Soporta **negrita**."""
     for part in re.split(r'(\*\*.+?\*\*)', text):
         if not part: continue
         b = part.startswith('**') and part.endswith('**')
-        r = p.add_run(part[2:-2] if b else part); r.font.name = FONT; r._element.rPr.rFonts.set(qn('w:eastAsia'), FONT)
+        r = p.add_run(part[2:-2] if b else part); r.font.name = FONT; r._element.get_or_add_rPr().rFonts.set(qn('w:eastAsia'), FONT)
         if size: r.font.size = Pt(size)
         if color: r.font.color.rgb = RGBColor.from_string(color)
         r.bold = True if (b or bold) else None
@@ -69,48 +95,62 @@ def runs(p, text, size=None, color=None, bold=None, italic=None):
 
 class Doc:
     def __init__(self, titulo, subtitulo, codigo, cover_img, header_text):
-        self.d = Document(); self.titulo = titulo; d = self.d
-        s = d.sections[0]; s.page_width, s.page_height = Cm(21), Cm(29.7)
-        s.left_margin = s.right_margin = Cm(2.2); s.top_margin = Cm(2.3); s.bottom_margin = Cm(2.0)
-        st = d.styles['Normal']; st.font.name = FONT; st.font.size = Pt(10.5); st.element.rPr.rFonts.set(qn('w:eastAsia'), FONT)
-        st.paragraph_format.space_after = Pt(6); st.paragraph_format.line_spacing = 1.12
-        for nm, sz, col, sb, sa in (('Heading 1', 20, NAVY, 18, 8), ('Heading 2', 14, TEAL, 14, 4), ('Heading 3', 11.5, NAVY, 10, 2)):
-            h = d.styles[nm]; h.font.name = FONT; h.font.size = Pt(sz); h.font.bold = True; h.font.color.rgb = RGBColor.from_string(col)
-            h.element.rPr.rFonts.set(qn('w:eastAsia'), FONT); h.element.rPr.rFonts.set(qn('w:ascii'), FONT); h.element.rPr.rFonts.set(qn('w:hAnsi'), FONT)
-            h.paragraph_format.space_before = Pt(sb); h.paragraph_format.space_after = Pt(sa); h.paragraph_format.keep_with_next = True
-        self.W = 16.6; self.header_text = header_text; self._cover(titulo, subtitulo, codigo, cover_img)
-    # portada: sección propia sin encabezado
-    def _cover(self, titulo, subtitulo, codigo, img):
+        self.d = Document(); self.titulo = titulo; d = self.d; self.pn = 0; self.cn = 0; self.heads = []; self.header_text = header_text
+        s = d.sections[0]; s.page_width, s.page_height = Cm(21.59), Cm(27.94)
+        s.left_margin = s.right_margin = Cm(2.54); s.top_margin = s.bottom_margin = Cm(2.54); s.header_distance = s.footer_distance = Cm(1.25)
+        st = d.styles['Normal']; st.font.name = FONT; st.font.size = Pt(11); st.element.get_or_add_rPr().rFonts.set(qn('w:eastAsia'), FONT)
+        st.font.color.rgb = RGBColor.from_string(NAVY)
+        st.paragraph_format.space_after = Pt(8); st.paragraph_format.line_spacing = 1.5; st.paragraph_format.alignment = WD_ALIGN_PARAGRAPH.JUSTIFY
+        for nm, sz, col in (('Heading 1', 16, NAVY), ('Heading 2', 13, NAVY), ('Heading 3', 12, GRAY), ('Heading 4', 11, GRAY)):
+            h = d.styles[nm]; h.font.name = FONT; h.font.size = Pt(sz); h.font.bold = True; h.font.italic = False; h.font.color.rgb = RGBColor.from_string(col)
+            rf = h.element.get_or_add_rPr().rFonts
+            for a in ('ascii', 'hAnsi', 'eastAsia', 'cs'): rf.set(qn('w:' + a), FONT)
+            for a in ('asciiTheme', 'hAnsiTheme', 'eastAsiaTheme', 'cstheme'):
+                if rf.get(qn('w:' + a)) is not None: del rf.attrib[qn('w:' + a)]
+            pf = h.paragraph_format; pf.space_before = Pt(16 if sz >= 13 else 10); pf.space_after = Pt(12); pf.keep_with_next = True; pf.line_spacing = 1.15; pf.alignment = WD_ALIGN_PARAGRAPH.LEFT
+        self._cover(titulo, subtitulo, codigo)
+        self.marker = d.add_paragraph(); self.marker.paragraph_format.space_after = Pt(0)
+        r = self.marker.add_run(' '); r.font.size = Pt(1)
+        hp = s.header.paragraphs[0]; runs(hp, header_text, 9, GRAY); cellp(hp)
+        fp = s.footer.paragraphs[0]; cellp(fp, 'c'); fp.alignment = WD_ALIGN_PARAGRAPH.RIGHT; runs(fp, 'Duoc UC · Proyecto La Puerta · Página ', 9, GRAY); self._field(fp, 'PAGE')
+    def _cover(self, titulo, subtitulo, codigo):
         d = self.d; s = d.sections[0]; s.different_first_page_header_footer = True
-        t = d.add_table(rows=1, cols=1); no_borders(t); c = t.rows[0].cells[0]; shade(c, NAVY); c.width = Cm(self.W); cell_margins(c, 700, 500, 500, 500); set_col_widths(t, [self.W])
-        trPr = t.rows[0]._tr.get_or_add_trPr(); hh = OxmlElement('w:trHeight'); hh.set(qn('w:val'), str(int(24.6 * 567))); hh.set(qn('w:hRule'), 'exact'); trPr.append(hh)
-        p = c.paragraphs[0]; runs(p, 'PROYECTO LA PUERTA', 11, AMB, bold=True); p.paragraph_format.space_after = Pt(2)
-        p = c.add_paragraph(); runs(p, 'Duoc UC · Escuela de Administración y Negocios · Sede San Bernardo', 9.5, 'C9D1E3')
-        c.add_paragraph().paragraph_format.space_after = Pt(60)
-        p = c.add_paragraph(); runs(p, codigo, 10, AMB, bold=True)
-        p = c.add_paragraph(); runs(p, titulo, 30, 'FFFFFF', bold=True); p.paragraph_format.line_spacing = 1.0; p.paragraph_format.space_after = Pt(8)
-        p = c.add_paragraph(); runs(p, subtitulo, 13, 'DDE3F0'); p.paragraph_format.space_after = Pt(30)
-        if img:
-            p = c.add_paragraph(); p.alignment = WD_ALIGN_PARAGRAPH.CENTER; p.add_run().add_picture(img, width=Cm(11.5))
-        c.add_paragraph().paragraph_format.space_after = Pt(18)
-        p = c.add_paragraph(); runs(p, f"Encuesta de percepción y competencias · {R['N']} estudiantes · aplicada del 13 al 16 de octubre de 2026", 9.5, 'C9D1E3')
-        p = c.add_paragraph(); runs(p, 'Elaborado con apoyo de herramientas de Inteligencia Artificial (ver declaración al final) · Octubre de 2026', 9, 'AEB8CF')
-        # header/footer normales
-        hp = s.header.paragraphs[0]; runs(hp, self.header_text, 8.5, GRAY); hp.alignment = WD_ALIGN_PARAGRAPH.LEFT
-        fp = s.footer.paragraphs[0]; fp.alignment = WD_ALIGN_PARAGRAPH.RIGHT; runs(fp, 'Proyecto La Puerta · Página ', 8.5, GRAY); self._field(fp, 'PAGE')
+        t = d.add_table(rows=3, cols=1); no_borders(t); set_col_widths(t, [W_TXT])
+        for row, hcm in zip(t.rows, (3.2, 10.6, 8.6)):
+            trPr = row._tr.get_or_add_trPr(); hh = OxmlElement('w:trHeight'); hh.set(qn('w:val'), str(int(hcm * 567))); hh.set(qn('w:hRule'), 'exact'); trPr.append(hh)
+        # 1) logo (marcador de posición: insertar logo oficial)
+        c = t.rows[0].cells[0]; inner = c.add_table(rows=1, cols=1); no_borders(inner); set_col_widths(inner, [5.2]); inner.alignment = WD_TABLE_ALIGNMENT.LEFT; ic = inner.rows[0].cells[0]
+        cell_border(ic, top=(6, '999999'), left=(6, '999999'), bottom=(6, '999999'), right=(6, '999999')); cell_margins(ic, 160, 160, 120, 120)
+        p = ic.paragraphs[0]; cellp(p, 'c'); runs(p, '[Insertar logo Duoc UC]', 9, GRAY)
+        c.paragraphs[0].paragraph_format.space_after = Pt(0)
+        # 2) título
+        c = t.rows[1].cells[0]; c.vertical_alignment = WD_CELL_VERTICAL_ALIGNMENT.CENTER
+        p = c.paragraphs[0]; p.alignment = WD_ALIGN_PARAGRAPH.CENTER; p.paragraph_format.space_after = Pt(10); p.paragraph_format.line_spacing = 1.15
+        self.cover_title = ('PROYECTO LA PUERTA: ' + titulo.upper()).rstrip('.'); runs(p, self.cover_title, 14, NAVY, bold=True)
+        pborder(p, 'bottom', AMB, 24, 10)
+        q = c.add_paragraph(); q.alignment = WD_ALIGN_PARAGRAPH.CENTER; q.paragraph_format.space_before = Pt(10); q.paragraph_format.line_spacing = 1.15; runs(q, subtitulo, 12, GRAY)
+        # 3) datos
+        c = t.rows[2].cells[0]; c.vertical_alignment = WD_CELL_VERTICAL_ALIGNMENT.BOTTOM
+        lines = ['Autor y docente responsable: Juan Antonio Carrasco Navarrete', 'Escuela de Administración y Negocios · Sede San Bernardo', f'Proyecto La Puerta · {codigo.split(" · ")[0].title()}', 'Octubre de 2026']
+        for i, ln in enumerate(lines):
+            p = c.paragraphs[0] if i == 0 else c.add_paragraph(); p.alignment = WD_ALIGN_PARAGRAPH.CENTER; p.paragraph_format.space_after = Pt(4); p.paragraph_format.line_spacing = 1.15; runs(p, ln, 14, NAVY)
+        p = c.add_paragraph(); p.alignment = WD_ALIGN_PARAGRAPH.CENTER; p.paragraph_format.space_before = Pt(8); runs(p, 'Elaborado con apoyo de herramientas de Inteligencia Artificial (véase Anexos)', 9, GRAY)
     def _field(self, p, code):
-        r = p.add_run(); r.font.size = Pt(8.5); r.font.color.rgb = RGBColor.from_string(GRAY)
+        r = p.add_run(); r.font.size = Pt(9); r.font.color.rgb = RGBColor.from_string(GRAY)
         for t, txt in (('begin', None), (None, code), ('end', None)):
             if t: e = OxmlElement('w:fldChar'); e.set(qn('w:fldCharType'), t)
             else: e = OxmlElement('w:instrText'); e.set(qn('xml:space'), 'preserve'); e.text = txt
             r._r.append(e)
+    # ---- estructura ----
+    def part(self, title):
+        self.pn += 1; self.cn = 0; txt = f'{self.pn}. {title}'
+        h = self.d.add_heading(txt, 1); h.paragraph_format.page_break_before = True; pborder(h, 'left'); self.heads.append((1, txt)); return h
+    def h1(self, t, newpage=False):
+        t = re.sub(r'^\d+\.\s*', '', t); self.cn += 1; txt = f'{self.pn}.{self.cn} {t}'
+        h = self.d.add_heading(txt, 2); pborder(h, 'left', AMB, 28, 8); self.heads.append((2, txt)); return h
+    def h2(self, t): return self.d.add_heading(t, 3)
+    def h3(self, t): return self.d.add_heading(t, 4)
     def pagebreak(self): self.d.add_paragraph().add_run().add_break(WD_BREAK.PAGE)
-    def h1(self, t, newpage=True):
-        h = self.d.add_heading(t, 1)
-        if newpage: h.paragraph_format.page_break_before = True
-        return h
-    def h2(self, t): return self.d.add_heading(t, 2)
-    def h3(self, t): return self.d.add_heading(t, 3)
     def p(self, t, size=None, color=None, italic=False, align=None, after=None):
         p = self.d.add_paragraph(); runs(p, t, size, color, italic=italic)
         if align == 'c': p.alignment = WD_ALIGN_PARAGRAPH.CENTER
@@ -123,61 +163,64 @@ class Doc:
         for i, it in enumerate(items, 1):
             p = self.d.add_paragraph(); p.paragraph_format.left_indent = Cm(0.9); p.paragraph_format.first_line_indent = Cm(-0.6); p.paragraph_format.space_after = Pt(4)
             runs(p, f'**{i}.**  ' + it)
-    def callout(self, titulo, texto, color=TEAL, bg=None, icon=''):
-        t = self.d.add_table(rows=1, cols=2); no_borders(t); a, b = t.rows[0].cells; a.width = Cm(.35); b.width = Cm(self.W - .35)
-        shade(a, color); shade(b, bg or 'F3F6FA'); cell_margins(b, 120, 120, 200, 160); cell_margins(a, 0, 0, 0, 0); keep_row(t.rows[0])
-        p = b.paragraphs[0]; runs(p, (icon + ' ' if icon else '') + titulo, 10.5, color, bold=True); p.paragraph_format.space_after = Pt(2)
+    def _spacer(self, pts=10):
+        p = self.d.add_paragraph(); p.paragraph_format.space_after = Pt(pts); p.paragraph_format.line_spacing = 1.0
+        r = p.add_run(' '); r.font.size = Pt(4)
+    def callout(self, titulo, texto, color=None, bg=None, icon=''):
+        t = self.d.add_table(rows=1, cols=1); no_borders(t); c = t.rows[0].cells[0]; shade(c, LG)
+        cell_border(c, left=(32, AMB)); cell_margins(c, 120, 120, 220, 160); keep_row(t.rows[0])
+        p = c.paragraphs[0]; cellp(p, 'l', 3, 1.15); runs(p, titulo, 10.5, NAVY, bold=True)
         for line in (texto if isinstance(texto, list) else [texto]):
-            q = b.add_paragraph(); runs(q, line, 10); q.paragraph_format.space_after = Pt(2)
-        set_col_widths(t, [.35, self.W - .35]); self.d.add_paragraph().paragraph_format.space_after = Pt(2)
-    def kpis(self, items):  # [(valor, etiqueta, color)]
+            q = c.add_paragraph(); cellp(q, 'l', 3, 1.15); runs(q, line, 10)
+        set_col_widths(t, [W_TXT]); self._spacer(10)
+    def kpis(self, items):
         k = len(items); t = self.d.add_table(rows=1, cols=k); no_borders(t); t.alignment = WD_TABLE_ALIGNMENT.CENTER
         for i, (v, lab, col) in enumerate(items):
-            c = t.rows[0].cells[i]; c.width = Cm(self.W / k); shade(c, 'F3F6FA'); cell_margins(c, 140, 140, 120, 120)
-            tcPr = c._tc.get_or_add_tcPr(); b = OxmlElement('w:tcBorders'); e = OxmlElement('w:top'); e.set(qn('w:val'), 'single'); e.set(qn('w:sz'), '24'); e.set(qn('w:color'), col); b.append(e); tcPr.append(b)
-            p = c.paragraphs[0]; p.alignment = WD_ALIGN_PARAGRAPH.CENTER; runs(p, v, 22, col, bold=True); p.paragraph_format.space_after = Pt(0)
-            q = c.add_paragraph(); q.alignment = WD_ALIGN_PARAGRAPH.CENTER; runs(q, lab, 8.8, '2B3548'); q.paragraph_format.space_after = Pt(0)
-        set_col_widths(t, [self.W / k] * k); self.d.add_paragraph().paragraph_format.space_after = Pt(2)
-    def table(self, header, rows, widths, hcolor=NAVY, size=9, zebra=True, colors=None, align=None):
+            c = t.rows[0].cells[i]; shade(c, LG); cell_border(c, top=(24, AMB)); cell_margins(c, 140, 140, 120, 120)
+            p = c.paragraphs[0]; cellp(p, 'c'); runs(p, v, 22, NAVY, bold=True)
+            q = c.add_paragraph(); cellp(q, 'c'); runs(q, lab, 9, GRAY)
+        set_col_widths(t, [W_TXT / k] * k); self._spacer(10)
+    def table(self, header, rows, widths, hcolor=None, size=9, zebra=True, colors=None, align=None):
         t = self.d.add_table(rows=1, cols=len(header)); borders(t); t.alignment = WD_TABLE_ALIGNMENT.CENTER
         for i, h in enumerate(header):
-            c = t.rows[0].cells[i]; shade(c, hcolor); cell_margins(c, 70, 70, 90, 90); p = c.paragraphs[0]; runs(p, h, size, 'FFFFFF', bold=True); p.paragraph_format.space_after = Pt(0)
+            c = t.rows[0].cells[i]; shade(c, NAVY); cell_margins(c, 70, 70, 90, 90); p = c.paragraphs[0]; cellp(p); runs(p, h, size, 'FFFFFF', bold=True)
         repeat_header(t.rows[0])
         for ri, row in enumerate(rows):
             r = t.add_row(); keep_row(r)
             for i, v in enumerate(row):
                 c = r.cells[i]; cell_margins(c, 60, 60, 90, 90); c.vertical_alignment = WD_CELL_VERTICAL_ALIGNMENT.CENTER
-                if zebra and ri % 2: shade(c, 'F7F9FC')
-                p = c.paragraphs[0]; p.paragraph_format.space_after = Pt(0)
-                col = None
-                if colors and colors.get((ri, i)): shade(c, colors[(ri, i)]); col = NAVY if colors[(ri, i)] in (AMB, 'FFE9A8', 'D9F0E4', 'FBD5CB', 'DCE9F8', 'F0F3F8') else 'FFFFFF'
-                runs(p, str(v), size, col, bold=bool(col) and col == 'FFFFFF')
+                if zebra and ri % 2: shade(c, LG)
+                p = c.paragraphs[0]; cellp(p); col = None
+                fill = colors.get((ri, i)) if colors else None
+                if fill:
+                    fill = {'1F8A5B': '1A1A1A', '8CBF3F': '666666'}.get(fill, fill); shade(c, fill); col = text_on(fill)
+                runs(p, str(v), size, col, bold=bool(col))
                 if align and align[i] == 'c': p.alignment = WD_ALIGN_PARAGRAPH.CENTER
-        set_col_widths(t, widths); self.d.add_paragraph().paragraph_format.space_after = Pt(2); return t
-    def fig(self, name, caption, width=16.2):
-        p = self.d.add_paragraph(); p.alignment = WD_ALIGN_PARAGRAPH.CENTER; p.paragraph_format.keep_with_next = True; p.paragraph_format.space_after = Pt(2)
-        p.add_run().add_picture(G + name + '.png', width=Cm(width))
-        q = self.d.add_paragraph(); q.alignment = WD_ALIGN_PARAGRAPH.CENTER; runs(q, caption, 8.8, GRAY, italic=True); q.paragraph_format.space_after = Pt(10)
-    def lee(self, texto):  # "cómo leerlo"
-        self.callout('Cómo leer este gráfico', texto, SKY, 'EEF4FB')
-    def save(self, path): self.d.save(path)
+        set_col_widths(t, widths); self._spacer(12); return t
+    def fig(self, name, caption, width=16.0):
+        p = self.d.add_paragraph(); p.alignment = WD_ALIGN_PARAGRAPH.CENTER; p.paragraph_format.keep_with_next = True; p.paragraph_format.space_after = Pt(2); p.paragraph_format.line_spacing = 1.0
+        p.add_run().add_picture(G + name + '.png', width=Cm(min(width, 16.0)))
+        q = self.d.add_paragraph(); q.alignment = WD_ALIGN_PARAGRAPH.CENTER; runs(q, caption, 9, GRAY, italic=True); q.paragraph_format.space_after = Pt(12); q.paragraph_format.line_spacing = 1.15
+    def lee(self, texto): self.callout('Cómo leer este gráfico', texto)
+    # ---- índice y guardado ----
+    def _index(self, pages):
+        els = []
+        def add(txt, level, page):
+            p = self.d.add_paragraph(); pf = p.paragraph_format; pf.line_spacing = 1.5; pf.space_after = Pt(2); p.alignment = WD_ALIGN_PARAGRAPH.LEFT
+            pf.left_indent = Cm(0 if level == 1 else 0.8); pf.tab_stops.add_tab_stop(Cm(W_TXT), WD_TAB_ALIGNMENT.RIGHT, WD_TAB_LEADER.DOTS)
+            runs(p, txt, 11, NAVY, bold=(level == 1)); runs(p, '\t' + str(pages.get(txt, '—')), 11, NAVY, bold=(level == 1)); els.append(p._p)
+        h = self.d.add_heading('Índice', 1); h.paragraph_format.page_break_before = True; pborder(h, 'left'); els.append(h._p)
+        for lvl, txt in self.heads: add(txt, lvl, None)
+        for e in els: self.marker._p.addprevious(e)
+        self.marker._p.getparent().remove(self.marker._p)
+    def save(self, path):
+        base = os.path.basename(path)
+        pf = BASE + 'src/pages_' + base + '.json'; pages = json.load(open(pf)) if os.path.exists(pf) else {}
+        self._index(pages); json.dump(self.heads, open(BASE + 'src/heads_' + base + '.json', 'w'), ensure_ascii=False)
+        self.d.save(path)
 
-def cover_art(name, accent=AMB):
-    """Puerta/arco estilizado (ilustración propia)."""
-    W, H = 1400, 700; im = Image.new('RGB', (W, H), (27, 42, 73)); d = ImageDraw.Draw(im)
-    rng = np.random.default_rng(7)
-    for _ in range(70):
-        x, y, r = rng.integers(0, W), rng.integers(0, H), rng.integers(2, 6); d.ellipse((x - r, y - r, x + r, y + r), fill=(60, 80, 120))
-    cx = W // 2
-    for i, (w, col) in enumerate([(430, (38, 58, 98)), (340, (76, 139, 214)), (250, (31, 138, 138)), (205, (242, 169, 0))]):
-        top = 60 + i * 45; d.rounded_rectangle((cx - w // 2, top, cx + w // 2, H + 80), radius=w // 2, fill=col)
-    d.rounded_rectangle((cx - 85, 190, cx + 85, H + 80), radius=85, fill=(27, 42, 73))
-    for k, (x, y) in enumerate([(cx - 420, 520), (cx - 520, 470), (cx + 440, 500), (cx + 540, 450)]):
-        d.ellipse((x - 26, y - 26, x + 26, y + 26), fill=(242, 169, 0) if k % 2 else (76, 139, 214)); d.rectangle((x - 18, y + 26, x + 18, 600), fill=(242, 169, 0) if k % 2 else (76, 139, 214))
-    d.line((cx - 600, 600, cx + 600, 600), fill=(76, 139, 214), width=4)
-    path = f'/home/user/Perfil_investigador/La_Puerta_Informes/graficos/{name}.png'; im.save(path); return path
+def cover_art(name, accent=None): return G + name + '.png'
 
-# ---- textos compartidos ----
 BIB = [
  'Bandura, A. (1997). *Self-efficacy: The exercise of control*. W. H. Freeman.',
  'Braun, V., & Clarke, V. (2006). Using thematic analysis in psychology. *Qualitative Research in Psychology, 3*(2), 77–101.',
@@ -202,24 +245,23 @@ BIB = [
  'Duoc UC (2026). *Proyecto La Puerta: Base de datos y matriz de análisis (20261009_1658)* [base de datos interna, no publicada].',
 ]
 def bibliografia(doc, subset=None):
-    doc.h1('Bibliografía y referencias')
-    doc.p('Las fuentes se ordenan alfabéticamente (formato APA 7). Las dos últimas son documentos internos del proyecto. Las referencias académicas fueron seleccionadas por la herramienta de IA a partir de su conocimiento de la literatura y **no se verificaron en línea durante esta sesión**: conviene confirmar volumen, páginas y DOI antes de una publicación formal.', 9.5, GRAY)
+    doc.part('REFERENCIAS')
+    doc.p('Referencias en formato APA 7, ordenadas alfabéticamente. Las dos últimas son documentos internos del proyecto. Las referencias académicas fueron seleccionadas por la herramienta de IA a partir de su conocimiento de la literatura y **no se verificaron en línea durante esta sesión**: conviene confirmar volumen, páginas y DOI antes de una publicación formal.', 10, GRAY)
     for b in (BIB if subset is None else [BIB[i] for i in subset]):
-        p = doc.d.add_paragraph(); p.paragraph_format.left_indent = Cm(1); p.paragraph_format.first_line_indent = Cm(-1); p.paragraph_format.space_after = Pt(4)
-        # cursivas con *...*
+        p = doc.d.add_paragraph(); p.alignment = WD_ALIGN_PARAGRAPH.LEFT; p.paragraph_format.left_indent = Cm(1); p.paragraph_format.first_line_indent = Cm(-1); p.paragraph_format.space_after = Pt(5); p.paragraph_format.line_spacing = 1.15
         for part in re.split(r'(\*[^*]+\*)', b):
             if not part: continue
-            it = part.startswith('*') and part.endswith('*'); r = p.add_run(part[1:-1] if it else part); r.italic = it; r.font.size = Pt(9.5); r.font.name = FONT
+            it = part.startswith('*') and part.endswith('*'); r = p.add_run(part[1:-1] if it else part); r.italic = it; r.font.size = Pt(10.5); r.font.name = FONT
 
 def declaracion_ia(doc, rol):
     doc.h2('Declaración sobre el uso de Inteligencia Artificial')
-    doc.callout('Este informe se elaboró con apoyo de Inteligencia Artificial',
+    doc.callout('Este documento se elaboró con apoyo de Inteligencia Artificial',
         [f'Se utilizó **Claude (Anthropic), modelo de IA generativa**, como herramienta de apoyo para: (1) limpiar y calcular los resultados de la base de datos con código reproducible; (2) {rol}; (3) redactar, organizar y diseñar los gráficos y diagramas; y (4) clasificar preliminarmente las respuestas abiertas por temas.',
          '**La IA no reemplaza el juicio experto.** La codificación temática automática es preliminar y debe ser validada por una persona (idealmente con doble codificación). Las interpretaciones, decisiones y recomendaciones deben ser revisadas y asumidas por el equipo responsable del Proyecto La Puerta antes de su difusión institucional.',
-         'No se incluyeron nombres, correos ni códigos de estudiantes. Las citas textuales son anónimas.'], AMB, 'FFF7E0')
+         'No se incluyeron nombres, correos ni códigos de estudiantes. Las citas textuales son anónimas.'])
 
 def aviso_datos(doc):
     c = R['campos_vacios']
     doc.callout('Una advertencia importante sobre los datos',
         [f"La base trae **{R['N']} respuestas de un solo momento**. Los campos que permitirían comparar «antes y después» o «grupo La Puerta vs. grupo de comparación» (código de estudiante, momento de medición y grupo de asignación) vienen **vacíos en las {c['ID02 código']} filas**, igual que la pregunta de valoración del programa (POST_EXP1).",
-         'Por eso este análisis describe **cómo se perciben hoy los estudiantes** y contrasta hipótesis sobre **diferencias entre perfiles** (por ejemplo, con y sin práctica previa). **No puede afirmar que el programa La Puerta produzca cambios**: eso requiere medir a las mismas personas antes y después, con un grupo de comparación.'], CORAL, 'FDEEE9', '⚠')
+         'Por eso este análisis describe **cómo se perciben hoy los estudiantes** y contrasta hipótesis sobre **diferencias entre perfiles** (por ejemplo, con y sin práctica previa). **No puede afirmar que el programa La Puerta produzca cambios**: eso requiere medir a las mismas personas antes y después, con un grupo de comparación.'])

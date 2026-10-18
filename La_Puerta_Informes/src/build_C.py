@@ -1,9 +1,13 @@
 from comun import *
 D = Doc('Informe consolidado', 'Lo que dicen juntos el análisis descriptivo y el análisis de hipótesis: conclusiones estratégicas y camino a seguir', 'PRODUCTO C · INFORME CONSOLIDADO E INTEGRADO', G + 'portada_puerta.png', 'Proyecto La Puerta · Informe C · Consolidado')
 g = R['global']; O = OF; fo = {r['var']: r for r in O['filas']}; S = O['semaforo_estudiantes']
-contenido(D, ['Síntesis ejecutiva', 'Comparación entre ambos enfoques', 'Coincidencias y discrepancias', 'Factores críticos', 'Oportunidades de mejora', 'Recomendaciones estratégicas priorizadas', 'Conclusiones generales', 'Anexo: trazabilidad y declaración de uso de IA', 'Bibliografía integrada'])
 
-D.h1('1. Síntesis ejecutiva')
+intro(D, 'La integración de los resultados del análisis descriptivo (Informe A) y del análisis con hipótesis (Informe B) de la encuesta del Proyecto La Puerta.',
+ 'Los Informes A y B parten de los mismos datos (n = 184) y responden preguntas distintas. Este informe los lee en conjunto para extraer conclusiones estratégicas y recomendaciones priorizadas.',
+ 'Integrar los hallazgos de ambos enfoques, identificar coincidencias y discrepancias y priorizar recomendaciones para la toma de decisiones.',
+ ['Sintetizar los hallazgos principales.', 'Comparar los dos enfoques de análisis.', 'Identificar factores críticos y oportunidades de mejora.', 'Priorizar recomendaciones estratégicas con indicadores de éxito.'],
+ 'El documento se organiza en cinco partes: la Introducción (síntesis ejecutiva); el Desarrollo (comparación de enfoques, coincidencias y discrepancias, factores críticos, oportunidades y recomendaciones); la Conclusión; las Referencias integradas; y los Anexos (trazabilidad y declaración de uso de IA).')
+D.h1('Síntesis ejecutiva')
 D.p(f"Los **{N} estudiantes** que respondieron la encuesta del Proyecto La Puerta muestran una preparación percibida **razonablemente buena (3,87 de 5)**, con fortalezas de actitud (diálogo en equipo, ética, ganas de aprender) y una brecha nítida en lo que depende del **contacto con el mundo laboral real**: conocer las tareas y exigencias, comprobar si el trabajo calza con los propios intereses y, sobre todo, **contar con una red de contactos**.")
 D.kpis([(n(g['media']), 'puntaje global\n(1 a 5)', NAVY), (pc(IT['P12']['fav']), 'tiene red de contactos\n(brecha mayor)', CORAL), (pc(IT['P15']['fav']), 'quiere proyectos\ncon empresas', TEAL), ('+' + n(fo['GLOBAL']['dif']), 'ventaja con práctica\nprevia (esperada: 0,8–1,2)', AMB)])
 D.h3('La historia en cinco frases')
@@ -16,6 +20,7 @@ D.numbered([
 D.callout('Mensaje para la toma de decisiones', 'Invertir en **contacto real con el trabajo y con personas de empresas** (redes, microexperiencias, simulaciones) responde a lo que los datos muestran como brecha, a lo que los estudiantes piden con sus palabras y a una demanda alta y homogénea (83 %). Antes de escalar el programa, **corregir el diseño de medición** para poder demostrar su efecto.', TEAL)
 aviso_datos(D)
 
+D.part('DESARROLLO')
 D.h1('2. Comparación entre ambos enfoques')
 D.p('Los dos informes parten de los mismos datos y responden preguntas distintas. Mirarlos juntos evita dos errores frecuentes: **creer que toda diferencia observada es real** (error del descriptivo solo) y **creer que lo «no significativo» no existe** (error del contraste solo).')
 D.table(['', 'Informe A · Descriptivo', 'Informe B · Con hipótesis'], [
@@ -75,6 +80,7 @@ D.table(['Prioridad', 'Recomendación', 'Resultado esperado', 'Indicador de éxi
  ['**8 · Ajuste**\nR8', '**Validar las respuestas abiertas** (doble codificación) y publicar el libro de códigos.', 'Rigor de la evidencia cualitativa.', 'Acuerdo entre codificadores ≥ 0,70 (kappa).', '1 mes']], [2.3, 5.4, 3.3, 3.8, 1.8], size=8.4)
 D.callout('Un criterio para escalar', 'Antes de institucionalizar el modelo La Puerta en otras sedes, exigir la evidencia de un piloto con **grupo de comparación y medición antes/después**. El Informe Metodológico define como acción del Escenario 1 «institucionalizar el modelo»; con los datos actuales (Escenario 2 sin brecha de origen marcada) corresponde más bien **perfeccionar y evaluar**.', AMB, 'FFF7E0')
 
+D.part('CONCLUSIÓN')
 D.h1('7. Conclusiones generales')
 D.numbered([
  '**La preparación percibida es buena y se apoya en la actitud; lo que falta es el contacto con el mundo real.** El puntaje global (3,87) y las fortalezas en diálogo, ética y confianza son una buena plataforma.',
@@ -84,7 +90,9 @@ D.numbered([
  '**La evaluación del programa es la deuda metodológica de mayor valor.** Corregir la medición permitirá, en la próxima aplicación, responder la pregunta de fondo.',
  '**Cuidado con tres tentaciones:** (a) segregar por «tiene o no práctica previa»; (b) tomar como hecho el «valle» de 3.º–4.º; (c) afirmar que La Puerta funciona con datos de una sola medición.'])
 
-D.h1('Anexo: trazabilidad y declaración de uso de IA')
+bibliografia(D)
+D.part('ANEXOS')
+D.h1('Trazabilidad de las cifras clave')
 D.table(['Cifra clave', 'Valor', 'Dónde se calculó'], [
  ['Puntaje global', f"{n(g['media'])} [{n(g['ci'][0])}; {n(g['ci'][1])}]", 'Informe A, 5.1'],
  ['P12 de acuerdo', pc(IT['P12']['fav']), 'Informe A, 5.2 · Informe B, 4.3'],
@@ -95,5 +103,4 @@ D.table(['Cifra clave', 'Valor', 'Dónde se calculó'], [
  ['Diferencia mínima detectable (80 % poder)', n(O['mde_80']) + ' puntos', 'Informe B, 3']], [6.4, 4.6, 5.6], size=9)
 D.p('Todos los números se generan con `src/analisis.py` y quedan en `src/resultados.json`; los gráficos con `src/graficos.py`. Si la base cambia, basta volver a ejecutar ambos scripts.', 9.5)
 declaracion_ia(D, 'integrar los resultados de ambos enfoques, comparar sus conclusiones y proponer una priorización de recomendaciones')
-bibliografia(D)
 D.save('/home/user/Perfil_investigador/La_Puerta_Informes/informes/C_Informe_Consolidado.docx'); print('C ok')

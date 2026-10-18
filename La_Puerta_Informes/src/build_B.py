@@ -1,9 +1,13 @@
 from comun import *
 D = Doc('Informe con hipótesis', 'Qué respaldan —y qué no— los datos de la encuesta frente a las hipótesis del Proyecto La Puerta', 'PRODUCTO B · ANÁLISIS CON CONTRASTE DE HIPÓTESIS', G + 'portada_puerta.png', 'Proyecto La Puerta · Informe B · Análisis con hipótesis')
 g = R['global']; O = OF; fo = {r['var']: r for r in O['filas']}; h3 = R['H3']; h4 = R['H4']; h5 = R['H5']; ols = R['ols_global']; sens = R['sens']
-contenido(D, ['Resumen ejecutivo', 'Formulación de hipótesis', 'Metodología de análisis', 'Contraste e interpretación de las hipótesis', 'Hallazgos principales', 'Conclusiones', 'Recomendaciones de mejora', 'Anexos y declaración de uso de IA', 'Bibliografía y referencias'])
 
-D.h1('1. Resumen ejecutivo')
+intro(D, 'El contraste de las hipótesis del Proyecto La Puerta con los datos de la encuesta de percepción y competencias (n = 184), con foco en el rol de la práctica previa.',
+ 'El Informe Metodológico del proyecto postula que la práctica previa amortigua el shock de transición al mundo laboral. Este informe pone a prueba esa hipótesis central con los umbrales definidos por el propio proyecto y agrega cuatro hipótesis exploratorias.',
+ 'Contrastar la hipótesis central del proyecto y cuatro hipótesis complementarias con los datos de la encuesta, e interpretar los resultados en términos prácticos.',
+ ['Formular las hipótesis y sus reglas de decisión antes de mirar los resultados.', 'Contrastar cada hipótesis con pruebas apropiadas a datos ordinales, con corrección por comparaciones múltiples.', 'Determinar si los datos permiten evaluar el efecto del programa (antes/después).', 'Derivar recomendaciones coherentes con la evidencia.'],
+ 'El documento se organiza en cinco partes: la Introducción (resumen ejecutivo y advertencia sobre los datos); el Desarrollo (formulación de hipótesis, metodología, contraste e interpretación y hallazgos); la Conclusión (conclusiones, limitaciones y recomendaciones); las Referencias; y los Anexos (resultados completos, robustez y declaración de uso de IA).')
+D.h1('Resumen ejecutivo')
 D.p(f"Este informe pone a prueba las hipótesis del Proyecto La Puerta con las respuestas de **{N} estudiantes**. La hipótesis central —tomada del *Informe Metodológico* del proyecto— dice que **haber vivido antes una práctica laboral amortigua el «shock de transición» y fortalece la autoeficacia**, reduciendo las brechas en comunicación, adaptabilidad y autonomía. A esa hipótesis se suman cuatro hipótesis complementarias formuladas por el equipo analista y una sexta (efecto del programa antes/después) que **no se puede evaluar** con estos datos.")
 D.fig('g15_hipotesis', 'Figura 1. Tablero de resultados: cuánto respaldan los datos cada hipótesis.')
 D.h3('Lo esencial, en cuatro ideas')
@@ -15,6 +19,7 @@ D.numbered([
 D.callout('Veredicto sobre la hipótesis central', [f"**Parcialmente respaldada: sí en dirección, no en magnitud.** La cohorte cae en el tramo del «Escenario 2 – hallazgos mixtos» por su promedio ({n(O['media_global'])}), pero **sin** la brecha por experiencia previa que define a ese escenario. Con la muestra actual podemos descartar que la diferencia sea de 0,8 puntos o más; no podemos descartar una diferencia pequeña (entre 0 y 0,36 puntos)."], AMB, 'FFF7E0')
 aviso_datos(D)
 
+D.part('DESARROLLO')
 D.h1('2. Formulación de hipótesis')
 D.h2('2.1 De dónde salen las hipótesis')
 D.p('El *Informe Metodológico y Análisis Prospectivo de Brechas* del Proyecto La Puerta plantea una premisa: el aprendizaje del currículo es necesario pero **insuficiente** para una transición exitosa; la variable que modula el desempeño es la **trayectoria de práctica previa**. Textualmente, se postula que «la vivencia previa de inmersión laboral actúa como un factor amortiguador del shock de transición, consolidando la autoeficacia ocupacional del estudiante y reduciendo significativamente las brechas conductuales en comunicación, adaptabilidad y autonomía». Esto se apoya en la teoría de la autoeficacia (Bandura, 1997): la experiencia directa de logro es la fuente más fuerte de confianza.')
@@ -55,7 +60,7 @@ D.p(f"**1) Nivel de la cohorte.** El promedio es {n(O['media_global'])}: por niv
 D.p(f"**2) Correlación.** La relación entre tener práctica previa y el índice global es r = {n(O['pearson']['r'])} (intervalo de confianza 95 %: {n(O['pearson']['ci'][0])} a {n(O['pearson']['ci'][1])}; {pv(O['pearson']['p'])}). Es una relación **débil**, muy lejos del 0,45 anticipado. En términos cotidianos: saber si alguien ya hizo una práctica ayuda muy poco a adivinar cuánto puntúa.")
 D.p(f"**3) Brecha entre grupos.** Quienes tienen práctica previa obtienen **{n(fo['GLOBAL']['con'])}** y quienes no **{n(fo['GLOBAL']['sin'])}**: una diferencia de **+{n(fo['GLOBAL']['dif'])}** puntos (intervalo 95 %: {n(fo['GLOBAL']['ci'][0])} a {n(fo['GLOBAL']['ci'][1])}). La prueba t da {pv(fo['GLOBAL']['p_t'])} y la de Mann-Whitney {pv(fo['GLOBAL']['p_mw'])}; con la corrección por comparaciones múltiples, ninguna resiste (Holm ≥ 0,25). El tamaño del efecto es **pequeño** (d = {n(fo['GLOBAL']['d'])}). El proyecto esperaba 0,8 a 1,2 puntos: **los datos descartan una brecha de esa magnitud**.")
 D.fig('g06_practica', 'Figura 3. Con y sin práctica previa, por dimensión.')
-D.lee('Cada fila compara dos puntos: el naranjo (sin práctica) y el verde azulado (con práctica). Cuanto más separados, mayor la diferencia. A la derecha: cuánto es y su valor p sin corregir. Las diferencias más visibles son en D1 y D3.')
+D.lee('Cada fila compara dos puntos: el amarillo (sin práctica) y el negro (con práctica). Cuanto más separados, mayor la diferencia. A la derecha: cuánto es y su valor p sin corregir. Las diferencias más visibles son en D1 y D3.')
 D.h3('Equivalencia con las dimensiones del Informe Metodológico')
 rows = []; cols = {}
 for i, v in enumerate(['O_COM', 'O_EQ', 'O_AUT', 'O_RES', 'O_ET', 'O_HB']):
@@ -122,6 +127,7 @@ F = [('1', 'La práctica previa se asocia con puntajes algo más altos (+0,17), 
  ('8', 'El efecto de La Puerta no se puede evaluar: faltan código, momento, grupo y valoración del programa; tampoco se aplicaron A03 y A04. H6: no evaluable.', 'B')]
 D.table(['N.º', 'Hallazgo', 'Estatus'], [[a, b, tag(c)] for a, b, c in F], [1.0, 11.8, 3.8], colors={(i, 2): {'H': TEAL, 'I': SKY, 'B': CORAL}[c] for i, (a, b, c) in enumerate(F)}, size=9.5, align=['c', 'l', 'c'])
 
+D.part('CONCLUSIÓN')
 D.h1('6. Conclusiones')
 D.numbered(['**La hipótesis central del proyecto se sostiene en dirección, pero no en tamaño.** La práctica previa no es el gran divisor que se proyectaba. Hoy no hay evidencia para tratar a los estudiantes sin práctica previa como un grupo de riesgo por esa sola condición.', '**Lo que sí distingue a los estudiantes más seguros es el contacto con el trabajo real**: saber qué se hace, qué se exige y si el trabajo calza con uno. Eso se puede intervenir sin esperar una práctica completa.', '**La red de contactos es la carencia más clara y más intervenible.**', '**El interés en vincularse con empresas es alto y parejo**, lo que da legitimidad y demanda a La Puerta.', '**La evaluación del programa sigue pendiente**; el principal obstáculo es de diseño de datos, no de análisis.'])
 D.h2('Limitaciones')
@@ -134,7 +140,8 @@ D.table(['Cód.', 'Recomendación', 'Hipótesis que la sustenta'], [
  ['R3', '**Microexperiencias de contacto real** (visitas, proyectos cortos con empresas, shadowing de 1–2 jornadas) para todos los años; es la palanca que H4 sugiere y que H5 muestra que los estudiantes quieren.', 'H4 · H5'],
  ['R4', '**Ajustar el criterio de focalización:** en vez de «sin práctica previa», usar el semáforo (rojo < 3,50) y la combinación de brechas (P01, P02, P09, P12).', 'H1 (brecha pequeña); 21 % en rojo'],
  ['R7', '**Atender el tramo 3.º–4.º semestre** con actividades que reconecten con el mundo laboral.', 'H2 (valle)']], [1.0, 10.8, 4.8], size=9, align=['c', 'l', 'l'])
-D.h1('Anexos')
+bibliografia(D, [0, 3, 4, 5, 7, 8, 10, 12, 13, 14, 15, 17, 19, 20, 2, 11])
+D.part('ANEXOS')
 D.h2('Anexo 1. Resultados completos de H1 por dimensión')
 rows = []
 for r in R['H1']:
@@ -147,5 +154,4 @@ D.p('Sin las 12 respuestas «idénticas en todo», la diferencia sube a +0,21 (p
 D.h2('Anexo 3. Código y reproducibilidad')
 D.p('Todo el análisis puede reproducirse con `src/analisis.py` (Python: pandas, SciPy, statsmodels) y `src/graficos.py`. La semilla aleatoria es fija (2026). La base original no se incluye en el repositorio por contener correos.')
 declaracion_ia(D, 'proponer el marco de contraste, calcular las pruebas estadísticas y redactar la interpretación de las hipótesis')
-bibliografia(D, [0, 3, 4, 5, 7, 8, 10, 12, 13, 14, 15, 17, 19, 20, 2, 11])
 D.save('/home/user/Perfil_investigador/La_Puerta_Informes/informes/B_Informe_Hipotesis.docx'); print('B ok')

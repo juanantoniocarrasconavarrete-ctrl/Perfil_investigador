@@ -1,9 +1,13 @@
 from comun import *
 D = Doc('Manual de propuestas de mejora', 'Qué hacer, quién, cuándo, con qué recursos y cómo saber si funcionó', 'PRODUCTO G · MANUAL ORIENTADO A LA ACCIÓN', G + 'portada_puerta.png', 'Proyecto La Puerta · Manual de propuestas de mejora')
 g = R['global']; O = OF; fo = {r['var']: r for r in O['filas']}; S = O['semaforo_estudiantes']
-contenido(D, ['Cómo usar este manual', 'Áreas prioritarias de mejora', 'Acciones concretas por área (fichas)', 'Indicadores de seguimiento', 'Cronograma referencial', 'Estrategias de implementación', 'Anexos: plantilla de microproyecto y protocolo de evaluación', 'Declaración de uso de IA y fuentes'])
 
-D.h1('1. Cómo usar este manual')
+intro(D, 'Las acciones de mejora derivadas de los resultados de la encuesta del Proyecto La Puerta: qué hacer, quién, cuándo, con qué recursos y cómo medir el éxito.',
+ 'Los Informes A, B y C identificaron brechas (red de contactos, contacto con el trabajo real, estudiantes en semáforo rojo) y un vacío de medición. Este manual convierte esos hallazgos en acciones concretas para equipos con tiempo comprimido y presupuestos acotados.',
+ 'Proponer un plan de acción priorizado, con indicadores de seguimiento, cronograma y estrategias de implementación.',
+ ['Definir áreas prioritarias de mejora y su evidencia.', 'Detallar acciones concretas con responsables, plazos y nivel de costo.', 'Establecer indicadores, metas y cadencia de seguimiento.', 'Proponer cronograma, gobernanza, riesgos y criterios para escalar.'],
+ 'El documento se organiza en cinco partes: la Introducción (cómo usar el manual y principios de diseño); el Desarrollo (áreas prioritarias, fichas de acción por área, indicadores, cronograma y estrategias); la Conclusión; las Referencias; y los Anexos (plantilla de microproyecto, protocolo de evaluación y declaración de uso de IA).')
+D.h1('Cómo usar este manual')
 D.p('Este manual traduce los hallazgos de los Informes A, B y C en **acciones concretas**. Cada una indica qué es, quién podría liderarla, en qué plazo, con qué nivel de costo y **cómo se medirá su éxito**. Está pensado para equipos con **tiempo comprimido y presupuestos acotados**: privilegia actividades que se integran a asignaturas existentes y microproyectos de bajo costo.')
 D.table(['Nivel de costo', 'Qué significa', 'Ejemplos'], [
  ['**Bajo (≈ 0)**', 'Usa horas ya contratadas; sin gasto adicional.', 'Rediseño de la encuesta, doble codificación, tutorías dentro de asignaturas.'],
@@ -14,6 +18,7 @@ D.callout('Sobre las cifras de costo', 'Los niveles de costo son **estimaciones 
 D.h3('Cuatro principios de diseño')
 D.numbered(['**Empezar pequeño y medir:** cada acción nace como piloto con indicador y línea base.', '**Integrar, no sumar:** vincular cada actividad a una asignatura y resultado de aprendizaje existente, para no sobrecargar a docentes ni estudiantes.', '**Aprender haciendo (Kolb, 1984):** experiencia → reflexión → aplicación; toda actividad con empresas termina con una bitácora de aprendizaje.', '**Focalizar por necesidad, no por rótulo:** usar el semáforo y las brechas específicas, no el hecho de tener o no práctica previa.'])
 
+D.part('DESARROLLO')
 D.h1('2. Áreas prioritarias de mejora')
 D.p('Los hallazgos se agrupan en **seis áreas**. Las ocho recomendaciones (R1 a R8) de los Informes A, B y C se reparten entre ellas.')
 D.table(['Área', 'Recomendaciones', 'Brecha que atiende (línea base)', 'Prioridad'], [
@@ -147,11 +152,16 @@ D.table(['Riesgo', 'Probabilidad', 'Impacto', 'Mitigación'], [
 D.h2('6.4 Comunicación')
 D.bullets(['**A estudiantes:** devolver los resultados con lenguaje simple (infografía y manual); explicar qué cambiará y por qué.', '**A docentes:** presentar los hallazgos y pedir su participación en 2 asignaturas ancla por carrera.', '**A empresas socias:** compartir los resultados y proponer formatos de colaboración breves.', '**Cierre del ciclo:** al terminar el semestre, informar qué funcionó, qué se ajustó y qué sigue.'])
 
-D.h1('Anexos')
+D.part('CONCLUSIÓN')
+D.h1('Conclusión y próximos pasos')
+D.p('El plan reúne ocho recomendaciones (R1 a R8) en seis áreas. Tres ideas ordenan su ejecución: (1) **medir bien desde el inicio**, porque sin código, momento y grupo no se podrá demostrar el efecto de La Puerta; (2) **acercar el trabajo real a todos los estudiantes** mediante redes, simulaciones, visitas y proyectos breves, que es lo que los datos y los propios estudiantes señalan; y (3) **focalizar el acompañamiento por necesidad** (semáforo y brechas específicas) y no por el solo hecho de tener o no práctica previa.')
+D.p('Los próximos pasos inmediatos son constituir el comité, corregir el formulario de medición (costo cero) y definir el grupo de comparación para el pretest de marzo de 2027. Las metas y costos son propuestas del equipo analista que deben validarse con la Dirección de Escuela.')
+bibliografia(D, [2, 4, 5, 7, 8, 9, 11, 14, 15, 16, 18, 19, 20])
+D.part('ANEXOS')
+D.h1('Plantillas y protocolos')
 D.h2('Anexo A. Plantilla de microproyecto (≤ $150.000 CLP)')
 D.table(['Campo', 'Qué completar'], [['Nombre de la actividad', ''], ['Área y recomendación (A1–A6, R1–R8)', ''], ['Brecha que atiende (indicador y línea base)', ''], ['Descripción (qué se hará, para quiénes, cuántas personas)', ''], ['Resultado de aprendizaje o asignatura vinculada', ''], ['Responsable y equipo', ''], ['Fecha y duración', ''], ['Presupuesto (colación, materiales, difusión, otros)', ''], ['Indicadores y forma de medición', ''], ['Riesgos y mitigación', ''], ['Evidencia a recolectar (asistencia, bitácora, fotos con consentimiento, encuesta breve)', ''], ['Retroalimentación esperada y ajustes para la próxima vez', '']], [7.4, 9.2], size=9, zebra=False)
 D.h2('Anexo B. Protocolo de evaluación pre/post con grupo de comparación')
 D.numbered(['**Diseño:** cuasi-experimental con grupo de comparación no equivalente, medición antes y después en ambos grupos (Campbell y Stanley, 1963).', '**Asignación:** por sección completa; los grupos deben ser parecidos en carrera, semestre y práctica previa; registrar esas variables.', '**Medición:** misma encuesta (con A03/A04 corregidos) en las semanas 1–3 y en la última semana del semestre; código único obligatorio.', f"**Tamaño de muestra de referencia:** para detectar una diferencia de 0,3 desviaciones estándar entre grupos (≈ 0,2 puntos en el índice global), con 80 % de poder, 5 % de significación y una correlación pre–post asumida de 0,6, se necesitan unos **110 estudiantes por grupo** (cálculo aproximado con ajuste por la medición inicial; Cohen, 1988). **[HIPÓTESIS]** La correlación pre–post debe verificarse con datos propios.", '**Análisis:** comparar el postest entre grupos ajustando por el pretest y por práctica previa y año; informar tamaño del efecto e intervalos de confianza; corregir por comparaciones múltiples (Holm, 1979).', '**Indicadores de calidad:** emparejamiento ≥ 70 %; comparar a quienes respondieron ambos momentos con quienes no, para ver si hay sesgo de desgaste.', '**Complemento:** evaluación del tutor de empresa y respuestas abiertas codificadas por dos personas.'])
 declaracion_ia(D, 'proponer acciones, indicadores, cronograma y criterios de decisión a partir de los hallazgos')
-bibliografia(D, [2, 4, 5, 7, 8, 9, 11, 14, 15, 16, 18, 19, 20])
 D.save('/home/user/Perfil_investigador/La_Puerta_Informes/informes/G_Manual_Propuestas_Mejora.docx'); print('G ok')

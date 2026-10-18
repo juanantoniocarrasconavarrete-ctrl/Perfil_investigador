@@ -13,6 +13,12 @@ Entregables (carpeta `informes/` e `infografias/`):
 | G | Manual de propuestas de mejora | `informes/G_Manual_Propuestas_Mejora.docx` / `.pdf` |
 | H | Infografía comparativa de brechas | `infografias/H_Infografia_Comparativa_de_Brechas.png` / `.pdf` |
 
+## Formato Duoc UC
+
+Los cinco documentos siguen la norma de informes de Bibliotecas Duoc UC: tamaño carta, márgenes normales, Calibri 11, interlineado 1,5, texto justificado, numeración de página (excepto portada), portada con título en mayúscula (14 pt, negrita, sin punto final) y filete amarillo, índice con páginas, y estructura Introducción → Desarrollo → Conclusión → Referencias (APA 7) → Anexos. Paleta: negro #1A1A1A, amarillo #FFB800, gris #666666 y gris claro #EEEEEE. Las infografías usan la misma paleta.
+
+**Pendiente:** insertar el logo oficial de Duoc UC en el recuadro «[Insertar logo Duoc UC]» de cada portada e infografía (no se generó ni se imitó el logo). Revisar en la portada los datos de autor/docente y la asignatura.
+
 ## Reproducir
 
 ```bash
@@ -20,6 +26,7 @@ cd src
 python3 -I analisis.py "<ruta>/Proyecto_La_Puerta_-_Base_de_Datos_y_Matriz_de_Analisis.xlsx"   # genera resultados.json y datos_limpios.pkl
 python3 -I graficos.py                                                                           # genera ../graficos/*.png
 for f in A B C F G; do python3 build_$f.py; done                                                 # genera los .docx
+python3 paginar.py A_Informe_Descriptivo B_Informe_Hipotesis C_Informe_Consolidado F_Manual_Explicativo_Resultados G_Manual_Propuestas_Mejora  # calcula páginas del índice (luego repetir build_*.py)
 python3 build_info.py                                                                            # genera las infografías (requiere Chromium)
 ```
 

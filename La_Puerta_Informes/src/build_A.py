@@ -2,10 +2,14 @@ from comun import *
 cover_art('portada_puerta')
 D = Doc('Informe descriptivo', 'Cómo perciben su preparación para el mundo laboral los estudiantes de la Escuela de Administración y Negocios', 'PRODUCTO A · ANÁLISIS DESCRIPTIVO (SIN HIPÓTESIS)', G + 'portada_puerta.png', 'Proyecto La Puerta · Informe A · Análisis descriptivo')
 g = R['global']; per = R['perfiles']; pp = R['perfiles_pct']; cal = R['calidad']
-contenido(D, ['Resumen ejecutivo', 'Contexto y objetivos del estudio', 'Metodología explicada en simple', 'Quiénes respondieron', 'Resultados en detalle', 'Lo que dicen los estudiantes con sus propias palabras', 'Principales hallazgos', 'Conclusiones', 'Recomendaciones de mejora', 'Anexos: ficha técnica, tablas y declaración de uso de IA', 'Bibliografía y referencias'])
 
 # 1 Resumen
-D.h1('1. Resumen ejecutivo')
+intro(D, 'La percepción de preparación para el mundo laboral de estudiantes de la Escuela de Administración y Negocios (Duoc UC, Sede San Bernardo), medida con una encuesta de percepción y competencias de 15 afirmaciones y dos preguntas abiertas.',
+ 'El Proyecto La Puerta busca acercar a estudiantes y empresas antes de la práctica profesional. Entre el 13 y el 16 de octubre de 2026 se aplicó una encuesta confidencial a 184 estudiantes; este informe presenta sus resultados sin contrastar hipótesis.',
+ 'Describir cómo perciben los estudiantes su preparación para el mundo laboral e identificar fortalezas, oportunidades de mejora y percepciones predominantes.',
+ ['Describir los resultados por afirmación y por dimensión.', 'Caracterizar diferencias relevantes entre perfiles (año de estudio y práctica previa).', 'Recoger, con sus propias palabras, qué aprendieron y qué apoyo necesitan.', 'Formular recomendaciones de mejora alcanzables.'],
+ 'El documento se organiza en cinco partes: la Introducción (incluye el resumen ejecutivo y el contexto); el Desarrollo (metodología, participantes, resultados, voz estudiantil y hallazgos); la Conclusión (conclusiones, limitaciones y recomendaciones); las Referencias en formato APA 7; y los Anexos (ficha técnica, robustez y declaración de uso de IA).')
+D.h1('Resumen ejecutivo')
 D.p(f"Entre el 13 y el 16 de octubre de 2026, **{N} estudiantes** de Duoc UC Sede San Bernardo respondieron una encuesta confidencial sobre qué tan preparados se sienten para enfrentar el mundo laboral. Este informe cuenta, sin tecnicismos, **qué dijeron**, **dónde están sus fortalezas** y **dónde conviene poner más apoyo**.")
 D.kpis([(n(g['media']), 'puntaje global\n(escala 1 a 5)', NAVY), (pc(g['fav_items']), 'de las respuestas\nson «de acuerdo»', TEAL), (pc(IT['P12']['fav']), 'dice tener una red\nde contactos (P12)', CORAL), (pc(IT['P15']['fav']), 'quiere proyectos\ncon empresas reales', AMB)])
 D.h3('Los cinco mensajes que hay que recordar')
@@ -28,6 +32,7 @@ D.bullets(['Describir cómo respondieron los estudiantes en cada afirmación y d
 D.p('**Importante:** este es el informe «sin hipótesis». Aquí solo se describe lo observado, sin probar teorías. El contraste de hipótesis está en el Informe B, y ambos se integran en el Informe C.', italic=True)
 
 # 3 Metodología
+D.part('DESARROLLO')
 D.h1('3. Metodología explicada en simple')
 D.h2('3.1 Qué se preguntó y cómo se respondió')
 D.p('Cada afirmación (por ejemplo, «Aprendo de mis errores») se respondió en una escala de 1 a 5, donde **1 = muy en desacuerdo, 3 = ni de acuerdo ni en desacuerdo y 5 = muy de acuerdo**. También existía la opción «No sé / No aplica», que se excluyó del cálculo (representa solo el ' + pc(cal['pct_celdas_NA'], 1) + ' de todas las respuestas posibles).')
@@ -43,6 +48,7 @@ D.bullets([
  '**% de acuerdo:** porcentaje que respondió 4 o 5. Es la cifra más fácil de comunicar y es la que usamos para el semáforo.',
  '**Semáforo de afirmaciones (criterio propuesto):** Fortaleza ≥ 80 % · Funcional 70–79 % · En desarrollo 60–69 % · Brecha < 60 %. La meta de 70 % se alinea con la exigencia usada en las rúbricas DUOC.',
  '**Semáforo oficial por promedio (del Informe Metodológico del proyecto):** Verde ≥ 4,20 · Amarillo 3,50–4,19 · Rojo < 3,50. Se usa para clasificar estudiantes y grupos.',
+ '**Colores del semáforo:** en este documento se representan con la paleta Duoc UC (verde = negro; amarillo = amarillo; rojo = gris oscuro) y siempre se indican con texto.',
  '**Margen de error:** se calculó con un método llamado «bootstrap»; en los gráficos aparece como una barra gris alrededor del promedio.',
  f"**Confiabilidad:** el conjunto de 15 afirmaciones se comporta de forma coherente (alfa de Cronbach = {n(g['alpha'])}; sobre 0,70 es aceptable, Cronbach, 1951). La dimensión D4 es la menos consistente ({n(DM['D4']['alpha'])}) porque mezcla dos ideas distintas: tener contactos (P11, P12) y querer proyectos con empresas (P15)."])
 D.h2('3.3 Calidad de los datos')
@@ -61,10 +67,10 @@ D.h1('5. Resultados en detalle')
 D.h2('5.1 Panorama general')
 D.p(f"El puntaje global promedio es **{n(g['media'])}** (margen de error 95 %: {n(g['ci'][0])} a {n(g['ci'][1])}). La mitad de los estudiantes está sobre {n(g['mediana'])}. Si clasificamos a cada estudiante por su propio promedio: **{per['Sólido (≥4)']} ({pc(pp['Sólido (≥4)'])}) tienen un perfil sólido** (4 o más), **{per['Intermedio (3–3,99)']} ({pc(pp['Intermedio (3–3,99)'])}) un perfil intermedio** y **{per['Por fortalecer (<3)']} ({pc(pp['Por fortalecer (<3)'])}) un perfil por fortalecer** (menos de 3).")
 D.fig('g04_global_hist', 'Figura 3. Cómo se distribuye el puntaje global de los estudiantes.')
-D.lee('Cada barra cuenta cuántos estudiantes tienen un puntaje en ese tramo. La mayoría se agrupa entre 3,5 y 4,5; hay una «cola» pequeña hacia abajo (rojo) que corresponde a quienes más necesitan apoyo.')
+D.lee('Cada barra cuenta cuántos estudiantes tienen un puntaje en ese tramo. La mayoría se agrupa entre 3,5 y 4,5; hay una «cola» pequeña hacia abajo (amarillo) que corresponde a quienes más necesitan apoyo.')
 D.h2('5.2 Afirmación por afirmación')
 D.fig('g02_items', 'Figura 4. Distribución de respuestas en las 15 afirmaciones (ordenadas de menor a mayor acuerdo).', 16.4)
-D.lee('Cada fila es una afirmación. A la derecha del centro, en verde, quienes están de acuerdo; a la izquierda, en rojo, quienes están en desacuerdo, y en gris los neutrales. Entre más larga la barra verde, mejor. La fila de abajo (P12, contactos) destaca por su barra roja larga.')
+D.lee('Cada fila es una afirmación. A la derecha del centro, en negro, quienes están de acuerdo; a la izquierda, en amarillo, quienes están en desacuerdo, y en gris los neutrales. Entre más larga la barra negra, mejor. La fila de abajo (P12, contactos) destaca por su barra amarilla larga.')
 D.fig('g05_semaforo', 'Figura 5. Semáforo de las afirmaciones frente a la meta de 70 %.')
 rows = []; cols = {}
 for i, x in enumerate(sorted(R['items'], key=lambda z: -z['fav'])):
@@ -112,7 +118,7 @@ for i, p_ in enumerate([f'P{k:02d}' for k in range(1, 16)]):
     a = R['heat_anio'][p_]; b = R['heat_pract'][p_]; rows.append([p_, SHORT[p_], n(a[0]), n(a[1]), n(a[2]), n(b[0]), n(b[1])])
     for j, v in enumerate(a + b): cols[(i, 2 + j)] = cell_col(v)
 D.table(['Id', 'Afirmación', '1.º–2.º', '3.º–4.º', '5.º o más', 'Sin prác.', 'Con prác.'], rows, [1.0, 6.9, 1.6, 1.6, 1.8, 1.8, 1.9], colors=cols, size=8.5, align=['c', 'l', 'c', 'c', 'c', 'c', 'c'])
-D.p('Color: verde ≥ 4,20 · amarillo 3,50–4,19 · rosado < 3,50. La red de contactos (P12) es la única fila que se mantiene amarilla o más baja en todos los perfiles.', 9, GRAY)
+D.p('Relleno: amarillo ≥ 4,20 · gris claro 3,50–4,19 · gris oscuro < 3,50. La red de contactos (P12) es la única fila que se mantiene amarilla o más baja en todos los perfiles.', 9, GRAY)
 D.h2('5.6 Semáforo oficial por estudiante')
 D.fig('g22_semaforo_oficial', 'Figura 11. Clasificación de cada estudiante según el semáforo del Informe Metodológico.')
 sm = OF['semaforo_estudiantes']
@@ -150,6 +156,7 @@ F = [
 D.table(['N.º', 'Hallazgo', 'Estatus'], [[a, b, tag(c)] for a, b, c in F], [1.0, 11.8, 3.8], colors={(i, 2): {'H': TEAL, 'I': SKY, 'B': CORAL}[c] for i, (a, b, c) in enumerate(F)}, size=9.5, align=['c', 'l', 'c'])
 
 # 8 conclusiones
+D.part('CONCLUSIÓN')
 D.h1('8. Conclusiones')
 D.numbered([
  f"**Los estudiantes llegan a la práctica con confianza razonable.** Siete de cada diez de sus respuestas son favorables (de acuerdo o muy de acuerdo); la actitud (ética, diálogo, ganas de aprender) es la base más fuerte.",
@@ -175,7 +182,8 @@ D.table(['Cód.', 'Recomendación', 'Por qué', 'Plazo'], [
  ['R8', '**Validar la codificación de respuestas abiertas** con doble lectura humana y publicar el libro de códigos.', 'Rigor y transparencia.', '1 mes']], [1.0, 8.0, 4.7, 2.9], size=9, align=['c', 'l', 'l', 'l'])
 
 # anexos
-D.h1('Anexos')
+bibliografia(D, [0, 1, 5, 6, 7, 9, 11, 13, 14, 15, 16, 18, 19, 20])
+D.part('ANEXOS')
 D.h2('Anexo 1. Ficha técnica')
 D.table(['Elemento', 'Detalle'], [
  ['Población y muestra', f"Estudiantes de Duoc UC Sede San Bernardo; {N} respuestas válidas (muestra voluntaria)."],
@@ -194,5 +202,4 @@ D.p('Se repitió la comparación «con vs. sin práctica previa» (puntaje globa
 D.table(['Subconjunto', 'n', 'Diferencia (con – sin)', 'Valor p (U de Mann-Whitney)'], [[k, v['n'], '+' + n(v['dif']), n(v['p_mw'], 3)] for k, v in sens.items()], [7.4, 1.6, 3.6, 4], size=9, align=['l', 'c', 'c', 'c'])
 D.p('La diferencia se mantiene entre +0,17 y +0,21 puntos al excluir respuestas idénticas o la escuela minoritaria. Dentro del primer año (donde práctica y año no se mezclan) cae a +0,07, lo que sugiere que parte de la diferencia refleja el avance en la carrera.', 9.5)
 declaracion_ia(D, 'apoyar el diseño de las visualizaciones y la redacción en lenguaje claro, adaptando los hallazgos a públicos no especializados')
-bibliografia(D, [0, 1, 5, 6, 7, 9, 11, 13, 14, 15, 16, 18, 19, 20])
 D.save('/home/user/Perfil_investigador/La_Puerta_Informes/informes/A_Informe_Descriptivo.docx'); print('A ok')
