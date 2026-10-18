@@ -1,0 +1,36 @@
+# Proyecto La Puerta — informes de análisis (encuesta oct. 2026, n = 184)
+
+Entregables (carpeta `informes/` e `infografias/`):
+
+| Cód. | Producto | Archivo |
+|---|---|---|
+| A | Informe descriptivo (sin hipótesis) | `informes/A_Informe_Descriptivo.docx` / `.pdf` |
+| B | Informe con hipótesis | `informes/B_Informe_Hipotesis.docx` / `.pdf` |
+| C | Informe consolidado | `informes/C_Informe_Consolidado.docx` / `.pdf` |
+| D | Infografía 1 (estudio y resultados) | `infografias/D_Infografia_1_Estudio_y_Resultados.png` / `.pdf` |
+| E | Infografía 2 (hipótesis y factores) | `infografias/E_Infografia_2_Hipotesis_y_Factores.png` / `.pdf` |
+| F | Manual explicativo de resultados | `informes/F_Manual_Explicativo_Resultados.docx` / `.pdf` |
+| G | Manual de propuestas de mejora | `informes/G_Manual_Propuestas_Mejora.docx` / `.pdf` |
+| H | Infografía comparativa de brechas | `infografias/H_Infografia_Comparativa_de_Brechas.png` / `.pdf` |
+
+## Reproducir
+
+```bash
+cd src
+python3 -I analisis.py "<ruta>/Proyecto_La_Puerta_-_Base_de_Datos_y_Matriz_de_Analisis.xlsx"   # genera resultados.json y datos_limpios.pkl
+python3 -I graficos.py                                                                           # genera ../graficos/*.png
+for f in A B C F G; do python3 build_$f.py; done                                                 # genera los .docx
+python3 build_info.py                                                                            # genera las infografías (requiere Chromium)
+```
+
+La base original **no** se versiona (contiene correos electrónicos). `datos_limpios.pkl` tampoco (se regenera).
+
+## Limitaciones conocidas
+
+- La base es de **un solo momento**; `Código_Estudiante`, `Momento_Medición`, `Grupo_Asignación` y `POST_EXP1` están vacíos, por lo que **no se puede evaluar el efecto de La Puerta** (H6).
+- El instrumento aplicado (15 ítems, D1–D5) difiere del descrito en el Informe Metodológico (A02–A04, COM/EQ/AUT/RES/ET); se usó una equivalencia aproximada.
+- La codificación de respuestas abiertas es automática y preliminar; requiere doble codificación humana.
+- Las referencias bibliográficas no se verificaron en línea; confirmar antes de publicar.
+- Los costos del Manual G son estimaciones gruesas a validar.
+
+Elaborado con apoyo de IA (Claude, Anthropic).

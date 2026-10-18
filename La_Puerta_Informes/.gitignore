@@ -1,0 +1,3 @@
+src/datos_limpios.pkl
+src/__pycache__/
+*.xlsx
