@@ -1,0 +1,39 @@
+src = open('build_info.py').read().split('# ======================= D')[0]
+exec(src)
+CSS += """
+.cmp{display:grid;grid-template-columns:1fr 190px 1fr;gap:14px;align-items:stretch;margin-bottom:14px}
+.cmp .mid{display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;gap:8px;font-weight:800;font-size:13px}
+.cmp .mid .arrow{font-size:26px;line-height:1;color:#666666}
+.pillb{display:inline-block;border-radius:30px;padding:7px 14px;font-size:13px;font-weight:900;letter-spacing:.03em}
+.src{font-size:13.5px;color:#666666;margin-top:8px;font-style:italic}
+.colh{font-size:13px;font-weight:800;text-transform:uppercase;letter-spacing:.08em;color:#666666;margin-bottom:10px}
+.three .card ul{padding-left:20px;font-size:15.5px;line-height:1.5;color:#333333}.three .card li{margin-bottom:7px}
+.tl{border-top:6px solid #1A1A1A}
+"""
+def pill(t, c): return f'<span class="pillb" style="background:{c};color:{"#1A1A1A" if c in (AMB,) else "#fff"}">{t}</span>'
+rows = [
+ ('1', 'Práctica previa', f"+{n(fo['GLOBAL']['dif'])}", 'puntos (de 5) más con práctica previa. Diferencia pequeña.', 'Con una pasantía, la confianza y la capacidad de adaptarse crecen con el tiempo; sin ella, casi no cambian.', 'Ocampo y otros, 2020 · 173 estudiantes de hotelería (China)', 'MATIZA EL TAMAÑO', AMB),
+ ('2', 'Calidad de la experiencia', f"{100*h4['ols']['r2']:.0f} %", 'de las diferencias en la seguridad para adaptarse van con conocer las tareas, aplicar lo aprendido y comprobar si el trabajo calza.', 'La calidad de la práctica (autonomía, apoyo, oportunidades de aprender) predice cuánto exploran su futura carrera.', 'Gamboa y otros, 2013 · 346 estudiantes de media técnica (Portugal) · por confirmar', 'COINCIDE', '#1A1A1A'),
+ ('3', 'Contactos', pc(IT['P12']['fav']), 'dice tener una red de contactos laborales. Es lo más bajo de las 15 afirmaciones.', 'Quien arma redes se siente más empleable, sobre todo porque recibe más información y recursos.', 'Batistic y Tymon, 2017 · 376 estudiantes de negocios', 'COINCIDE', '#1A1A1A'),
+ ('4', 'Simulaciones y proyectos', pc(IT['P15']['fav']), 'quiere hacer proyectos con empresas; lo más pedido son simulaciones y visitas.', 'Un proyecto real, simulado y acompañado por una empresa, subió la confianza igual que una práctica.', 'Jollands, 2017 · ingeniería (Australia) · mide confianza, no empleo', 'COINCIDE CON CAUTELA', AMB),
+ ('5', 'Lo que se mide', '100 %', 'de lo que medimos es lo que los estudiantes creen de sí mismos.', 'Casi todos los estudios también miden la percepción, no el desempeño real.', 'Jackson y Dean, 2023 · 76.261 egresados (Australia)', 'MISMO LÍMITE', GRAY)]
+cm = ''
+for num, tema, big, txt, inv, srcs, res, col in rows:
+    cm += f'''<div class="cmp"><div class="card"><div class="colh">{num} · {tema} · Duoc UC</div><div class="big" style="font-size:54px">{big}</div><p style="margin-top:6px">{txt}</p></div>
+<div class="mid"><div class="arrow">⇄</div>{pill(res, col)}</div>
+<div class="card" style="border-left:6px solid #FFB800"><div class="colh">Lo que dice la investigación</div><p style="font-size:16.5px">{inv}</p><div class="src">{srcs}</div></div></div>'''
+body = sec(1, 'Cinco comparaciones', 'A la izquierda, lo que vimos en La Puerta; a la derecha, lo que dicen otros estudios', cm)
+body += '<div class="warn" style="margin-top:6px"><b>Cómo leerlo:</b> <b>COINCIDE</b> = va en la misma dirección · <b>MATIZA</b> = misma dirección con una diferencia importante · <b>MISMO LÍMITE</b> = ambos tienen la misma debilidad. Los estudios son de otros países; sirven de guía, no de prueba.</div>'
+cons = '''<div class="grid g3 three">
+<div class="card" style="border-top:6px solid #1A1A1A"><div class="ico">🌱</div><h3>Si actuamos bien</h3><ul><li>Estudiantes llegan con contactos y una vivencia real.</li><li>Docentes con casos y visitas para sus clases.</li><li>Empresas reciben practicantes más preparados.</li><li>La Escuela tiene pruebas propias para decidir.</li></ul></div>
+<div class="card" style="border-top:6px solid #666666"><div class="ico">⏳</div><h3>Si no hacemos nada</h3><ul><li>Los contactos dependen de la suerte.</li><li>6 de cada 10 siguen sin experiencias que contar.</li><li>No se podrá demostrar si La Puerta funciona.</li><li>La demanda (83 %) se desperdicia.</li></ul></div>
+<div class="card" style="border-top:6px solid #FFB800"><div class="ico">⚠️</div><h3>Si actuamos mal</h3><ul><li>Etiquetar a quienes «no tienen práctica previa».</li><li>Decir que La Puerta «funciona» sin pruebas.</li><li>Sobrecargar a docentes con actividades extra.</li><li>Gastar donde no corresponde.</li></ul></div></div>'''
+body += sec(2, 'Qué consecuencias tiene', 'Escenarios razonados: sirven para conversar y decidir', cons)
+acc = f'''<div class="grid g3 three">
+<div class="card tl"><div class="colh">En 30 días</div><ul><li><b>Arreglar la encuesta:</b> código, antes/después y grupo (R1).</li><li><b>Acompañar</b> a los {S["total"]["Rojo"]} estudiantes con puntaje más bajo, sin etiquetarlos (R4).</li><li><b>Doble lectura</b> de las respuestas abiertas (R8).</li></ul></div>
+<div class="card tl"><div class="colh">En 90 días</div><ul><li><b>Cafés con profesionales</b> y entrevista a un profesional (R2).</li><li><b>Visitas y simulaciones</b> con hoja de observación (R3).</li><li><b>Taller de comunicación</b> (R5).</li></ul></div>
+<div class="card tl"><div class="colh">En un año</div><ul><li><b>Medir antes y después</b> con un grupo parecido y evaluación de tutores (R1).</li><li><b>Inglés y herramientas</b>; actividades para 3.º–4.º semestre (R6 · R7).</li><li><b>Decidir</b> si se amplía La Puerta.</li></ul></div></div>'''
+body += sec(3, 'Qué hacer', 'Acciones en tres plazos (códigos R1 a R8 del Manual de propuestas de mejora)', acc)
+body += '<div class="warn"><b>Falta revisar:</b> abrir los textos completos de los estudios y confirmar sus datos; buscar estudios chilenos de formación técnica; y repetir esta comparación cuando haya resultados antes/después de La Puerta.</div>'
+p = page(body, 'J_Infografia_Comparada_Investigacion', 'Proyecto La Puerta · Infografía comparada', 'Lo que vimos aquí y lo que dice la investigación', 'Comparación en lenguaje simple entre los resultados de La Puerta y otros estudios, con sus consecuencias y acciones.', ['⇄ 5 comparaciones', '🔎 5 estudios revisados', f'👥 {N} estudiantes'], foot_extra='Estudios: Batistic y Tymon (2017); Gamboa y otros (2013); Jackson y Dean (2023); Jollands (2017); Ocampo y otros (2020). Datos tomados de resúmenes publicados; referencias completas en el Producto I.')
+render(p)

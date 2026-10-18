@@ -12,6 +12,8 @@ Entregables (carpeta `informes/` e `infografias/`):
 | F | Manual explicativo de resultados | `informes/F_Manual_Explicativo_Resultados.docx` / `.pdf` |
 | G | Manual de propuestas de mejora | `informes/G_Manual_Propuestas_Mejora.docx` / `.pdf` |
 | H | Infografía comparativa de brechas | `infografias/H_Infografia_Comparativa_de_Brechas.png` / `.pdf` |
+| I | Estudio paralelo de investigación (lenguaje cotidiano) | `informes/I_Estudio_Paralelo_Investigacion.docx` / `.pdf` |
+| J | Infografía comparada: La Puerta vs. investigación | `infografias/J_Infografia_Comparada_Investigacion.png` / `.pdf` |
 
 ## Formato Duoc UC
 
@@ -33,6 +35,8 @@ python3 build_info.py                                                           
 La base original **no** se versiona (contiene correos electrónicos). `datos_limpios.pkl` tampoco (se regenera).
 
 ## Limitaciones conocidas
+
+- **Estudio paralelo (I, J):** la búsqueda se hizo en la web el 18-oct-2026 y solo se pudieron leer resúmenes (el entorno no permitió abrir textos completos). Varios datos de cita están marcados «por confirmar». No se revisaron a fondo estudios chilenos.
 
 - La base es de **un solo momento**; `Código_Estudiante`, `Momento_Medición`, `Grupo_Asignación` y `POST_EXP1` están vacíos, por lo que **no se puede evaluar el efecto de La Puerta** (H6).
 - El instrumento aplicado (15 ítems, D1–D5) difiere del descrito en el Informe Metodológico (A02–A04, COM/EQ/AUT/RES/ET); se usó una equivalencia aproximada.
