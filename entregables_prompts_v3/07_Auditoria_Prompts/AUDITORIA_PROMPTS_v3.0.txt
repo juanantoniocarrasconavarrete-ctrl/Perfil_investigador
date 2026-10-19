@@ -1,0 +1,86 @@
+================================================================================
+AUDITORÍA DE LOS PROMPTS v3.0 — INFORME EN TEXTO PLANO
+Fecha: 19 de octubre de 2026 | Autor del proyecto: Juan Antonio Carrasco Navarrete
+Asistencia de IA: Claude Sonnet 5.5 (Anthropic), mediante Claude Code. Verificación humana: PENDIENTE.
+================================================================================
+
+1. ALCANCE Y LÍMITES
+- Auditoría documental: estructura, coherencia interna y cumplimiento de requisitos. Es reproducible (script _build/audit.py).
+- NO es validación empírica: los prompts no se ejecutaron con adjuntos o informes reales.
+- Referencias NO verificadas en línea (sin acceso a Crossref/arXiv). Verificar antes de uso formal.
+
+2. COMPROBACIONES AUTOMATIZADAS (21/21 cumplidas)
+[OK ] A-P1   P1    Bloques <etiqueta> abiertos y cerrados balanceados
+        Evidencia: 12 bloques
+[OK ] B-P1   P1    Referencias cruzadas a bloques inexistentes
+        Evidencia: ninguna
+[OK ] A-P2   P2    Bloques <etiqueta> abiertos y cerrados balanceados
+        Evidencia: 12 bloques
+[OK ] B-P2   P2    Referencias cruzadas a bloques inexistentes
+        Evidencia: ninguna
+[OK ] C-P1   P1    Variables {{…}} usadas están declaradas en variables_de_entrada
+        Evidencia: 10 usadas; sin declarar: ninguna
+[OK ] C-P2   P2    Variables {{…}} usadas están declaradas en variables_de_entrada
+        Evidencia: 8 usadas; sin declarar: ninguna
+[OK ] D-P1   P1    A4 no aparece en la Fase 3 (corrige contradicción original)
+        Evidencia: Fase 3 contiene solo A1–A3
+[OK ] D0-P1  P1    Contradicción presente en el original (A4 mencionado en Fase 3)
+        Evidencia: confirma el hallazgo P1-01
+[OK ] E-P1   P1    Conversión a nota 1,0–7,0 (0→1,0; 35→2,5; 70→4,0; 85→5,5; 100→7,0)
+        Evidencia: 0%→1.0; 35%→2.5; 70%→4.0; 85%→5.5; 100%→7.0
+[OK ] E2-P1  P1    La fórmula del prompt coincide con la implementada
+        Evidencia: texto verificado
+[OK ] F-P2   P2    Los pesos de los criterios suman 100 %
+        Evidencia: [20, 20, 15, 15, 10, 10, 5, 5] → 100 %
+[OK ] G-P2   P2    Seis estados de evidencia definidos
+        Evidencia: ✅ ⚠️ ❓ ❌ ⛔ 🔒
+[OK ] H-P2   P2    Semáforos 🟢🟡🔴 con regla determinista
+        Evidencia: regla + excepción presentes
+[OK ] I-P2   P2    Productos P1–P7 definidos
+        Evidencia: P1–P7
+[OK ] J-P1   P1    Incluye declaración de IA, formato DUOC UC, APA 7, etiquetas epistémicas y protocolo de piloto
+        Evidencia: 5/5 elementos
+[OK ] K-P1   P1    Incluye defensa ante instrucciones incrustadas en datos/adjuntos
+        Evidencia: regla presente
+[OK ] J-P2   P2    Incluye declaración de IA, formato DUOC UC, APA 7, etiquetas epistémicas y protocolo de piloto
+        Evidencia: 5/5 elementos
+[OK ] K-P2   P2    Incluye defensa ante instrucciones incrustadas en datos/adjuntos
+        Evidencia: regla presente
+[OK ] L-P1   P1    Referencias del prompt presentes en la bibliografía normalizada (apellido y año)
+        Evidencia: 7 verificadas; faltan: ninguna
+[OK ] L-P2   P2    Referencias del prompt presentes en la bibliografía normalizada (apellido y año)
+        Evidencia: 5 verificadas; faltan: ninguna
+[OK ] M      Ambos Identificadores de cambio únicos y consecutivos
+        Evidencia: 41 cambios
+
+3. MÉTRICAS DESCRIPTIVAS (original → v3.0)
+- P1: 1763 → 2912 palabras; 155 → 210 líneas; ≈5038 tokens (estimación: caracteres/4).
+- P2: 729 → 2458 palabras; 239 → 186 líneas; ≈4483 tokens (estimación: caracteres/4).
+
+4. AUTOEVALUACIÓN DE CALIDAD (1–5) [INTERPRETACIÓN; no empírica]
+Criterio                                             P1-orig P1-v3 P2-orig P2-v3
+Claridad de rol y objetivo                                4     5      3     5
+Completitud de entradas                                   3     5      1     5
+Criterios de calidad explícitos                           4     5      3     4
+Mecanismos de validación y control                        3     5      2     4
+Robustez (anti-alucinación y seguridad)                   3     4      2     4
+Alineación institucional (DUOC UC, APA)                   2     5      1     5
+Operacionalidad (anclas, reglas deterministas)            3     4      2     4
+Reutilizabilidad y documentación                          3     4      2     4
+PROMEDIO                                                3.1   4.6    2.0   4.4
+
+5. CAMBIOS REGISTRADOS
+- Total 41: 2 críticos, 24 mayores, 15 menores (P1: 19; P2: 22). Detalle en 03_Matriz_Trazabilidad_Cambios.
+
+6. FILTRO DE CALIDAD (FY)
+- Cobertura: Sí. Coherencia: Sí. Aplicabilidad: Sí, con reserva (longitud). Accesibilidad: Sí.
+
+7. RIESGOS RESIDUALES Y ACCIONES
+- Longitud: dividir los prompts en módulos si el modelo pierde instrucciones (≈4.500–5.000 tokens cada uno).
+- Verificar referencias (prioridad alta: Zheng, M. et al., 2024).
+- Confirmar con la institución la fórmula de nota (4,0 al 70 %) y la norma de Bibliotecas Duoc UC.
+- Ejecutar los protocolos de piloto incluidos en cada prompt y versionar a v3.1.
+- Insertar el logotipo oficial en las portadas DOCX.
+
+8. DECLARACIÓN DE USO DE IA
+Herramienta: Claude Sonnet 5.5 (Anthropic), mediante Claude Code. Objetivo: análisis, optimización y redacción. Alcance: borradores y comprobaciones; el autor dirige y valida. Responsabilidad final: del autor.

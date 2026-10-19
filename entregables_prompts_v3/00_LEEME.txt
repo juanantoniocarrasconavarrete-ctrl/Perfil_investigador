@@ -1,0 +1,20 @@
+LÉEME — PAQUETE DE ENTREGABLES: PROMPTS v3.0 (optimizados y auditados)
+Autor: Juan Antonio Carrasco Navarrete | Escuela de Administración y Negocios, Sede San Bernardo | 19 de octubre de 2026
+Asistencia de IA: Claude Sonnet 5.5 (Anthropic), mediante Claude Code. Verificación humana: PENDIENTE (ver 05_Declaracion_Uso_IA.docx).
+
+CONTENIDO
+01_Informe_Ejecutivo.docx ........ Hallazgos, mejoras, resultados, riesgos y próximos pasos (formato Duoc UC).
+02_Informe_Tecnico.docx .......... Metodología, diagnóstico, diseño, resultados y auditoría completa.
+03_Matriz_Trazabilidad_Cambios ... .docx y .xlsx con los 41 cambios (ID, severidad, fundamento, sección).
+04_Bibliografia_APA7.docx ........ Fuentes normalizadas, diferenciadas, con cuadro de verificación y uso de IA.
+05_Declaracion_Uso_IA.docx ....... Herramienta, objetivo, alcance, verificación y responsabilidad.
+06_Prompts_TXT/ .................. PROMPT_01 (Arquitecto Pedagógico de Casos) y PROMPT_02 (Auditor de informes de IA), v3.0.
+07_Auditoria_Prompts/ ............ AUDITORIA_PROMPTS_v3.0.txt (comprobaciones, métricas, riesgos).
+08_Originales/ ................... Prompts originales sin modificar.
+_build/ .......................... Scripts reproducibles (contenido, auditoría y generación de documentos).
+
+ANTES DE USAR O DIFUNDIR
+1. Verificar cada referencia (DOI/arXiv) y completar URL normativas.
+2. Insertar el logotipo oficial Duoc UC en las portadas.
+3. Confirmar con la Escuela la conversión de nota y la norma de presentación.
+4. Ejecutar los protocolos de piloto de cada prompt.
