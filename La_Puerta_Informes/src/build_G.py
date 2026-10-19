@@ -114,7 +114,7 @@ area('A6', 'Gobernanza y mejora continua', 'Sin responsables claros ni ciclo de 
  [['6.1', 'Comité La Puerta', 'Comité de 5–6 personas: Dirección de Escuela, jefaturas, coordinación de práctica, Vinculación con el Medio, analista de datos y un estudiante representante; reunión mensual de 45 minutos.', 'Dirección de Escuela', 'Nov 26', 'Bajo'],
   ['6.2', 'Tablero de indicadores', 'Planilla/tablero con los indicadores de este manual, actualizado cada semestre con los scripts del repositorio.', 'Analista de datos', 'Dic 26', 'Bajo'],
   ['6.3', 'Ciclo semestral', 'Planificar → hacer → medir → ajustar (PDCA): revisión al inicio, a mitad y al cierre del semestre.', 'Comité', 'Cada semestre', 'Bajo'],
-  ['6.4', 'Criterios de escalamiento', 'Definir qué debe ocurrir para escalar (ver Sección 6.2).', 'Comité', 'Mar 27', 'Bajo'],
+  ['6.4', 'Criterios de escalamiento', 'Definir qué debe ocurrir para escalar (ver «Criterios para escalar» en el capítulo «Estrategias de implementación»).', 'Comité', 'Mar 27', 'Bajo'],
   ['6.5', 'Comunicación', 'Devolver resultados a estudiantes, docentes y empresas con el Manual de resultados y la infografía.', 'Comité', 'Dic 26', 'Bajo']],
  ['Decisiones oportunas, con responsables claros.', 'Transparencia con estudiantes y empresas.', 'Aprendizaje acumulado de cada cohorte.'],
  [['Reuniones del comité realizadas', '0', '≥ 80 % de las programadas', 'Actas'], ['Indicadores actualizados a tiempo', '0', '100 %', 'Tablero'], ['Devolución de resultados a estudiantes', 'No realizada', '1 por semestre', 'Registro de comunicación']],

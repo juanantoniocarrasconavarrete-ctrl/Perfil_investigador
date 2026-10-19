@@ -1,0 +1,542 @@
+[
+ {
+  "verificacion": "N",
+  "esperado": 184.0,
+  "recalculado": 184.0,
+  "coincide": true
+ },
+ {
+  "verificacion": "consentimiento",
+  "esperado": 184.0,
+  "recalculado": 184.0,
+  "coincide": true
+ },
+ {
+  "verificacion": "P01 n",
+  "esperado": 183.0,
+  "recalculado": 183.0,
+  "coincide": true
+ },
+ {
+  "verificacion": "P01 media",
+  "esperado": 3.7814207650273226,
+  "recalculado": 3.7814207650273226,
+  "coincide": true
+ },
+ {
+  "verificacion": "P01 %fav",
+  "esperado": 68.30601092896174,
+  "recalculado": 68.30601092896174,
+  "coincide": true
+ },
+ {
+  "verificacion": "P01 %des",
+  "esperado": 10.382513661202186,
+  "recalculado": 10.382513661202186,
+  "coincide": true
+ },
+ {
+  "verificacion": "P02 n",
+  "esperado": 181.0,
+  "recalculado": 181.0,
+  "coincide": true
+ },
+ {
+  "verificacion": "P02 media",
+  "esperado": 3.8121546961325965,
+  "recalculado": 3.8121546961325965,
+  "coincide": true
+ },
+ {
+  "verificacion": "P02 %fav",
+  "esperado": 69.06077348066299,
+  "recalculado": 69.06077348066299,
+  "coincide": true
+ },
+ {
+  "verificacion": "P02 %des",
+  "esperado": 11.602209944751381,
+  "recalculado": 11.602209944751381,
+  "coincide": true
+ },
+ {
+  "verificacion": "P03 n",
+  "esperado": 181.0,
+  "recalculado": 181.0,
+  "coincide": true
+ },
+ {
+  "verificacion": "P03 media",
+  "esperado": 4.143646408839779,
+  "recalculado": 4.143646408839779,
+  "coincide": true
+ },
+ {
+  "verificacion": "P03 %fav",
+  "esperado": 82.32044198895028,
+  "recalculado": 82.32044198895028,
+  "coincide": true
+ },
+ {
+  "verificacion": "P03 %des",
+  "esperado": 6.629834254143646,
+  "recalculado": 6.629834254143646,
+  "coincide": true
+ },
+ {
+  "verificacion": "P04 n",
+  "esperado": 181.0,
+  "recalculado": 181.0,
+  "coincide": true
+ },
+ {
+  "verificacion": "P04 media",
+  "esperado": 3.7679558011049723,
+  "recalculado": 3.7679558011049723,
+  "coincide": true
+ },
+ {
+  "verificacion": "P04 %fav",
+  "esperado": 67.95580110497238,
+  "recalculado": 67.95580110497238,
+  "coincide": true
+ },
+ {
+  "verificacion": "P04 %des",
+  "esperado": 8.287292817679557,
+  "recalculado": 8.287292817679557,
+  "coincide": true
+ },
+ {
+  "verificacion": "P05 n",
+  "esperado": 184.0,
+  "recalculado": 184.0,
+  "coincide": true
+ },
+ {
+  "verificacion": "P05 media",
+  "esperado": 3.9293478260869565,
+  "recalculado": 3.9293478260869565,
+  "coincide": true
+ },
+ {
+  "verificacion": "P05 %fav",
+  "esperado": 76.08695652173914,
+  "recalculado": 76.08695652173914,
+  "coincide": true
+ },
+ {
+  "verificacion": "P05 %des",
+  "esperado": 5.434782608695652,
+  "recalculado": 5.434782608695652,
+  "coincide": true
+ },
+ {
+  "verificacion": "P06 n",
+  "esperado": 180.0,
+  "recalculado": 180.0,
+  "coincide": true
+ },
+ {
+  "verificacion": "P06 media",
+  "esperado": 3.783333333333333,
+  "recalculado": 3.783333333333333,
+  "coincide": true
+ },
+ {
+  "verificacion": "P06 %fav",
+  "esperado": 65.55555555555556,
+  "recalculado": 65.55555555555556,
+  "coincide": true
+ },
+ {
+  "verificacion": "P06 %des",
+  "esperado": 5.555555555555555,
+  "recalculado": 5.555555555555555,
+  "coincide": true
+ },
+ {
+  "verificacion": "P07 n",
+  "esperado": 181.0,
+  "recalculado": 181.0,
+  "coincide": true
+ },
+ {
+  "verificacion": "P07 media",
+  "esperado": 4.143646408839779,
+  "recalculado": 4.143646408839779,
+  "coincide": true
+ },
+ {
+  "verificacion": "P07 %fav",
+  "esperado": 86.74033149171271,
+  "recalculado": 86.74033149171271,
+  "coincide": true
+ },
+ {
+  "verificacion": "P07 %des",
+  "esperado": 4.972375690607735,
+  "recalculado": 4.972375690607735,
+  "coincide": true
+ },
+ {
+  "verificacion": "P08 n",
+  "esperado": 180.0,
+  "recalculado": 180.0,
+  "coincide": true
+ },
+ {
+  "verificacion": "P08 media",
+  "esperado": 4.011111111111111,
+  "recalculado": 4.011111111111111,
+  "coincide": true
+ },
+ {
+  "verificacion": "P08 %fav",
+  "esperado": 80.0,
+  "recalculado": 80.0,
+  "coincide": true
+ },
+ {
+  "verificacion": "P08 %des",
+  "esperado": 8.88888888888889,
+  "recalculado": 8.88888888888889,
+  "coincide": true
+ },
+ {
+  "verificacion": "P09 n",
+  "esperado": 177.0,
+  "recalculado": 177.0,
+  "coincide": true
+ },
+ {
+  "verificacion": "P09 media",
+  "esperado": 3.6836158192090394,
+  "recalculado": 3.6836158192090394,
+  "coincide": true
+ },
+ {
+  "verificacion": "P09 %fav",
+  "esperado": 61.5819209039548,
+  "recalculado": 61.5819209039548,
+  "coincide": true
+ },
+ {
+  "verificacion": "P09 %des",
+  "esperado": 12.429378531073446,
+  "recalculado": 12.429378531073446,
+  "coincide": true
+ },
+ {
+  "verificacion": "P10 n",
+  "esperado": 181.0,
+  "recalculado": 181.0,
+  "coincide": true
+ },
+ {
+  "verificacion": "P10 media",
+  "esperado": 3.81767955801105,
+  "recalculado": 3.81767955801105,
+  "coincide": true
+ },
+ {
+  "verificacion": "P10 %fav",
+  "esperado": 68.50828729281768,
+  "recalculado": 68.50828729281768,
+  "coincide": true
+ },
+ {
+  "verificacion": "P10 %des",
+  "esperado": 8.83977900552486,
+  "recalculado": 8.83977900552486,
+  "coincide": true
+ },
+ {
+  "verificacion": "P11 n",
+  "esperado": 182.0,
+  "recalculado": 182.0,
+  "coincide": true
+ },
+ {
+  "verificacion": "P11 media",
+  "esperado": 3.7472527472527473,
+  "recalculado": 3.7472527472527473,
+  "coincide": true
+ },
+ {
+  "verificacion": "P11 %fav",
+  "esperado": 64.28571428571429,
+  "recalculado": 64.28571428571429,
+  "coincide": true
+ },
+ {
+  "verificacion": "P11 %des",
+  "esperado": 10.989010989010989,
+  "recalculado": 10.989010989010989,
+  "coincide": true
+ },
+ {
+  "verificacion": "P12 n",
+  "esperado": 177.0,
+  "recalculado": 177.0,
+  "coincide": true
+ },
+ {
+  "verificacion": "P12 media",
+  "esperado": 3.135593220338983,
+  "recalculado": 3.135593220338983,
+  "coincide": true
+ },
+ {
+  "verificacion": "P12 %fav",
+  "esperado": 40.67796610169492,
+  "recalculado": 40.67796610169492,
+  "coincide": true
+ },
+ {
+  "verificacion": "P12 %des",
+  "esperado": 29.943502824858758,
+  "recalculado": 29.943502824858758,
+  "coincide": true
+ },
+ {
+  "verificacion": "P13 n",
+  "esperado": 181.0,
+  "recalculado": 181.0,
+  "coincide": true
+ },
+ {
+  "verificacion": "P13 media",
+  "esperado": 3.9668508287292816,
+  "recalculado": 3.9668508287292816,
+  "coincide": true
+ },
+ {
+  "verificacion": "P13 %fav",
+  "esperado": 76.24309392265194,
+  "recalculado": 76.24309392265194,
+  "coincide": true
+ },
+ {
+  "verificacion": "P13 %des",
+  "esperado": 5.524861878453039,
+  "recalculado": 5.524861878453039,
+  "coincide": true
+ },
+ {
+  "verificacion": "P14 n",
+  "esperado": 177.0,
+  "recalculado": 177.0,
+  "coincide": true
+ },
+ {
+  "verificacion": "P14 media",
+  "esperado": 4.03954802259887,
+  "recalculado": 4.03954802259887,
+  "coincide": true
+ },
+ {
+  "verificacion": "P14 %fav",
+  "esperado": 85.31073446327684,
+  "recalculado": 85.31073446327684,
+  "coincide": true
+ },
+ {
+  "verificacion": "P14 %des",
+  "esperado": 5.084745762711865,
+  "recalculado": 5.084745762711865,
+  "coincide": true
+ },
+ {
+  "verificacion": "P15 n",
+  "esperado": 180.0,
+  "recalculado": 180.0,
+  "coincide": true
+ },
+ {
+  "verificacion": "P15 media",
+  "esperado": 4.2444444444444445,
+  "recalculado": 4.2444444444444445,
+  "coincide": true
+ },
+ {
+  "verificacion": "P15 %fav",
+  "esperado": 83.33333333333334,
+  "recalculado": 83.33333333333334,
+  "coincide": true
+ },
+ {
+  "verificacion": "P15 %des",
+  "esperado": 3.3333333333333335,
+  "recalculado": 3.3333333333333335,
+  "coincide": true
+ },
+ {
+  "verificacion": "D1 media",
+  "esperado": 3.797814207650273,
+  "recalculado": 3.797814207650273,
+  "coincide": true
+ },
+ {
+  "verificacion": "D2 media",
+  "esperado": 3.913496376811594,
+  "recalculado": 3.913496376811594,
+  "coincide": true
+ },
+ {
+  "verificacion": "D3 media",
+  "esperado": 3.918498168498169,
+  "recalculado": 3.9184981684981683,
+  "coincide": true
+ },
+ {
+  "verificacion": "D4 media",
+  "esperado": 3.7176684881602915,
+  "recalculado": 3.7176684881602915,
+  "coincide": true
+ },
+ {
+  "verificacion": "D5 media",
+  "esperado": 4.0054945054945055,
+  "recalculado": 4.0054945054945055,
+  "coincide": true
+ },
+ {
+  "verificacion": "global media",
+  "esperado": 3.8690516005733397,
+  "recalculado": 3.8690516005733397,
+  "coincide": true
+ },
+ {
+  "verificacion": "alfa global",
+  "esperado": 0.9251909424626913,
+  "recalculado": 0.9251909424626913,
+  "coincide": true
+ },
+ {
+  "verificacion": "n con práctica",
+  "esperado": 72.0,
+  "recalculado": 72.0,
+  "coincide": true
+ },
+ {
+  "verificacion": "n sin práctica",
+  "esperado": 112.0,
+  "recalculado": 112.0,
+  "coincide": true
+ },
+ {
+  "verificacion": "dif global",
+  "esperado": 0.1699292110006385,
+  "recalculado": 0.1699292110006385,
+  "coincide": true
+ },
+ {
+  "verificacion": "MW p global",
+  "esperado": 0.049702537198381615,
+  "recalculado": 0.049702537198381615,
+  "coincide": true
+ },
+ {
+  "verificacion": "Welch p global",
+  "esperado": 0.07780407865475143,
+  "recalculado": 0.07780407865475143,
+  "coincide": true
+ },
+ {
+  "verificacion": "Pearson práctica-global",
+  "esperado": 0.1246760827721496,
+  "recalculado": 0.12467608277214964,
+  "coincide": true
+ },
+ {
+  "verificacion": "verde",
+  "esperado": 59.0,
+  "recalculado": 59.0,
+  "coincide": true
+ },
+ {
+  "verificacion": "amarillo",
+  "esperado": 87.0,
+  "recalculado": 87.0,
+  "coincide": true
+ },
+ {
+  "verificacion": "rojo",
+  "esperado": 38.0,
+  "recalculado": 38.0,
+  "coincide": true
+ },
+ {
+  "verificacion": "rojo sin práctica",
+  "esperado": 28.0,
+  "recalculado": 28.0,
+  "coincide": true
+ },
+ {
+  "verificacion": "rojo con práctica",
+  "esperado": 10.0,
+  "recalculado": 10.0,
+  "coincide": true
+ },
+ {
+  "verificacion": "Friedman chi2",
+  "esperado": 40.266398929049714,
+  "recalculado": 40.266398929049714,
+  "coincide": true
+ },
+ {
+  "verificacion": "rho P09-P10",
+  "esperado": 0.4707046522661676,
+  "recalculado": 0.4707046522661676,
+  "coincide": true
+ },
+ {
+  "verificacion": "P15 favorables",
+  "esperado": 150.0,
+  "recalculado": 150.0,
+  "coincide": true
+ },
+ {
+  "verificacion": "binomial p vs 70%",
+  "esperado": 2.8837357567408806e-05,
+  "recalculado": 2.8837357567408806e-05,
+  "coincide": true
+ },
+ {
+  "verificacion": "celdas No sé/No aplica",
+  "esperado": 54.0,
+  "recalculado": 54.0,
+  "coincide": true
+ },
+ {
+  "verificacion": "respuestas idénticas en todo",
+  "esperado": 12.0,
+  "recalculado": 12.0,
+  "coincide": true
+ },
+ {
+  "verificacion": "correos duplicados",
+  "esperado": 0.0,
+  "recalculado": 0.0,
+  "coincide": true
+ },
+ {
+  "verificacion": "campos vacíos ID02/03/04/POST_EXP1",
+  "esperado": 736.0,
+  "recalculado": 736.0,
+  "coincide": true
+ },
+ {
+  "verificacion": "abiertas ABI1",
+  "esperado": 142.0,
+  "recalculado": 142.0,
+  "coincide": true
+ },
+ {
+  "verificacion": "abiertas ABI2",
+  "esperado": 136.0,
+  "recalculado": 136.0,
+  "coincide": true
+ }
+]

@@ -148,7 +148,7 @@ class Doc:
     def h1(self, t, newpage=False):
         t = re.sub(r'^\d+\.\s*', '', t); self.cn += 1; txt = f'{self.pn}.{self.cn} {t}'
         h = self.d.add_heading(txt, 2); pborder(h, 'left', AMB, 28, 8); self.heads.append((2, txt)); return h
-    def h2(self, t): return self.d.add_heading(t, 3)
+    def h2(self, t): return self.d.add_heading(re.sub(r'^\d+(\.\d+)+\s+', '', t), 3)
     def h3(self, t): return self.d.add_heading(t, 4)
     def pagebreak(self): self.d.add_paragraph().add_run().add_break(WD_BREAK.PAGE)
     def p(self, t, size=None, color=None, italic=False, align=None, after=None):

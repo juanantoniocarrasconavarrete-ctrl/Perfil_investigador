@@ -14,6 +14,7 @@ Entregables (carpeta `informes/` e `infografias/`):
 | H | Infografía comparativa de brechas | `infografias/H_Infografia_Comparativa_de_Brechas.png` / `.pdf` |
 | I | Estudio paralelo de investigación (lenguaje cotidiano) | `informes/I_Estudio_Paralelo_Investigacion.docx` / `.pdf` |
 | J | Infografía comparada: La Puerta vs. investigación | `infografias/J_Infografia_Comparada_Investigacion.png` / `.pdf` |
+| K | Informe de auditoría y verificación (90/90 cifras recalculadas, 10 hallazgos corregidos) | `informes/K_Informe_Auditoria_Verificacion.docx` / `.pdf` |
 
 ## Descarga rápida
 
