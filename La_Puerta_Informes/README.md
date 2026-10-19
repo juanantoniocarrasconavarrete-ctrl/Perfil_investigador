@@ -15,6 +15,10 @@ Entregables (carpeta `informes/` e `infografias/`):
 | I | Estudio paralelo de investigación (lenguaje cotidiano) | `informes/I_Estudio_Paralelo_Investigacion.docx` / `.pdf` |
 | J | Infografía comparada: La Puerta vs. investigación | `infografias/J_Infografia_Comparada_Investigacion.png` / `.pdf` |
 
+## Descarga rápida
+
+Todos los productos en un solo archivo: `descargas/Proyecto_La_Puerta_Productos.zip` (informes en Word/PDF e infografías en PNG/PDF, con `LEEME.txt`). En GitHub: abrir el archivo y pulsar **Download**.
+
 ## Formato Duoc UC
 
 Los cinco documentos siguen la norma de informes de Bibliotecas Duoc UC: tamaño carta, márgenes normales, Calibri 11, interlineado 1,5, texto justificado, numeración de página (excepto portada), portada con título en mayúscula (14 pt, negrita, sin punto final) y filete amarillo, índice con páginas, y estructura Introducción → Desarrollo → Conclusión → Referencias (APA 7) → Anexos. Paleta: negro #1A1A1A, amarillo #FFB800, gris #666666 y gris claro #EEEEEE. Las infografías usan la misma paleta.
