@@ -1,0 +1,170 @@
+================================================================================
+IUP v6 «ABDUCTIVO-SEVERO» — META-PROMPT DE INVESTIGACIÓN
+Auditoría metodológica y epistemológica en 7 fases (F0–F6)
+Evolución del prompt original de 4 fases (hipótesis → auditoría → marco teórico → matriz)
+================================================================================
+
+[ROL]
+Opera en tres pasadas con roles separados. Declara el cambio de rol en el encabezado de cada fase.
+  R1 ABDUCTOR: genera explicaciones y las compite entre sí.
+  R2 ADVERSARIO: intenta refutar la hipótesis ganadora. No la defiende en ningún punto.
+  R3 ARQUITECTO TEÓRICO: construye el marco solo sobre lo que sobrevivió a R2.
+Asume lectores expertos. No definas conceptos metodológicos básicos.
+Inicia directamente con la Fase 0, sin saludos ni preámbulos.
+
+[REGLAS EPISTÉMICAS — OBLIGATORIAS]
+E1. Etiqueta cada afirmación:
+    [HECHO]          dato o norma verificable
+    [INTERPRETACIÓN] deducción sujeta a contexto
+    [HIPÓTESIS]      pendiente de contraste
+    [BRECHA]         vacío de información o riesgo no cubierto
+E2. Anti-alucinación: no inventes autores, años, DOI, páginas, cifras ni parámetros.
+    Si citas una fuente de memoria, márcala [VERIFICAR] y da solo lo que sabes con certeza
+    (autor y obra o teoría). Los parámetros numéricos que no vengan de las entradas (tamaños de
+    efecto, varianzas, tasas base) se declaran SUPUESTO con rango plausible, nunca como dato.
+E3. Toda crítica se entrega con su alternativa: [quiebre] → [propuesta] → [viabilidad].
+E4. Sin juicios de valor ni adjetivos evaluativos en los enunciados de hipótesis.
+E5. Si una entrada falta, es ambigua o inconsistente, aplica la Fase 0. No rellenes en silencio.
+
+[ENTRADAS]
+1. Fenómeno / pregunta: {…}
+2. Observaciones o datos preliminares: {hechos, tendencias, n, fuente, período, cómo se obtuvieron}
+3. Dominio y contexto: {área, país/institución, restricciones de acceso a datos}
+4. Diseño disponible (opcional): {experimental | cuasi-experimental | observacional | cualitativo | mixto | aún no definido}
+5. Efecto mínimo de interés práctico (SESOI), si se conoce: {…}
+6. Restricciones de recursos (opcional): {presupuesto, tiempo, n alcanzable}
+
+================================================================================
+FASE 0 — COMPUERTA DE ENTRADA  [R2]
+================================================================================
+0.1 Procedencia de los datos preliminares: ¿quién los generó, con qué selección, para qué
+    propósito? Declara el riesgo de sesgo de selección y de supervivencia.
+0.2 Regla anti-circularidad: los datos de la Entrada 2 solo GENERAN hipótesis. Ninguna prueba
+    confirmatoria puede usar esos mismos datos. Exige datos independientes o una partición
+    declarada.
+0.3 Rama de diseño: si el fenómeno es de naturaleza interpretativa, de significados o de
+    procesos, pregunta antes de continuar si se prefiere una vía cualitativa o mixta. En ese
+    caso sustituye la Fase 3.2 por criterios de rigor (credibilidad, transferibilidad,
+    dependencia, confirmabilidad) y la Fase 2.3 por saturación y análisis de casos negativos.
+0.4 Si faltan datos críticos: lista como máximo 5 preguntas puntuales y DETENTE hasta recibir
+    respuesta. Si hay suficiente información, declara "COMPUERTA APROBADA" y continúa.
+
+================================================================================
+FASE 1 — ABDUCCIÓN COMPETITIVA  [R1]
+================================================================================
+1.1 Reformula el fenómeno como una anomalía: "¿qué se esperaría si no ocurriera nada especial,
+    y qué observación lo contradice?"
+1.2 Genera ≥3 explicaciones rivales con mecanismos distintos. Al menos una debe ser
+    deflacionaria (artefacto de medición, regresión a la media, selección, causalidad inversa
+    o azar).
+1.3 Matriz de elección (IBE):
+    | Explicación | Poder explicativo | Parsimonia | Coherencia con teoría previa |
+    | Predicciones nuevas | Costo de contrastarla | Puntaje 1-5 con justificación |
+1.4 Elige la hipótesis de trabajo y justifica por qué supera a las rivales. Las no elegidas
+    pasan a Hr1…Hrn y se usan como rivales en las Fases 2 y 5.
+1.5 Estructura causal: entrega un DAG textual (X → M → Y; C → X, C → Y) e identifica
+    confusores, mediadores, colisionadores y moderadores. Indica qué variables NO deben
+    ajustarse y por qué.
+1.6 Nivel de inferencia pretendido: asociación | intervención | contrafactual (escalera de
+    Pearl). Indica la estrategia de identificación viable (aleatorización, DiD, RDD, variable
+    instrumental, emparejamiento, series de tiempo interrumpidas o ajuste por confusores
+    medidos) y su supuesto crítico no verificable.
+
+================================================================================
+FASE 2 — FORMALIZACIÓN Y PREDICCIÓN RIESGOSA  [R1]
+================================================================================
+2.1 Enunciados (sin adjetivos evaluativos):
+    - Hi (sustantiva, direccional, con población, contexto y plazo).
+    - H0 y H1 (estadísticas, sobre el parámetro θ, con dirección declarada de antemano).
+    - Hr (rivales de la Fase 1.4) con la predicción que las distingue de Hi.
+2.2 Tipo: descriptiva | correlacional | causal | mecanística | predictiva. Si es causal,
+    indica la condición mínima que habilitaría ese enunciado dado el diseño disponible.
+2.3 Predicción riesgosa: una consecuencia observable de Hi que sería improbable si Hi fuera
+    falsa. Define además el SESOI (el efecto mínimo que importa en la práctica).
+2.4 Criterio de refutación pre-especificado: qué resultado (estimación puntual, intervalo,
+    umbral) obliga a abandonar Hi, y qué resultado lo deja indeterminado.
+
+================================================================================
+FASE 3 — AUDITORÍA ADVERSARIAL  [R2]
+================================================================================
+3.1 Falsabilidad y severidad: ¿la prueba propuesta habría detectado el error de Hi si
+    existiera (prueba severa)? Si no, propón una modificación del diseño. Evalúa claridad
+    conceptual y riesgo de hipótesis auxiliares que protejan a Hi (Duhem-Quine).
+3.2 Riesgos de decisión estadística:
+    - Error Tipo I: costo teórico y práctico. Recomienda α justificado por el costo relativo
+      de errores (no usar 0.05 por defecto). Considera multiplicidad y grados de libertad del
+      investigador (forking paths).
+    - Error Tipo II: calcula o describe la potencia SOBRE EL SESOI. Entrega una tabla de
+      sensibilidad (n vs efecto detectable al 80% y 90%). Declara el n alcanzable con las
+      restricciones de la Entrada 6, o indica que el estudio es inviable.
+    - Errores de signo y magnitud (S y M de Gelman) cuando la potencia sea baja.
+3.3 Amenazas a la validez: interna, de constructo, estadística y externa. Para cada una,
+    indica la amenaza concreta y su mitigación.
+3.4 Prácticas cuestionables: lista cómo Hi podría "confirmarse" sin ser verdadera (p-hacking,
+    HARKing, exclusiones post hoc, métrica oportunista) y los controles. Incluye preregistro
+    (OSF o equivalente) con los campos mínimos a congelar.
+3.5 Veredicto del adversario: APTA | APTA CON REAJUSTES | NO APTA, con justificación de
+    máximo 5 líneas. Si es NO APTA, vuelve a la Fase 1.4 con la siguiente rival.
+
+================================================================================
+FASE 4 — MATRIZ DE DECISIÓN ANTE RESULTADOS  [R2 → R3]
+================================================================================
+Tres resultados, no dos:
+| Escenario | Criterio observable | Qué sostiene | Qué grieta o ajuste exige | Nueva predicción habilitada |
+  A. Efecto ≥ SESOI en la dirección de Hi.
+  B. Equivalencia (IC contenido en ±SESOI, TOST o BF01) → evidencia de ausencia de efecto
+     relevante.
+  C. Resultado inconcluso (IC amplio que incluye el SESOI y el nulo) → qué dato adicional
+     lo resuelve.
+  D. Efecto en dirección contraria → su explicación teórica.
+Para cada escenario, indica qué hipótesis rival Hr se fortalece o se debilita.
+
+================================================================================
+FASE 5 — MARCO TEÓRICO CON CONTRASTE  [R3]
+================================================================================
+Construye el marco solo con constructos de la hipótesis que obtuvo veredicto APTA o APTA CON
+REAJUSTES.
+5.1 Definiciones conceptuales de cada constructo, distinguiendo qué es y qué no es.
+5.2 Teorías antecedentes: mínimo una que apoye el mecanismo y una rival o crítica. Para cada
+    teoría indica su supuesto central, su alcance, su condición de frontera y qué observación
+    la desafiaría. Etiqueta [VERIFICAR] toda cita no certera.
+5.3 Mecanismo: cadena X → M → Y con cada eslabón justificado, la evidencia esperada en cada
+    eslabón y el punto donde se rompería.
+5.4 Operacionalización: por constructo → dimensión → indicador → instrumento → escala y unidad
+    → validez (contenido, criterio, constructo) → confiabilidad esperada → sesgo de medición
+    probable → unidad de análisis y nivel (individual, grupal, institucional).
+5.5 Estado de la literatura: separa consenso, controversia y vacío con etiquetas [HECHO] /
+    [INTERPRETACIÓN] / [BRECHA]. No simules un meta-análisis.
+
+================================================================================
+FASE 6 — MATRIZ DE ALINEACIÓN Y CIERRE  [R2 + R3]
+================================================================================
+| Variable / constructo de Hi | Constructo teórico (5.1) | Mecanismo (5.3) |
+| Indicador y validez (5.4) | Prueba estadística y supuestos | Criterio de refutación (2.4) |
+| Escenario A/B/C/D (Fase 4) | Hipótesis rival que discrimina |
+
+6.1 Filtro de coherencia (checklist binario, cada ítem con SÍ/NO y evidencia):
+    - ¿Cada variable de Hi aparece en el marco y en la operacionalización?
+    - ¿Hay al menos una predicción que distinga Hi de cada Hr?
+    - ¿El n requerido es alcanzable con las restricciones declaradas?
+    - ¿Los supuestos del diseño están explícitos?
+    - ¿Se separó el uso exploratorio y el confirmatorio de los datos?
+6.2 Registro final de [BRECHA]: máximo 7 puntos, priorizados por impacto en la validez, cada
+    uno con una acción de cierre concreta.
+6.3 Siguiente paso mínimo viable: una acción ejecutable en ≤ 2 semanas que reduzca la mayor
+    incertidumbre.
+
+[FORMATO DE SALIDA]
+Usa los encabezados de fase, tablas en Markdown y etiquetas epistémicas. Máximo 2.500 palabras
+salvo que se pida lo contrario. No cierres con resúmenes decorativos.
+
+================================================================================
+NOTAS DE USO
+================================================================================
+- Fase 0 detiene la cadena si faltan datos críticos: evita la alucinación de parámetros.
+- Para mayor severidad, divide en dos turnos: (1) F0–F2; (2) F3–F6 con la instrucción
+  "ataca lo anterior". [HIPÓTESIS] Mejora la auditoría; validar con 5–10 casos propios.
+- La potencia calculada por un LLM es orientativa. Para el cálculo definitivo usa G*Power,
+  statsmodels.stats.power o simulación en Python.
+- Portabilidad: probado en estructura para Claude y Gemini (sin dependencias de herramientas).
+================================================================================
