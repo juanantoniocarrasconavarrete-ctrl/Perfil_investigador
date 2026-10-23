@@ -43,6 +43,7 @@ Cada etapa ofrece: preguntas orientadoras, un ejemplo (ficticio y rotulado), exp
 | Registro de afirmaciones | Separar observación, interpretación, supuesto, predicción | Implementado |
 | Descomposición de la hipótesis | Componentes editables + resaltado en el texto | Implementado |
 | Conceptos en 3 niveles | Técnico, cotidiano, situado (17 conceptos) | Implementado |
+| Ayudas para quien no maneja conceptos técnicos | En cada campo: «¿Qué escribo aquí?» con explicación sencilla, ejemplo ficticio y frases para empezar; etiquetas en lenguaje cotidiano con el término técnico entre paréntesis; glosario de 38 términos con subrayado en el texto; cuadro «Tu avance» con siguiente paso; constructor de frase para la hipótesis | Implementado |
 | Vista multidimensional | Humana, conceptual, empírica, metodológica, contextual, ética | Implementado |
 | Lienzo visual | Mapa del problema, diagrama de variables, escena, secuencia, escenarios | Implementado |
 | Sincronización texto↔visual | Avisa qué visuales quedaron desactualizados | Implementado |
