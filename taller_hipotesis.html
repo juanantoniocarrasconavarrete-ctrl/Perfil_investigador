@@ -1,0 +1,634 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Laboratorio de Hipótesis</title>
+<style>
+:root{--pri:#6B21A8;--pri2:#581c87;--pril:#f3e8ff;--acc:#F97316;--accd:#c2410c;--accl:#ffedd5;--bg:#faf7fc;--ink:#1f1630;--mut:#5b5370;--line:#ddd2ea;--card:#fff}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.5 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
+h1,h2,h3,h4{margin:0 0 .4em;line-height:1.25}h2{font-size:1.2rem;color:var(--pri)}h3{font-size:1.02rem}h4{font-size:.93rem;color:var(--pri2)}
+p{margin:.3em 0 .6em}.mut{color:var(--mut)}small{font-size:.82rem}
+.skip{position:absolute;left:-999px;top:0;background:#fff;padding:8px;z-index:50}.skip:focus{left:8px;top:8px}
+:focus-visible{outline:3px solid var(--accd);outline-offset:2px}
+.hd{background:linear-gradient(120deg,var(--pri),var(--pri2));color:#fff;padding:10px 18px;display:flex;flex-wrap:wrap;gap:10px;align-items:center;justify-content:space-between}
+.hd h1{font-size:1.15rem;margin:0}.hd .sub{opacity:.92;font-size:.8rem}
+.row{display:flex;gap:8px;flex-wrap:wrap;align-items:center}.sp{flex:1;min-width:120px}
+.btn{border:2px solid var(--pri);background:var(--pri);color:#fff;padding:7px 13px;border-radius:9px;font:inherit;font-weight:600;cursor:pointer}
+.btn:hover{background:var(--pri2)}.btn:disabled{opacity:.5;cursor:not-allowed}
+.btn.acc{background:var(--accd);border-color:var(--accd)}.btn.gh{background:transparent;color:var(--pri)}.btn.gh:hover{background:var(--pril)}
+.hd .btn.gh{color:#fff;border-color:#fff}.hd .btn.gh:hover{background:#ffffff22}.hd .btn[aria-pressed=true]{background:#fff;color:var(--pri)}
+.btn.sm{padding:3px 10px;font-size:.84rem}
+#steps{display:flex;gap:4px;overflow-x:auto;background:#fff;border-bottom:3px solid var(--acc);padding:6px 10px;position:sticky;top:0;z-index:20}
+.st{border:1px solid var(--line);background:#fff;border-radius:99px;padding:5px 12px;font:inherit;font-size:.84rem;font-weight:600;color:var(--mut);cursor:pointer;white-space:nowrap}
+.st.on{background:var(--pri);color:#fff;border-color:var(--pri)}.st.dn:not(.on){border-color:#16a34a;color:#166534}
+.app{display:grid;grid-template-columns:minmax(300px,1fr) minmax(380px,1.3fr) minmax(280px,.9fr);gap:14px;padding:14px 16px;max-width:1700px;margin:0 auto}
+#canvas,#comp{position:sticky;top:58px;align-self:start;max-height:calc(100vh - 66px);overflow:auto}
+@media(max-width:1300px){.app{grid-template-columns:minmax(0,1fr) minmax(0,1fr)}#comp{grid-column:1/-1;position:static;max-height:none}}
+@media(max-width:820px){.app{grid-template-columns:minmax(0,1fr);padding:10px}#canvas{position:static;max-height:none}}
+.app>*{min-width:0}table.t{display:block;max-width:100%;overflow-x:auto}.card{background:var(--card);border:1px solid var(--line);border-radius:13px;padding:14px;margin-bottom:14px}
+.card.pri{border-left:5px solid var(--pri)}.card.acc{border-left:5px solid var(--acc)}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px}@media(max-width:560px){.grid2{grid-template-columns:1fr}}
+label.f{display:block;margin-bottom:9px}label.f>span{display:block;font-weight:600;font-size:.84rem;margin-bottom:2px}label.f em{font-weight:400;font-style:normal;color:var(--mut)}
+input[type=text],input[type=number],textarea,select{width:100%;padding:7px 9px;border:1px solid #b9a8d0;border-radius:8px;font:inherit;background:#fff;color:var(--ink)}
+textarea{resize:vertical}
+fieldset.li{border:1px solid var(--line);border-radius:10px;padding:8px 10px;margin:0 0 10px}fieldset.li legend{font-weight:700;font-size:.82rem;color:var(--pri2);padding:0 6px}
+.chip{display:inline-block;padding:2px 9px;border-radius:99px;background:var(--pril);color:var(--pri2);font-size:.76rem;font-weight:700;margin:0 4px 4px 0}
+.chip.ok{background:#dcfce7;color:#166534}.chip.at{background:#fef3c7;color:#92400e}.chip.pe{background:#dbeafe;color:#1e3a8a}.chip.na{background:#f3f4f6;color:#374151}.chip.sim{background:#fee2e2;color:#7f1d1d}
+.note{border-left:4px solid var(--acc);background:var(--accl);padding:7px 11px;border-radius:0 8px 8px 0;font-size:.88rem;margin:8px 0}.note.p{border-color:var(--pri);background:var(--pril)}
+.warn{border:2px solid #b91c1c;background:#fef2f2;color:#7f1d1d;padding:6px 10px;border-radius:8px;font-size:.84rem;font-weight:600;margin:6px 0}
+table.t{width:100%;border-collapse:collapse;font-size:.84rem;margin:6px 0}table.t th,table.t td{border:1px solid var(--line);padding:5px 7px;text-align:left;vertical-align:top}table.t th{background:var(--pril);color:var(--pri2)}
+.tabs{display:flex;gap:4px;flex-wrap:wrap;margin-bottom:10px}
+.ct{border:1px solid var(--line);background:#fff;border-radius:8px;padding:4px 10px;font:inherit;font-size:.82rem;font-weight:600;cursor:pointer;color:var(--mut)}.ct[aria-selected=true]{background:var(--pri);color:#fff;border-color:var(--pri)}
+.hint{border:1px solid var(--line);border-radius:10px;padding:9px;margin-bottom:9px;background:#fff}
+pre.pr{white-space:pre-wrap;background:#f6f1fb;border:1px dashed #9b7bc0;border-radius:8px;padding:8px;font:12.5px/1.45 ui-monospace,Menlo,Consolas,monospace;margin:6px 0}
+svg{max-width:100%;height:auto}
+.imgwrap{position:relative;display:inline-block;max-width:100%;border:1px solid var(--line);border-radius:10px;overflow:hidden}.imgwrap img{display:block;max-width:100%;height:auto}.imgwrap.pin{cursor:crosshair}
+.pn{position:absolute;transform:translate(-50%,-50%);width:24px;height:24px;border-radius:50%;color:#fff;font-weight:700;font-size:12px;display:flex;align-items:center;justify-content:center;border:2px solid #fff;box-shadow:0 1px 4px #0006}
+.hl{padding:1px 4px;border-radius:5px;font-weight:600}.sw{display:inline-block;width:10px;height:10px;border-radius:3px;margin-right:4px}
+.ok{color:#166534}.no{color:#b91c1c}.sr{position:absolute;left:-999px}
+dl.rv{margin:6px 0;font-size:.86rem}dl.rv dt{font-weight:700;color:var(--pri2);margin-top:4px}dl.rv dd{margin:0 0 0 0}
+details>summary{cursor:pointer;font-weight:600}
+dialog{max-width:720px;width:92%;border:2px solid var(--pri);border-radius:14px;padding:18px}
+#printdoc{display:none}
+@media print{body>*:not(#printdoc){display:none!important}#printdoc{display:block;padding:10px}#printdoc table{page-break-inside:auto}#printdoc h2{page-break-after:avoid}}
+</style>
+</head>
+<body>
+<a class="skip" href="#view">Saltar al panel de construcción</a>
+<header class="hd">
+  <div><h1>Laboratorio de Hipótesis</h1><div class="sub">Construir, representar y revisar una hipótesis como proceso de aprendizaje · prototipo sin conexión · DUOC UC</div></div>
+  <div class="row" role="toolbar" aria-label="Opciones generales">
+    <button class="btn gh sm" id="bG" data-act="modo" data-arg="guiada" aria-pressed="true">Vista guiada</button>
+    <button class="btn gh sm" id="bA" data-act="modo" data-arg="avanzada" aria-pressed="false">Vista avanzada</button>
+    <button class="btn gh sm" data-act="estado">Estado del prototipo</button>
+    <button class="btn gh sm" data-act="demo">Cargar ejemplo ficticio</button>
+    <button class="btn gh sm" data-act="reset">Reiniciar</button>
+    <span id="status" class="sub" role="status" aria-live="polite"></span>
+  </div>
+</header>
+<nav id="steps" aria-label="Recorrido de 10 etapas"></nav>
+<div class="app">
+  <section id="view" aria-label="Panel de construcción" tabindex="-1"></section>
+  <section id="canvas" aria-label="Lienzo visual"></section>
+  <aside id="comp" aria-label="Panel de acompañamiento"></aside>
+</div>
+<div id="printdoc"></div>
+<dialog id="dlg" aria-label="Estado del prototipo"></dialog>
+<input type="file" id="fileJson" accept="application/json" hidden>
+<input type="file" id="fileImg" accept="image/*" hidden>
+
+<script>
+'use strict';
+/* ================= ESTADO ================= */
+const KEY='lab_hipotesis_duoc_v2';
+const CLASES=['Dato real','Registro de observación','Documento o estudio','Ilustración','Escenario hipotético'];
+const ATIPOS=['Observación','Interpretación','Supuesto','Predicción'];
+const blank=()=>({stage:0,modo:'guiada',ctab:'mapa',enfoque:'causal',
+ ui:{lvl:'cot',pin:false,alt:false,cmpA:0,cmpB:0,rechaz:false},
+ p:{ocurre:'',porque:''},afirm:[{t:'',tipo:'Observación'}],
+ ctx:{donde:'',cuando:'',circ:''},actores:[{n:'',rol:'',cons:''}],
+ evid:[{desc:'',fuente:'',tipo:'Documento',clase:'Documento o estudio',vinc:''}],falta:'',
+ factores:[{t:'',rel:'explorar'}],consec:[{t:'',actor:''}],pregunta:'',pregTipo:'',
+ h:{texto:'',nula:'',cot:''},
+ c:{unidad:'',tiempo:'',x:'',y:'',dir:'',mec:'',conf:'',fund:'',x_ind:'',x_inst:'',y_ind:'',y_inst:'',y_esc:'',refuta:'',alcance:'',limit:''},
+ sup:[],
+ vis:{img:'',imgTipo:'Ilustración',imgNota:'',pins:[],pasos:[{t:''},{t:''}],actual:'',posible:'',snap:null},
+ con:{datos:'',muestra:'',analisis:'',viab:'',riesgos:'',priv:''},
+ esc:{compat:'',cuestiona:'',mixto:'',alterna:'',imprev:''},
+ sim:{pred:null,res:null,expl:'',n:30,d:0.6,gamma:0.8,kappa:1,runs:1500,alpha:0.05,seed:11},
+ rev:{},tdec:{},ayuda:{ok:0,no:0,mod:0,alt:0},
+ vers:[],vcambio:'',vcoment:'',vfund:'',refl:{a:'',b:'',c:'',d:'',e:''}});
+let S=blank();
+function merge(t,s){for(const k in s){if(s[k]&&typeof s[k]==='object'&&!Array.isArray(s[k])&&t[k]&&typeof t[k]==='object'&&!Array.isArray(t[k]))merge(t[k],s[k]);else t[k]=s[k]}return t}
+function load(){try{const r=localStorage.getItem(KEY);if(r)S=merge(blank(),JSON.parse(r))}catch(e){}}
+let svT;function save(){clearTimeout(svT);svT=setTimeout(()=>{try{localStorage.setItem(KEY,JSON.stringify(S));st('Guardado en este navegador')}catch(e){st('No se pudo guardar: descarga el JSON')}},250)}
+function st(m){const e=document.getElementById('status');if(e)e.textContent=m}
+const $=(s,r=document)=>r.querySelector(s);
+const esc=s=>String(s==null?'':s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const get=p=>p.split('.').reduce((o,k)=>o==null?o:o[k],S);
+function setp(p,v){const k=p.split('.');let o=S;for(let i=0;i<k.length-1;i++){if(o[k[i]]==null)o[k[i]]={};o=o[k[i]]}o[k[k.length-1]]=v}
+const ne=(a,k)=>a.filter(x=>x[k]&&String(x[k]).trim());
+
+/* ================= TEXTO ================= */
+const norm=s=>(s||'').toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g,'');
+const STOP=new Set('el la los las un una unos unas de del al en y o u que se con por para su sus es son ser como entre sobre este esta estos estas lo le les ya si tiene tienen hay'.split(' '));
+const toks=s=>norm(s).replace(/[^a-z0-9ñ ]/g,' ').split(/\s+/).filter(w=>w.length>2&&!STOP.has(w)).map(w=>w.length>5?w.slice(0,5):w);
+const wc=s=>(s||'').trim()?s.trim().split(/\s+/).length:0;
+function ovl(a,b){const ta=toks(a);if(!ta.length)return 0;const tb=new Set(toks(b));return ta.filter(x=>tb.has(x)).length/ta.length}
+const VAGUE=['mejora','mejoran','mejoras','mejorar','mejorara','mejor','mejores','impacto','impactos','impactar','adecuado','adecuada','eficiente','eficaz','efectivo','efectiva','positivo','positiva','positivamente','influye','influyen','influencia','afecta','afectan','afectar','calidad','bueno','buena'];
+const CONSTR=['salud','bienestar','desempeno','rendimiento','satisfaccion','motivacion','aprendizaje','seguridad','productividad','clima','cultura'];
+const POSW=['mas','mayor','mayores','aumenta','aumentan','sube','suben','incrementa','superior','aumento'];
+const NEGW=['menos','menor','menores','disminuye','disminuyen','reduce','reducen','baja','bajan','inferior','reduccion','disminucion'];
+const CAUSAL=['causa','provoca','produce','genera','origina','hace que','debido a','por culpa','gracias a','efecto de','efecto sobre'];
+const foundExact=(t,l)=>{const tk=new Set(norm(t).replace(/[^a-z0-9 ]/g,' ').split(/\s+/));return l.filter(w=>tk.has(w))};
+const trunc=(s,n)=>{s=(s||'').trim();return s.length>n?s.slice(0,n-1)+'…':s};
+function wrap(t,max,lines){t=(t||'').trim();const w=t.split(/\s+/),o=[];let cur='';for(const x of w){if((cur+' '+x).trim().length>max&&cur){o.push(cur);cur=x}else cur=(cur+' '+x).trim()}if(cur)o.push(cur);if(o.length>lines){o.length=lines;o[lines-1]=trunc(o[lines-1],max-1)+'…'}return o}
+const vagueIn=t=>foundExact((t||'').replace(/\S+\s*\(medida como:[^)]*\)/gi,' '),VAGUE);
+const lines=s=>(s||'').split(/[\n;]+/).map(x=>x.trim()).filter(Boolean);
+
+/* ================= ESTADÍSTICA (validada contra valores de referencia) ================= */
+function rng(seed){let a=seed>>>0;return()=>{a=a+0x6D2B79F5|0;let t=Math.imul(a^a>>>15,1|a);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296}}
+function mkN(r){let s=null;return()=>{if(s!==null){const v=s;s=null;return v}let u=0;while(u===0)u=r();const v=r(),m=Math.sqrt(-2*Math.log(u));s=m*Math.sin(2*Math.PI*v);return m*Math.cos(2*Math.PI*v)}}
+function lgamma(x){const c=[76.18009172947146,-86.50532032941677,24.01409824083091,-1.231739572450155,0.1208650973866179e-2,-0.5395239384953e-5];let y=x,t=x+5.5;t-=(x+0.5)*Math.log(t);let s=1.000000000190015;for(let j=0;j<6;j++){y+=1;s+=c[j]/y}return -t+Math.log(2.5066282746310005*s/x)}
+function betacf(a,b,x){const F=1e-300;let qab=a+b,qap=a+1,qam=a-1,c=1,d=1-qab*x/qap;if(Math.abs(d)<F)d=F;d=1/d;let h=d;for(let m=1;m<=200;m++){const m2=2*m;let aa=m*(b-m)*x/((qam+m2)*(a+m2));d=1+aa*d;if(Math.abs(d)<F)d=F;c=1+aa/c;if(Math.abs(c)<F)c=F;d=1/d;h*=d*c;aa=-(a+m)*(qab+m)*x/((a+m2)*(qap+m2));d=1+aa*d;if(Math.abs(d)<F)d=F;c=1+aa/c;if(Math.abs(c)<F)c=F;d=1/d;const del=d*c;h*=del;if(Math.abs(del-1)<3e-10)break}return h}
+function ibeta(x,a,b){if(x<=0)return 0;if(x>=1)return 1;const bt=Math.exp(lgamma(a+b)-lgamma(a)-lgamma(b)+a*Math.log(x)+b*Math.log(1-x));return x<(a+1)/(a+b+2)?bt*betacf(a,b,x)/a:1-bt*betacf(b,a,1-x)/b}
+const pT=(t,df)=>ibeta(df/(df+t*t),df/2,0.5);
+function qt975(df){let lo=0,hi=50;for(let i=0;i<50;i++){const m=(lo+hi)/2;if(pT(m,df)>0.05)lo=m;else hi=m}return(lo+hi)/2}
+function invN(p){const a=[-3.969683028665376e+01,2.209460984245205e+02,-2.759285104469687e+02,1.383577518672690e+02,-3.066479806614716e+01,2.506628277459239e+00],b=[-5.447609879822406e+01,1.615858368580409e+02,-1.556989798598866e+02,6.680131188771972e+01,-1.328068155288572e+01],c=[-7.784894002430293e-03,-3.223964580411365e-01,-2.400758277161838e+00,-2.549732539343734e+00,4.374664141464968e+00,2.938163982698783e+00],d=[7.784695709041462e-03,3.224671290700398e-01,2.445134137142996e+00,3.754408661907416e+00];let q,r;if(p<0.02425){q=Math.sqrt(-2*Math.log(p));return(((((c[0]*q+c[1])*q+c[2])*q+c[3])*q+c[4])*q+c[5])/((((d[0]*q+d[1])*q+d[2])*q+d[3])*q+1)}if(p>1-0.02425){q=Math.sqrt(-2*Math.log(1-p));return-(((((c[0]*q+c[1])*q+c[2])*q+c[3])*q+c[4])*q+c[5])/((((d[0]*q+d[1])*q+d[2])*q+d[3])*q+1)}q=p-0.5;r=q*q;return(((((a[0]*r+a[1])*r+a[2])*r+a[3])*r+a[4])*r+a[5])*q/(((((b[0]*r+b[1])*r+b[2])*r+b[3])*r+b[4])*r+1)}
+const mean=a=>a.reduce((s,x)=>s+x,0)/a.length;
+const vari=(a,m)=>a.reduce((s,x)=>s+(x-m)*(x-m),0)/(a.length-1);
+function welch(a,b){const n1=a.length,n2=b.length,m1=mean(a),m2=mean(b),v1=vari(a,m1),v2=vari(b,m2),se=Math.sqrt(v1/n1+v2/n2);if(!se)return{diff:m2-m1,p:1,t:0,se:0,df:n1+n2-2};const t=(m2-m1)/se,df=(v1/n1+v2/n2)**2/((v1/n1)**2/(n1-1)+(v2/n2)**2/(n2-1));return{diff:m2-m1,t,df,se,p:pT(t,df)}}
+function solve3(A,B){const M=A.map((r,i)=>[...r,B[i]]);for(let i=0;i<3;i++){let p=i;for(let r=i+1;r<3;r++)if(Math.abs(M[r][i])>Math.abs(M[p][i]))p=r;[M[i],M[p]]=[M[p],M[i]];const d=M[i][i]||1e-12;for(let c=i;c<4;c++)M[i][c]/=d;for(let r=0;r<3;r++)if(r!==i){const f=M[r][i];for(let c=i;c<4;c++)M[r][c]-=f*M[i][c]}}return[M[0][3],M[1][3],M[2][3]]}
+function olsG(y,g,z){const A=[[0,0,0],[0,0,0],[0,0,0]],B=[0,0,0];for(let i=0;i<y.length;i++){const x=[1,g[i],z[i]];for(let r=0;r<3;r++){B[r]+=x[r]*y[i];for(let c=0;c<3;c++)A[r][c]+=x[r]*x[c]}}return solve3(A,B)[1]}
+function powerAt(n,d,alpha,runs,seed){const N=mkN(rng(seed));let rej=0;for(let k=0;k<runs;k++){const a=[],b=[];for(let i=0;i<n;i++){a.push(N());b.push(N()+d)}const t=welch(a,b);if(t.p<alpha&&t.diff>0)rej++}return rej/runs}
+function simulate(P){
+ const N=mkN(rng(P.seed)),o={w1:{rej:0,est:[]},w2:{rej:0,est:[]},w3:{rej:0,est:[],adj:[]}};let guard=0;
+ for(let k=0;k<P.runs;k++){
+  let a=[],b=[];for(let i=0;i<P.n;i++){a.push(N());b.push(N()+P.d)}
+  let t=welch(a,b);o.w1.est.push(t.diff);if(t.p<P.alpha&&t.diff>0)o.w1.rej++;
+  a=[];b=[];for(let i=0;i<P.n;i++){a.push(N());b.push(N())}
+  t=welch(a,b);o.w2.est.push(t.diff);if(t.p<P.alpha)o.w2.rej++;
+  const y=[],g=[],z=[],ya=[],yb=[];
+  for(let i=0;i<2*P.n;i++){const zi=N(),gi=(P.kappa*zi+N())>0?1:0,yi=P.d*gi+P.gamma*zi+N();y.push(yi);g.push(gi);z.push(zi);(gi?yb:ya).push(yi)}
+  if((ya.length<3||yb.length<3)&&guard++<P.runs*5){k--;continue}
+  if(ya.length<3||yb.length<3)continue;
+  t=welch(ya,yb);o.w3.est.push(t.diff);if(t.p<P.alpha)o.w3.rej++;o.w3.adj.push(olsG(y,g,z));
+ }
+ const R=P.runs,nReq=Math.ceil(2*((invN(1-P.alpha/2)+invN(0.8))/P.d)**2),m3=mean(o.w3.est);
+ return{P:{...P},power:o.w1.rej/R,typeI:o.w2.rej/R,rej3:o.w3.rej/o.w3.est.length,naive:m3,adj:mean(o.w3.adj),bias:m3-P.d,nReq,
+  pReq:powerAt(Math.min(nReq,400),P.d,P.alpha,500,P.seed+1),pLo:powerAt(P.n,P.d*0.8,P.alpha,500,P.seed+2),pHi:powerAt(P.n,P.d*1.2,P.alpha,500,P.seed+3),h1:o.w1.est,h0:o.w2.est}}
+
+/* ================= CONTENIDO PEDAGÓGICO ================= */
+const ENF={
+ causal:{n:'Explicativo: efecto de un factor o intervención',x:'Factor o intervención',y:'Resultado esperado',conf:'Confusoras (otras explicaciones posibles)',mec:true,hip:true,nota:'Permite formular un efecto; solo un diseño adecuado permite sostener causalidad.',dirs:[['aumenta','El resultado aumenta'],['disminuye','El resultado disminuye'],['cambia','El resultado cambia (sin precisar sentido)']]},
+ asoc:{n:'Asociación entre dos variables',x:'Variable A',y:'Variable B',conf:'Variables de control',mec:false,hip:true,nota:'Asociación no implica causa: evita verbos causales.',dirs:[['pos','Se asocian en el mismo sentido'],['neg','Se asocian en sentido contrario'],['existe','Existe asociación (sin precisar sentido)']]},
+ comp:{n:'Comparación entre grupos o condiciones',x:'Grupos o condiciones que se comparan',y:'Variable en la que se comparan',conf:'Diferencias previas entre grupos / controles',mec:false,hip:true,nota:'Comparar grupos describe diferencias; explicarlas requiere controlar otras diferencias.',dirs:[['mayor','El primer grupo tiene valores mayores'],['menor','El primer grupo tiene valores menores'],['distinto','Los grupos difieren (sin precisar sentido)']]},
+ expl:{n:'Exploratorio o descriptivo (sin hipótesis todavía)',x:'Categorías o dimensiones a explorar',y:'',conf:'Condiciones o factores a registrar',mec:false,hip:false,nota:'Cuando aún no hay base para una hipótesis, una buena pregunta es el resultado correcto.',dirs:[]}};
+const DIRSYM={aumenta:'↑ aumenta',disminuye:'↓ disminuye',cambia:'≠ cambia',pos:'↗ mismo sentido',neg:'↘ sentido contrario',existe:'↔ se asocian',mayor:'↑ mayor en el 1.º',menor:'↓ menor en el 1.º',distinto:'≠ difieren'};
+const sgn=()=>['disminuye','neg','menor'].includes(S.c.dir)?-1:1;
+const CONC={
+problema:{n:'Problema de investigación',tec:'Situación observable que revela una brecha de conocimiento o una consecuencia no deseada, delimitable y susceptible de estudio.',cot:'Algo que pasa, que alguien nota y que no sabemos explicar o resolver bien.',sit:'Marta, jefa de una bodega (ejemplo ficticio), nota que cada mes dos operarios piden licencia por dolor de espalda. Ese hecho —no «la salud laboral en general»— es el punto de partida.'},
+afirmaciones:{n:'Observación, interpretación, supuesto y predicción',tec:'Observación: hecho registrable. Interpretación: sentido que se le atribuye. Supuesto: lo que se da por cierto sin comprobar. Predicción: lo que se espera que ocurra.',cot:'No es lo mismo «hay 5 licencias» (se ve), «por falta de capacitación» (se interpreta), «todos levantan igual» (se supone) y «bajarán» (se predice).',sit:'Si Marta dice «se lesionan por descuidados», mezcla interpretación con prejuicio. Separar lo que vio de lo que piensa le permite investigar en vez de acusar.'},
+contexto:{n:'Contexto y delimitación',tec:'Condiciones espaciales, temporales, institucionales y sociales que acotan dónde y cuándo se estudia el fenómeno.',cot:'La dirección exacta de tu pregunta: dónde, cuándo y en qué circunstancias.',sit:'Lo que ocurre en la bodega central en temporada alta no necesariamente ocurre en una obra pequeña en invierno. Precisarlo evita conclusiones que viajan a donde no deben.'},
+actores:{n:'Actores y consecuencias',tec:'Personas o grupos involucrados y los efectos que experimentan o producen.',cot:'Quiénes viven el problema, quiénes deciden y qué les pasa por eso.',sit:'Operarios (dolor, pérdida de ingresos), jefatura (reemplazos), mutualidad (costos): cada uno ve el problema distinto, y eso cambia qué conviene medir.'},
+evidencia:{n:'Antecedentes y evidencia',tec:'Información existente (datos, estudios, documentos, registros) que respalda o cuestiona afirmaciones específicas, y vacíos de conocimiento.',cot:'Lo que ya se sabe, de dónde viene y qué todavía no sabemos.',sit:'El registro de licencias es un dato; la opinión del capataz es una observación útil pero de otro peso. Conviene anotar cuál es cuál y de dónde salió.'},
+factor:{n:'Factor, variable o categoría',tec:'Elemento del fenómeno que varía o puede clasificarse e interviene en la relación propuesta.',cot:'Algo que puede cambiar o presentarse distinto de una persona o situación a otra.',sit:'Peso de la carga, horas de turno, técnica de levante, antigüedad: todos varían entre operarios y podrían influir.'},
+relacion:{n:'Relación y dirección',tec:'Forma en que se propone que se vinculan dos elementos (asociación, diferencia, efecto) y, si procede, su sentido.',cot:'Si uno cambia, ¿qué pasa con el otro? ¿Suben juntos, uno sube y otro baja, o solo se diferencian? Asociación no es causa.',sit:'Que quienes levantan más peso tengan más dolor es una asociación. Decir que «el peso causa el dolor» exige descartar, por ejemplo, que además son los de mayor antigüedad.'},
+confusora:{n:'Confusoras o variables de control',tec:'Variables relacionadas con el factor principal y con el resultado que pueden crear u ocultar una relación aparente.',cot:'Un tercero que mueve ambas cosas y engaña a la comparación.',sit:'Si al taller solo van quienes tienen turnos livianos, los «mejores resultados» podrían deberse al turno y no al taller.'},
+pregunta:{n:'Pregunta de investigación',tec:'Formulación interrogativa, delimitada y respondible que orienta el diseño; puede ser exploratoria, descriptiva, comparativa o explicativa.',cot:'Lo que quieres averiguar, escrito de modo que alguien pueda decir cómo se respondería.',sit:'«¿Qué hacemos con la espalda?» no se puede responder. «¿Cómo difiere la frecuencia de dolor lumbar entre quienes asistieron y no asistieron al taller, en tres meses?» sí.'},
+hipotesis:{n:'Hipótesis',tec:'Respuesta provisional, contrastable y delimitada a la pregunta de investigación, que explicita una relación o diferencia entre elementos definidos.',cot:'Tu mejor apuesta, escrita para que los datos puedan darte la razón o quitártela.',sit:'Marta apuesta: «quienes asistan al taller tendrán menos episodios de dolor». Si tras tres meses no hay diferencia, su apuesta queda en duda; eso también es aprendizaje.'},
+supuesto:{n:'Supuestos y limitaciones',tec:'Condiciones que se asumen ciertas para que el razonamiento o el diseño funcione sin haber sido comprobadas aquí, y restricciones del alcance.',cot:'Lo que das por hecho para que tu idea funcione, y hasta dónde llega.',sit:'Marta supone que quienes asisten aplicarán lo aprendido en su turno; si no ocurre, un taller útil parecería inútil.'},
+falsabilidad:{n:'Condiciones para cuestionar la hipótesis',tec:'Resultados observables que, de ocurrir, contradirían la hipótesis o la dejarían sin respaldo.',cot:'Qué tendría que pasar para que dudes de tu propia idea.',sit:'Si tras el taller los episodios son iguales o mayores que en quienes no asistieron, Marta debería replantear la causa o el taller.'},
+indicador:{n:'Indicadores, instrumentos y escalas',tec:'Indicador: expresión observable de un concepto. Instrumento: procedimiento para registrarlo. Escala: forma de expresarlo (conteo, nivel, categoría).',cot:'Cómo se ve y cómo se mide, concretamente, cada idea.',sit:'«Dolor de espalda» se registra como episodios ≥3/10 en un cuestionario semanal que responde cada operario. Otra persona podría repetirlo igual.'},
+representacion:{n:'Representación visual',tec:'Recurso gráfico que organiza elementos y relaciones propuestas para facilitar su análisis; no constituye evidencia.',cot:'Un dibujo de tu idea para ver lo que el texto esconde. Dibujar no demuestra nada.',sit:'Al dibujar el mapa, Marta descubre que nadie anotó el peso de las cargas: una variable clave que su texto no mencionaba.'},
+escenarios:{n:'Escenarios de resultados',tec:'Anticipaciones de cómo se interpretarían distintos resultados: compatibles, contrarios, mixtos, explicaciones alternativas y efectos no previstos.',cot:'Imaginar de antemano qué significaría cada resultado, para no interpretar a gusto después.',sit:'Si baja el dolor pero también bajó la carga por temporada baja, Marta ya anotó que ese resultado es mixto y exige otro análisis.'},
+etica:{n:'Consideraciones éticas y privacidad',tec:'Evaluación de riesgos y beneficios, consentimiento, confidencialidad y uso de los datos de las personas involucradas.',cot:'Cuidar a las personas que participan y a sus datos.',sit:'Los datos de salud son sensibles: usar códigos en vez de nombres y pedir consentimiento antes de aplicar el cuestionario.'},
+iteracion:{n:'Iteración y versiones',tec:'Revisión sucesiva de la formulación a partir de retroalimentación y evidencia, con registro de cambios y decisiones.',cot:'Mejorar la idea por rondas, anotando qué cambió y por qué.',sit:'La versión 3 de Marta incluye el indicador y los controles que la 1 no tenía; el historial le permite explicar por qué.'}};
+const ST=[
+ {n:'Identificar el problema',s:'Problema',q:'¿Qué ocurre y por qué merece investigarse?',or:['¿Qué viste, con tus ojos o en registros?','¿Desde cuándo y con qué frecuencia ocurre?','¿Qué pasaría si nadie lo estudiara?'],ej:'En la bodega se registran dos licencias mensuales por dolor lumbar entre operarios que mueven cargas.',cn:['problema','afirmaciones']},
+ {n:'Contextualizar',s:'Contexto',q:'¿Dónde ocurre, a quiénes afecta y en qué circunstancias?',or:['¿En qué lugar, turno o temporada?','¿Quiénes lo viven y quiénes toman decisiones?','¿Qué les pasa a cada uno por esto?'],ej:'Bodega de una constructora mediana de la Región Metropolitana, turnos de día, temporada alta.',cn:['contexto','actores']},
+ {n:'Explorar antecedentes',s:'Antecedentes',q:'¿Qué información existe y qué falta conocer?',or:['¿Qué registros o documentos tienes a mano?','¿De dónde salió cada dato?','¿Qué te gustaría saber y no sabes?'],ej:'Registro mensual de licencias de la mutualidad (dato). Opinión del capataz (observación).',cn:['evidencia']},
+ {n:'Descomponer el problema',s:'Descomposición',q:'¿Cuáles son sus componentes, factores y posibles relaciones?',or:['¿Qué factores podrían intensificarlo o atenuarlo?','¿Cuáles son sus consecuencias?','¿Qué relaciones afirmas y cuáles solo sospechas?'],ej:'Factores: peso de la carga, técnica de levante, antigüedad. Consecuencias: licencias, reemplazos.',cn:['factor','relacion','confusora']},
+ {n:'Pregunta de investigación',s:'Pregunta',q:'¿Qué se quiere comprender o comprobar?',or:['¿Se puede responder con datos?','¿Nombra a quiénes, qué y comparado con qué?','¿Es exploratoria o ya hay base para apostar?'],ej:'¿Difiere la frecuencia de dolor lumbar entre operarios que asisten a un taller de levante y los que no, en 3 meses?',cn:['pregunta']},
+ {n:'Construir la hipótesis',s:'Hipótesis',q:'¿Qué respuesta provisional se propone?',or:['¿Qué esperas que ocurra y en quiénes?','¿Cómo se vería concretamente?','¿Qué supones sin haberlo comprobado?'],ej:'Los operarios que asistan al taller presentarán menos episodios de dolor lumbar (≥3/10) que quienes no asistan, durante 3 meses.',cn:['hipotesis','supuesto','falsabilidad','indicador']},
+ {n:'Revisión técnica',s:'Revisión',q:'¿Es clara, coherente, delimitada y susceptible de contrastación?',or:['¿Qué criterio requiere más atención?','¿Estás de acuerdo con el cambio propuesto?','¿Qué decides y por qué?'],ej:'Criterio «Correspondencia con indicadores»: falta el instrumento. Cambio: cuestionario semanal.',cn:['falsabilidad']},
+ {n:'Representación visual',s:'Visual',q:'¿Cómo se puede mostrar el problema y la relación propuesta?',or:['¿Qué ves en el dibujo que no estaba en el texto?','¿Qué falta en el diagrama?','¿Cómo ocurre paso a paso?'],ej:'Secuencia: taller → cambia la técnica de levante → menos sobrecarga → menos dolor.',cn:['representacion']},
+ {n:'Diseño de contrastación',s:'Contrastación',q:'¿Qué datos, observaciones o mediciones serían necesarios?',or:['¿Qué dato necesitas y quién lo tiene?','¿Qué resultado sostendría, cuestionaría o dejaría inconclusa la hipótesis?','¿Qué riesgos hay para las personas?'],ej:'Cuestionario semanal a 30 operarios por grupo durante 3 meses; códigos en vez de nombres.',cn:['indicador','escenarios','etica']},
+ {n:'Iteración y cierre',s:'Iteración',q:'¿Qué debe cambiar a partir de la retroalimentación o la evidencia?',or:['¿Qué cambió desde la versión anterior y por qué?','¿Qué te haría modificar la hipótesis?','¿Puedes explicarla sin mirar la pantalla?'],ej:'V1 → V2: reemplacé «mejora la salud» por el conteo de episodios de dolor.',cn:['iteracion']}];
+
+/* ================= CONSTRUCTORES DE FORMULARIO ================= */
+const optPair=o=>Array.isArray(o)?o:[o,o];
+const FLD=(p,l,o={})=>`<label class="f"><span>${l}${o.h?` <em>${o.h}</em>`:''}</span>${o.rows?`<textarea rows="${o.rows}" data-bind="${p}" placeholder="${esc(o.ph||'')}">${esc(get(p))}</textarea>`:`<input type="${o.type||'text'}" data-bind="${p}"${o.num?' data-num="1"':''}${o.step?` step="${o.step}"`:''} value="${esc(get(p))}" placeholder="${esc(o.ph||'')}">`}</label>`;
+const SEL=(p,l,opts)=>`<label class="f"><span>${l}</span><select data-bind="${p}">${opts.map(optPair).map(o=>`<option value="${esc(o[0])}"${String(get(p))===String(o[0])?' selected':''}>${esc(o[1])}</option>`).join('')}</select></label>`;
+const claimOpts=()=>{const o=[['','Sin vincular']];S.afirm.forEach((a,i)=>{if(a.t.trim())o.push(['A'+(i+1),'A'+(i+1)+': '+trunc(a.t,50)])});if(S.h.texto.trim())o.push(['H','Hipótesis: '+trunc(S.h.texto,50)]);S.sup.forEach((a,i)=>{if(a.t.trim())o.push(['S'+(i+1),'S'+(i+1)+': '+trunc(a.t,50)])});return o};
+const LDEF={
+ afirm:[{k:'t',l:'Afirmación',rows:2},{k:'tipo',l:'Tipo',opts:ATIPOS}],
+ actores:[{k:'n',l:'Actor o grupo'},{k:'rol',l:'Rol'},{k:'cons',l:'Consecuencia que experimenta',rows:2}],
+ evid:[{k:'desc',l:'Qué es / qué dice',rows:2},{k:'fuente',l:'Fuente (la que tú tienes; la app no inventa fuentes)'},{k:'tipo',l:'Formato',opts:['Documento','Dato','Observación','Imagen','Testimonio']},{k:'clase',l:'Clase',opts:CLASES,def:'Documento o estudio'},{k:'vinc',l:'Respalda o cuestiona',opts:()=>claimOpts()}],
+ factores:[{k:'t',l:'Factor'},{k:'rel',l:'Relación propuesta con el problema',opts:[['intensifica','lo intensifica'],['atenua','lo atenúa'],['asociado','está asociado'],['explorar','por explorar']],def:'explorar'}],
+ consec:[{k:'t',l:'Consecuencia'},{k:'actor',l:'Quién la experimenta'}],
+ sup:[{k:'t',l:'Supuesto o limitación',rows:2},{k:'tipo',l:'Tipo',opts:['Supuesto','Limitación','Condición']}],
+ 'vis.pasos':[{k:'t',l:'Paso',rows:2}]};
+const LNAME={afirm:'Afirmación',actores:'Actor',evid:'Antecedente',factores:'Factor',consec:'Consecuencia',sup:'Supuesto','vis.pasos':'Paso'};
+function newItem(path){const o={};LDEF[path].forEach(d=>{o[d.k]=d.def!==undefined?d.def:(d.opts&&typeof d.opts!=='function'?optPair(d.opts[0])[0]:'')});return o}
+function LIST(path,empty){const arr=get(path),defs=LDEF[path],nm=LNAME[path];
+ return(arr.length?arr.map((it,i)=>`<fieldset class="li"><legend>${nm} ${i+1}</legend><div class="grid2">${defs.map(d=>d.opts?SEL(`${path}.${i}.${d.k}`,d.l,typeof d.opts==='function'?d.opts():d.opts):FLD(`${path}.${i}.${d.k}`,d.l,{rows:d.rows})).join('')}</div><button class="btn sm gh" data-act="del" data-arg="${path}|${i}" aria-label="Quitar ${nm.toLowerCase()} ${i+1}">Quitar</button></fieldset>`).join(''):`<p class="mut">${empty||'Sin elementos todavía.'}</p>`)+`<button class="btn sm" data-act="add" data-arg="${path}">+ Agregar ${nm.toLowerCase()}</button>`}
+const ADV=h=>S.modo==='avanzada'?h:'';
+const exp=()=>S.enfoque==='expl';
+
+/* ================= TUTOR (reglas locales) ================= */
+function textDir(t){const n=norm(t);return{pos:foundExact(t,POSW).length>0,neg:foundExact(t,NEGW).length>0}}
+function tutor(){
+ const o=[],c=S.c,E=ENF[S.enfoque],h=S.h.texto,txt=exp()?S.pregunta:h;
+ const A=(id,st,tipo,t,why,prop)=>o.push({id,st,tipo,t,why,prop});
+ const obs=S.afirm.filter(a=>a.t.trim()&&a.tipo==='Observación');
+ if(!S.p.ocurre.trim())A('p0',0,'Pregunta','¿Qué ocurre exactamente? Descríbelo sin incluir la causa ni la solución.','Un problema bien descrito se puede observar; una causa o solución supuesta cierra la investigación antes de empezar.');
+ else if(/(falta de|debe(ria)?\b|hay que|necesitamos|se necesita|por culpa|porque no)/.test(norm(S.p.ocurre)))A('p1',0,'Ambigüedad','Tu descripción parece incluir una causa o una solución supuesta («falta de…», «hay que…»). ¿Qué hecho observable hay detrás?','Describir hechos separa el problema de las explicaciones que luego pondrás a prueba.');
+ if(!obs.length)A('p2',0,'Distinción','Aún no registras observaciones. ¿Qué hecho concreto, que otra persona pudiera verificar, muestra que el problema existe?','Separar lo que se ve de lo que se interpreta evita partir de prejuicios.');
+ if(S.afirm.some(a=>a.t.trim()&&a.tipo==='Observación'&&/(porque|debido|por culpa|flojos?|descuidad|siempre|nunca|todos)/.test(norm(a.t))))A('p3',0,'Distinción','Una afirmación marcada como «Observación» contiene una explicación o una generalización («porque», «siempre», «todos»). ¿Es un hecho o una interpretación?','Las interpretaciones pueden ser valiosas, pero deben rotularse para no confundirlas con hechos.');
+ if(!S.ctx.donde.trim()||!S.ctx.cuando.trim())A('c0',1,'Falta información','Falta precisar '+[!S.ctx.donde.trim()&&'dónde',!S.ctx.cuando.trim()&&'cuándo'].filter(Boolean).join(' y ')+' ocurre.','Sin delimitar lugar y tiempo no se sabe dónde mirar ni hasta dónde llega una conclusión.');
+ if(!ne(S.actores,'n').length)A('c1',1,'Pregunta','¿Quiénes viven el problema y quiénes toman decisiones sobre él?','Cada actor ve el problema distinto y eso cambia qué conviene medir.');
+ S.actores.forEach((a,i)=>{if(a.n.trim()&&!a.cons.trim())A('c2_'+i,1,'Pregunta',`¿Qué le ocurre a «${a.n}» por causa del problema?`,'Las consecuencias humanas justifican la investigación y orientan los indicadores.')});
+ if(!ne(S.evid,'desc').length)A('a0',2,'Falta información','Aún no registras antecedentes. Pueden ser registros, documentos o tu propia observación (rotulada como tal).','Saber qué existe evita investigar lo ya conocido y muestra dónde están los vacíos.');
+ S.evid.forEach((e,i)=>{if(e.desc.trim()&&!e.fuente.trim())A('a1_'+i,2,'Falta información',`El antecedente ${i+1} no tiene fuente. ¿De dónde proviene? (La app no completa ni inventa fuentes).`,'Sin fuente nadie puede revisar el respaldo de una afirmación.')});
+ if(!S.falta.trim())A('a2',2,'Pregunta','¿Qué te gustaría saber y todavía no sabes? Anotar los vacíos orienta qué datos faltan.','Los vacíos explícitos son el puente hacia la pregunta de investigación.');
+ if(ne(S.factores,'t').length<2)A('d0',3,'Pregunta','¿Qué otros factores podrían intensificar o atenuar el problema? Hasta ahora identificas '+ne(S.factores,'t').length+'.','Un solo factor suele esconder alternativas; ver varios ayuda a no atribuir todo a una causa.');
+ if(!ne(S.consec,'t').length)A('d1',3,'Pregunta','¿Qué consecuencias tiene el problema, y para quién?','Las consecuencias muestran por qué importa y qué resultados podrían medirse.');
+ if(S.enfoque!=='causal'&&S.factores.some(f=>f.t.trim()&&['intensifica','atenua'].includes(f.rel)))A('d2',3,'Causalidad','Marcaste que algunos factores «intensifican» o «atenúan» el problema, pero tu enfoque es «'+E.n+'». ¿Tienes un diseño que permita hablar de efecto, o prefieres «está asociado»?','Afirmar efecto sin diseño que lo sostenga es el error más frecuente al pasar de una observación a una hipótesis.');
+ if(!S.pregunta.trim())A('q0',4,'Pregunta','Escribe tu pregunta con tus palabras. ¿Qué quieres averiguar y en quiénes?','La pregunta orienta todo el diseño; si es difusa, la hipótesis también lo será.');
+ else{
+  if(!S.pregunta.includes('?'))A('q1',4,'Ambigüedad','Tu pregunta no está formulada como interrogante. ¿Puedes escribirla entre signos de interrogación?','Una pregunta clara se reconoce porque se puede imaginar su respuesta.');
+  if(exp()&&/(efecto|causa|provoca|reduce|aumenta|impacto)/.test(norm(S.pregunta)))A('q2',4,'Contradicción','Elegiste un enfoque exploratorio, pero tu pregunta habla de efecto o causa. ¿Quieres cambiar el enfoque o reformular?','Las preguntas causales suponen una base que el enfoque exploratorio todavía no tiene.');
+  if(S.pregunta.length>20&&c.x&&ovl(c.x,S.pregunta)<.2&&ovl(S.p.ocurre,S.pregunta)<.2)A('q3',4,'Contradicción','Tu pregunta comparte pocos términos con el problema y con tus componentes. ¿Sigue hablando de lo mismo?','Si la pregunta se aleja del problema descrito, la hipótesis responderá otra cosa.');
+ }
+ if(!exp()){
+  const vag=vagueIn(h);
+  vag.forEach(w=>A('h_v_'+w,5,'Ambigüedad',`«${w}» puede significar cosas distintas para distintas personas. ¿Qué observarías para decir que ocurrió?`,'Un término impreciso impide que otra persona repita tu estudio y reconozca cuándo la hipótesis falla.',c.y_ind.trim()?{path:'h.texto',mode:'replace',from:w,to:w+' (medida como: '+c.y_ind.trim()+')'}:null));
+  if(foundExact(h,CONSTR).length&&!c.y_ind.trim())A('h_c',5,'Ambigüedad',`«${foundExact(h,CONSTR)[0]}» es un concepto amplio. ¿Qué indicador concreto lo representa?`,'Sin indicador no hay forma de saber si el concepto cambió.');
+  const cw=CAUSAL.filter(w=>norm(h).includes(w));
+  if(cw.length&&S.enfoque!=='causal')A('h_ca',5,'Causalidad',`Usas lenguaje causal («${cw[0]}») con un enfoque de «${E.n}». ¿Puedes sostener una relación causal con ese diseño?`,'Los verbos causales prometen más de lo que una asociación o una comparación pueden respaldar.');
+  if(cw.length&&S.enfoque==='causal'&&!c.conf.trim())A('h_cb',5,'Causalidad','Afirmas un efecto, pero no has nombrado explicaciones alternativas (confusoras). ¿Qué más podría producir el mismo resultado?','Una relación causal es creíble en la medida en que se descartan explicaciones rivales.');
+  const td=textDir(h);if(c.dir&&h.trim()){if(sgn()<0&&td.pos&&!td.neg)A('h_d',5,'Contradicción','Elegiste una dirección descendente, pero el texto usa palabras de aumento. ¿Cuál es la correcta?','El texto y los componentes deben decir lo mismo; si no, el diagrama y la revisión se contradicen.');
+   if(sgn()>0&&td.neg&&!td.pos)A('h_d2',5,'Contradicción','Elegiste una dirección ascendente, pero el texto usa palabras de disminución. ¿Cuál es la correcta?','El texto y los componentes deben decir lo mismo.')}
+  if(h.trim()&&c.x&&ovl(c.x,h)<.4)A('h_x',5,'Pregunta',`Tu texto no nombra con claridad «${trunc(c.x,50)}». ¿Es el mismo elemento con otro nombre?`,'Un mismo concepto con dos nombres hace creer que hay dos conceptos.');
+  if(h.trim()&&c.y&&ovl(c.y,h)<.4&&ovl(c.y_ind,h)<.4)A('h_y',5,'Pregunta',`Tu texto no nombra con claridad «${trunc(c.y,50)}». ¿Es el mismo elemento con otro nombre?`,'La hipótesis debe hablar del mismo resultado que vas a medir.');
+  if(h.trim()&&!c.refuta.trim())A('h_r',5,'Falta información','¿Qué resultado concreto te haría dudar de tu hipótesis?','Una hipótesis que ningún resultado podría cuestionar no se puede contrastar.');
+ }
+ if(!c.y_ind.trim()&&c.y)A('h_i',5,'Falta información',`¿Cómo se mide «${trunc(c.y,50)}»? Falta indicador, instrumento y escala.`,'Sin indicador la hipótesis no puede ponerse a prueba.');
+ const rv=revisar().filter(r=>r.tono==='pe'||r.tono==='at');
+ if(rv.length)A('r0',6,'Pregunta',`Tienes ${rv.length} criterio(s) que requieren atención. ¿Cuál desbloquea más a los demás? (${rv.slice(0,3).map(r=>r.n).join(', ')}…)`,'Priorizar evita corregir lo superficial primero.');
+ const stl=stale();
+ if(stl&&stl.length)A('v0',7,'Visual','Cambiaste elementos y hay representaciones desactualizadas: '+stl.join('; ')+'.','Un diagrama que ya no coincide con el texto confunde más que ayuda.');
+ if(c.mec.trim()&&!ne(S.vis.pasos,'t').length)A('v1',7,'Visual','Nombraste un mecanismo. Una secuencia visual paso a paso mostraría cómo se propone que ocurre.','Ver el mecanismo en pasos revela saltos lógicos.');
+ if(c.conf.trim()&&!S.vis.snap)A('v2',7,'Visual','Tienes confusoras: el diagrama de variables las muestra apuntando a ambos extremos. Revísalo en el lienzo.','Dibujarlas hace evidente qué parte de la relación podrían explicar.');
+ if(ne(S.actores,'n').length&&!S.vis.img)A('v3',7,'Visual','Una escena contextual con marcas (dónde ocurre la intervención, dónde se mide el resultado) ayuda a quienes no leen términos técnicos.','Recuerda rotular la imagen como ilustración o registro de observación.');
+ if(!S.con.muestra.trim()||!S.con.analisis.trim())A('k0',8,'Falta información','Falta definir '+[!S.con.muestra.trim()&&'a quiénes y cuántos medirás',!S.con.analisis.trim()&&'cómo compararás los resultados'].filter(Boolean).join(' y ')+'.','Sin esto no se puede saber si la contrastación es viable.');
+ if(!S.con.riesgos.trim())A('k1',8,'Pregunta','¿Qué riesgos tiene la investigación para las personas involucradas (privacidad, consentimiento, estigma)?','Anticipar riesgos es parte del diseño, no un trámite posterior.');
+ if(!S.esc.cuestiona.trim())A('k2',8,'Pregunta','¿Qué resultado cuestionaría tu hipótesis? Describirlo antes de ver datos evita interpretar a gusto.','Los escenarios previos protegen contra reinterpretar los resultados.');
+ if(!S.vers.length)A('i0',9,'Falta información','Aún no guardas ninguna versión. Guardar permite comparar cómo cambió tu razonamiento.','El historial es evidencia de tu aprendizaje.');
+ if(Object.values(S.refl).some(x=>x.trim().length<40))A('i1',9,'Pregunta','Completa tu reflexión con tus propias palabras (al menos unas líneas por pregunta).','Poder explicarlo sin ayuda es el verdadero criterio de éxito.');
+ return o}
+
+/* ================= REVISIÓN (9 criterios, estados descriptivos) ================= */
+function visState(){return{mapa:JSON.stringify([ne(S.factores,'t'),ne(S.consec,'t'),ne(S.actores,'n'),S.p.ocurre,S.ctx.donde,S.ctx.cuando]),vars:JSON.stringify([S.enfoque,S.c.unidad,S.c.tiempo,S.c.x,S.c.y,S.c.dir,S.c.mec,S.c.conf,S.c.x_ind,S.c.y_ind,S.pregunta]),sec:JSON.stringify(ne(S.vis.pasos,'t')),texto:S.h.texto+'|'+S.h.nula}}
+function stale(){const sn=S.vis.snap;if(!sn)return null;const cur=visState(),o=[];if(cur.mapa!==sn.mapa)o.push('Mapa del problema (problema, actores, factores o consecuencias cambiaron)');if(cur.vars!==sn.vars)o.push('Diagrama de variables (componentes, dirección, indicadores, pregunta o enfoque cambiaron)');if(cur.sec!==sn.sec)o.push('Secuencia visual (los pasos cambiaron)');if(cur.texto!==sn.texto)o.push('El texto de la hipótesis cambió: confirma que diagrama y secuencia aún la reflejan');return o}
+function revisar(){
+ const e=S.enfoque,x=exp(),c=S.c,txt=x?S.pregunta:S.h.texto,P=S.p,R=[];
+ const add=(id,n,que,estado,tono,aten,porq,camb)=>R.push({id,n,que,estado,tono,aten,porq,camb});
+ const noun=x?'pregunta':'hipótesis',vag=vagueIn(txt),cons=foundExact(txt,CONSTR),cw=CAUSAL.filter(w=>norm(txt).includes(w));
+ // 1 Claridad
+ if(!txt.trim())add('cla','Claridad','Que la '+noun+' se entienda sin ambigüedad y exprese una sola relación','Falta redactar la '+noun,'pe','Aún no hay texto que revisar.','Sin texto no hay nada que precisar ni contrastar.','Escribe un primer borrador con tus palabras.');
+ else{const is=[];if(vag.length)is.push('términos imprecisos: «'+vag.join('», «')+'»');if(wc(txt)>45)is.push('es larga ('+wc(txt)+' palabras): ¿contiene más de una relación?');if(wc(txt)<8)is.push('es muy breve ('+wc(txt)+' palabras): ¿nombra a quiénes, qué y comparado con qué?');if(cons.length&&!c.y_ind.trim())is.push('«'+cons[0]+'» es un constructo sin indicador');
+  is.length?add('cla','Claridad','Que la '+noun+' se entienda sin ambigüedad y exprese una sola relación','Requiere precisión','at',is.join(' · '),'Un término que cada persona interpreta distinto impide que otra repita tu estudio.','Reemplaza lo impreciso por lo que se observaría (tu indicador) y separa relaciones múltiples.'):add('cla','Claridad','Que la '+noun+' se entienda sin ambigüedad y exprese una sola relación','Formulación consistente','ok','Las reglas automáticas no detectan ambigüedades.','Que las reglas no encuentren problemas no sustituye a un lector humano.','Pide a otra persona que la lea y te diga qué entendió.')}
+ // 2 Delimitación
+ {const m=[!c.unidad.trim()&&'a quiénes (unidad de análisis)',!S.ctx.donde.trim()&&'dónde',!c.tiempo.trim()&&'cuándo / horizonte'].filter(Boolean);
+  add('del','Delimitación','Que se sepa a quiénes, dónde y cuándo se refiere',m.length===3?'Falta delimitar':m.length?'Requiere precisión':'Formulación consistente',m.length===3?'pe':m.length?'at':'ok',m.length?'Falta precisar: '+m.join(', ')+'.':'Población, lugar y tiempo están definidos.','Una conclusión solo vale para el ámbito que se delimitó.',m.length?'Completa esos campos en las etapas 2 y 6.':'Revisa que la delimitación no sea más amplia que tus posibilidades de medir.')}
+ // 3 Coherencia
+ if(!S.pregunta.trim())add('coh','Coherencia','Que problema, pregunta y '+(x?'componentes':'hipótesis')+' hablen de lo mismo','Falta la pregunta de investigación','pe','No hay pregunta registrada.','La pregunta conecta el problema con la hipótesis.','Escribe la pregunta en la etapa 5.');
+ else{const is=[];if(!x&&txt.trim()&&ovl(S.pregunta,txt)<.25)is.push('hipótesis y pregunta comparten pocos términos');if(ovl(P.ocurre,[c.x,c.y,txt].join(' '))<.15)is.push('poco vínculo entre el problema descrito y lo formulado');if(cw.length&&e!=='causal')is.push('lenguaje causal («'+cw[0]+'») con enfoque de «'+ENF[e].n+'»');
+  add('coh','Coherencia','Que problema, pregunta y '+(x?'componentes':'hipótesis')+' hablen de lo mismo',is.length?'Requiere precisión':'Formulación consistente',is.length?'at':'ok',is.length?is.join(' · ')+'.':'Se comparten términos entre problema, pregunta y formulación.','Si la hipótesis responde otra cosa que la pregunta, el estudio no resolverá el problema.',is.length?'Reescribe usando las mismas palabras en las tres piezas, o ajusta el enfoque.':'Verifica con otra persona que ve la misma relación.')}
+ // 4 Definición de elementos
+ {const m=[!c.x.trim()&&ENF[e].x.toLowerCase(),!x&&!c.y.trim()&&ENF[e].y.toLowerCase(),!x&&!c.dir&&'dirección esperada',(e==='causal'||e==='comp')&&!c.conf.trim()&&ENF[e].conf.toLowerCase()].filter(Boolean);
+  add('def','Definición de los elementos','Que cada elemento esté nombrado y definido',m.length>=3?'Falta definir los elementos':m.length?'Requiere precisión':'Formulación consistente',m.length>=3?'pe':m.length?'at':'ok',m.length?'Faltan: '+m.join('; ')+'.':'Elementos principales nombrados.','Un elemento sin nombre no puede medirse ni controlarse.',m.length?'Completa los componentes en la etapa 6.':'Revisa que cada nombre sea el mismo en todo el documento.')}
+ // 5 Contrastación
+ if(x){const ok=!!c.refuta.trim();add('con','Posibilidad de contrastación','Que se sepa qué te haría replantear la pregunta',ok?'Formulación consistente':'Falta definir criterio para replantear',ok?'ok':'pe',ok?'Hay criterio para replantear.':'No hay criterio registrado.','Aun explorando, conviene saber qué te haría cambiar de rumbo.',ok?'Revísalo al ver datos.':'Anota qué hallazgo cambiaría tu pregunta.')}
+ else{const m=[!c.refuta.trim()&&'qué resultado la cuestionaría',!c.dir&&'dirección o forma de la relación',vag.length&&'términos vagos'].filter(Boolean);
+  add('con','Posibilidad de contrastación','Que exista un resultado observable que pueda cuestionarla',!c.refuta.trim()?'Falta definir condiciones para cuestionarla':m.length?'Requiere precisión':'Formulación consistente',!c.refuta.trim()?'pe':m.length?'at':'ok',m.length?'Pendiente: '+m.join('; ')+'.':'Hay condiciones de cuestionamiento definidas.','Si ningún resultado puede cuestionarla, no es contrastable.',m.length?'Describe un resultado concreto que te haría dudar.':'Compara con los escenarios de la etapa 9.')}
+ // 6 Conceptos-indicadores
+ {const m=[!c.x_ind.trim()&&'indicador del factor/primer elemento',!x&&!c.y_ind.trim()&&'indicador del resultado',!x&&!c.y_inst.trim()&&'instrumento del resultado'].filter(Boolean);
+  add('ind','Correspondencia entre conceptos e indicadores','Que cada concepto tenga un indicador observable',m.length?(!c.y_ind.trim()&&!x?'Falta definir indicadores':'Requiere precisión'):'Formulación consistente',m.length?(!c.y_ind.trim()&&!x?'pe':'at'):'ok',m.length?'Faltan: '+m.join('; ')+'.':'Indicadores e instrumentos registrados.','Un concepto sin indicador no puede observarse.',m.length?'Completa la matriz de variables e indicadores (etapa 6).':'Pregunta: ¿otra persona mediría lo mismo con tu definición?')}
+ // 7 Fundamento
+ {const ev=ne(S.evid,'desc'),ws=ev.filter(v=>v.fuente.trim()),fu=c.fund.trim().length>=30;
+  let est='Fundamento registrado',t='ok',a='Hay fundamento conceptual y antecedentes con fuente.';
+  if(!ev.length&&!fu){est='Falta definir evidencia';t='pe';a='No hay fundamento conceptual ni antecedentes registrados.'}
+  else if(!fu){est='Requiere precisión';t='at';a='Hay antecedentes, pero falta explicar por qué esperas esta relación.'}
+  else if(!ws.length){est='Fundamento sin fuentes registradas';t='at';a='Hay explicación, pero ningún antecedente con fuente.'}
+  add('fun','Fundamento disponible','Que exista una razón y antecedentes que sustenten la propuesta',est,t,a,'El fundamento muestra por qué la apuesta es razonable; no la hace verdadera.',t==='ok'?'Registrar fundamento no equivale a respaldo suficiente: evalúa la calidad de cada antecedente.':'Agrega el fundamento (etapa 6) y antecedentes con su fuente (etapa 3).')}
+ // 8 Viabilidad
+ {const m=[!S.con.datos.trim()&&'datos necesarios',!S.con.muestra.trim()&&'a quiénes y cuántos',!S.con.analisis.trim()&&'cómo se analizará',!S.con.viab.trim()&&'viabilidad (tiempo, costo, acceso)'].filter(Boolean);
+  add('via','Viabilidad de la contrastación','Que se pueda obtener y analizar lo que se necesita',m.length>2?'Falta definir la contrastación':m.length?'Requiere precisión':'Formulación consistente',m.length>2?'pe':m.length?'at':'ok',m.length?'Falta: '+m.join('; ')+'.':'Datos, muestra, análisis y viabilidad descritos.','Una hipótesis excelente pero imposible de contrastar no avanza.',m.length?'Completa la etapa 9.':'Pregunta: ¿tienes acceso real a esos datos en el plazo?')}
+ // 9 Consistencia visual
+ {const sl=stale();
+  add('vis','Consistencia entre texto y representación visual','Que diagramas y texto cuenten lo mismo',!S.vis.snap?'Falta revisar la representación visual':sl&&sl.length?'Requiere actualización':'Formulación consistente',!S.vis.snap?'pe':sl&&sl.length?'at':'ok',!S.vis.snap?'Aún no confirmas que los visuales reflejan la formulación.':sl&&sl.length?sl.join('; ')+'.':'Los visuales coinciden con la última confirmación.','Un diagrama desactualizado induce a error.',!S.vis.snap?'Revisa el lienzo y confirma en la etapa 8.':sl&&sl.length?'Actualiza y vuelve a confirmar en la etapa 8.':'Sigue confirmando tras cada cambio.')}
+ return R}
+const TONO={ok:['✓','ok'],at:['◐','at'],pe:['○','pe'],na:['–','na']};
+
+/* ================= SVG ================= */
+const DEFS='<defs><marker id="ah" markerWidth="10" markerHeight="8" refX="9" refY="4" orient="auto"><path d="M0,0 L10,4 L0,8 z" fill="#475569"/></marker><marker id="ahs" markerWidth="10" markerHeight="8" refX="1" refY="4" orient="auto-start-reverse"><path d="M10,0 L0,4 L10,8 z" fill="#475569"/></marker><marker id="ar" markerWidth="10" markerHeight="8" refX="9" refY="4" orient="auto"><path d="M0,0 L10,4 L0,8 z" fill="#dc2626"/></marker></defs>';
+const SV=(w,h,label,desc,inner)=>`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${w} ${h}" width="${w}" height="${h}" role="img" aria-label="${esc(label)}" font-family="system-ui,Arial,sans-serif"><title>${esc(label)}</title><desc>${esc(desc||'')}</desc>${DEFS}<rect width="${w}" height="${h}" fill="#fff"/>${inner}</svg>`;
+const TX=(x,y,ls,o={})=>ls.map((l,i)=>`<text x="${x}" y="${y+i*(o.lh||15)}" text-anchor="${o.a||'middle'}" font-size="${o.fs||12}" font-weight="${o.fw||400}" fill="${o.fill||'#1f1630'}">${esc(l)}</text>`).join('');
+const NODE=(x,y,w,h,col,lab,txt,sub,miss)=>`<rect x="${x}" y="${y}" width="${w}" height="${h}" rx="12" fill="${miss?'#f8fafc':col+'22'}" stroke="${miss?'#64748b':col}" stroke-width="2"${miss?' stroke-dasharray="5 4"':''}/>`+TX(x+w/2,y+16,[lab],{fs:10.5,fw:700,fill:miss?'#475569':col})+TX(x+w/2,y+34,wrap(txt||'¿Falta definir?',Math.floor(w/7.6),sub?2:3),{fs:13,fw:600,fill:miss?'#475569':'#1f1630',lh:16})+(sub?TX(x+w/2,y+h-8,[trunc(sub,Math.floor(w/6.3))],{fs:10.5,fill:'#334155'}):'');
+const RELSYM={intensifica:'↑ lo intensifica',atenua:'↓ lo atenúa',asociado:'~ asociado',explorar:'? por explorar'};
+function mapaSVG(){
+ const F=ne(S.factores,'t').slice(0,5),C=ne(S.consec,'t').slice(0,4),A=ne(S.actores,'n').slice(0,4);
+ const H=Math.max(340,120+Math.max(F.length,1)*66+34),mid=Math.round((96+H-40)/2);let s='';
+ s+=`<rect x="8" y="6" width="704" height="30" rx="10" fill="none" stroke="#0369a1" stroke-width="2" stroke-dasharray="7 5"/>`+TX(360,26,[`Contexto: ${trunc(S.ctx.donde||'¿dónde?',58)} · ${trunc(S.ctx.cuando||'¿cuándo?',36)}`],{fs:12.5,fw:700,fill:'#075985'});
+ A.forEach((a,i)=>{const x=24+i*172;s+=`<rect x="${x}" y="46" width="160" height="28" rx="14" fill="#e0f2fe" stroke="#0369a1"/>`+TX(x+80,64,[trunc(a.n+(a.rol?' ('+a.rol+')':''),23)],{fs:11,fw:600,fill:'#075985'})+`<path d="M${x+80} 74 L360 ${mid-45}" stroke="#0369a1" stroke-dasharray="4 4" fill="none"/>`});
+ if(!A.length)s+=TX(360,64,['¿Quiénes están involucrados? (actores)'],{fs:12,fill:'#475569'});
+ s+=NODE(240,mid-48,240,96,'#6B21A8','PROBLEMA',S.p.ocurre,'',!S.p.ocurre.trim());
+ F.forEach((f,i)=>{const y=96+i*66;s+=NODE(14,y,200,54,'#475569','FACTOR',f.t,RELSYM[f.rel]||'',false)+`<line x1="214" y1="${y+27}" x2="240" y2="${mid}" stroke="#475569" stroke-width="2" marker-end="url(#ah)"/>`});
+ if(!F.length)s+=NODE(14,mid-30,200,60,'#475569','FACTORES','',false,true);
+ const c0=mid-(C.length*72)/2+8;
+ C.forEach((k,i)=>{const y=c0+i*72;s+=NODE(506,y,200,56,'#c2410c','CONSECUENCIA',k.t,k.actor?'afecta a: '+k.actor:'',false)+`<line x1="480" y1="${mid}" x2="506" y2="${y+28}" stroke="#475569" stroke-width="2" marker-end="url(#ah)"/>`});
+ if(!C.length)s+=NODE(506,mid-30,200,60,'#c2410c','CONSECUENCIAS','',false,true);
+ s+=TX(360,H-10,['Propuesta de organización del problema — no es evidencia'],{fs:11,fill:'#334155'});
+ return SV(720,H,'Mapa del problema','Problema central con factores que lo intensifican o atenúan, consecuencias y actores involucrados.',s)}
+function altMapa(){const F=ne(S.factores,'t'),C=ne(S.consec,'t'),A=ne(S.actores,'n');return 'Mapa del problema. Problema: '+(S.p.ocurre||'sin describir')+'. Contexto: '+(S.ctx.donde||'sin dónde')+', '+(S.ctx.cuando||'sin cuándo')+'. Actores: '+(A.map(a=>a.n+(a.cons?' ('+a.cons+')':'')).join('; ')||'ninguno')+'. Factores: '+(F.map(f=>f.t+' ['+(RELSYM[f.rel]||'')+']').join('; ')||'ninguno')+'. Consecuencias: '+(C.map(k=>k.t+(k.actor?' → '+k.actor:'')).join('; ')||'ninguna')+'.'}
+function varsSVG(){
+ const c=S.c,e=S.enfoque,E=ENF[e];let s='';
+ s+=`<rect x="8" y="8" width="624" height="324" rx="16" fill="none" stroke="#0369a1" stroke-width="2" stroke-dasharray="7 5"/>`+TX(22,28,[trunc(c.unidad||'¿Unidad de análisis?',55)+(S.ctx.donde?' · '+trunc(S.ctx.donde,35):'')],{a:'start',fs:12,fw:700,fill:'#075985'})+(c.tiempo?TX(618,28,[trunc(c.tiempo,38)],{a:'end',fs:11,fill:'#854d0e'}):'');
+ if(e==='expl'){
+  const cats=lines(c.x).slice(0,6);s+=NODE(220,120,200,100,'#6B21A8','PREGUNTA',S.pregunta,'',!S.pregunta.trim());
+  cats.forEach((k,i)=>{const ang=Math.PI*(0.15+0.7*i/Math.max(1,cats.length-1)),x=i<3?20:440,y=60+(i%3)*85;s+=`<rect x="${x}" y="${y}" width="180" height="46" rx="12" fill="#e0f2fe" stroke="#0369a1" stroke-width="2"/>`+TX(x+90,y+19,['CATEGORÍA'],{fs:9.5,fw:700,fill:'#075985'})+TX(x+90,y+35,wrap(k,24,1),{fs:11.5,fw:600})+`<line x1="${i<3?200:440}" y1="${y+23}" x2="${i<3?220:420}" y2="170" stroke="#475569" stroke-dasharray="4 3"/>`});
+  if(!cats.length)s+=TX(320,60,['¿Qué categorías o dimensiones vas a explorar?'],{fs:12,fill:'#64748b'});
+  s+=TX(320,322,['Enfoque exploratorio: sin relación hipotetizada'],{fs:10.5,fill:'#475569'});
+  return SV(640,340,'Diagrama de categorías exploratorias','Pregunta central y categorías a explorar.',s)}
+ s+=NODE(30,120,180,100,'#6B21A8',E.x.toUpperCase(),c.x,c.x_ind?'mide: '+c.x_ind:'¿cómo se define?',!c.x.trim());
+ s+=NODE(430,120,180,100,'#c2410c',E.y.toUpperCase(),c.y,c.y_ind?'mide: '+c.y_ind:'¿cómo se mide?',!c.y.trim());
+ const both=e==='asoc'||e==='comp';
+ s+=`<line x1="212" y1="170" x2="428" y2="170" stroke="#475569" stroke-width="3" marker-end="url(#ah)"${both?' marker-start="url(#ahs)"':''}/>`+TX(320,160,[DIRSYM[c.dir]||'¿dirección?'],{fs:13,fw:700,fill:c.dir?'#166534':'#64748b'});
+ if(e==='causal'&&c.mec.trim()){s+=NODE(250,44,140,60,'#0e7490','MECANISMO',c.mec,'',false)+`<path d="M150 118 Q170 76 248 76" fill="none" stroke="#475569" stroke-width="2" marker-end="url(#ah)"/><path d="M392 76 Q470 76 490 118" fill="none" stroke="#475569" stroke-width="2" marker-end="url(#ah)"/>`}
+ const cf=lines(c.conf).slice(0,3);
+ if(cf.length){const w=180,gap=(600-cf.length*w)/(cf.length+1);cf.forEach((t,i)=>{const x=20+gap*(i+1)+w*i;s+=`<rect x="${x}" y="262" width="${w}" height="48" rx="10" fill="#fee2e2" stroke="#dc2626" stroke-width="2" stroke-dasharray="6 4"/>`+TX(x+w/2,278,[e==='causal'?'CONFUSORA':'CONTROL'],{fs:9.5,fw:700,fill:'#b91c1c'})+TX(x+w/2,294,wrap(t,26,1),{fs:11.5,fw:600})+`<path d="M${x+w/2} 262 L120 222" fill="none" stroke="#dc2626" stroke-width="1.6" stroke-dasharray="5 4" marker-end="url(#ar)"/><path d="M${x+w/2} 262 L520 222" fill="none" stroke="#dc2626" stroke-width="1.6" stroke-dasharray="5 4" marker-end="url(#ar)"/>`})}
+ else s+=TX(320,290,['¿Qué otras cosas podrían explicar el resultado? ('+(e==='causal'?'confusoras':'controles')+')'],{fs:11.5,fill:'#64748b'});
+ return SV(640,340,'Diagrama de variables','Relación propuesta entre '+(c.x||'el primer elemento')+' y '+(c.y||'el segundo')+'.',s)}
+function altVars(){const c=S.c,E=ENF[S.enfoque];if(exp())return 'Diagrama exploratorio. Pregunta: '+(S.pregunta||'sin escribir')+'. Categorías: '+(lines(c.x).join('; ')||'ninguna')+'.';return 'Diagrama de variables ('+E.n+'). '+E.x+': '+(c.x||'sin definir')+(c.x_ind?' (se mide con '+c.x_ind+')':'')+'. '+E.y+': '+(c.y||'sin definir')+(c.y_ind?' (se mide con '+c.y_ind+')':'')+'. Relación propuesta: '+(DIRSYM[c.dir]||'sin dirección')+'.'+(c.mec?' Mecanismo: '+c.mec+'.':'')+' '+(lines(c.conf).length?E.conf+': '+lines(c.conf).join('; ')+'.':'Sin confusoras o controles registrados.')}
+function secSVG(){
+ const P=ne(S.vis.pasos,'t').slice(0,6),n=P.length;if(!n)return '';const w=(700)/n;let s='';
+ P.forEach((p,i)=>{const x=10+i*w;s+=`<path d="M${x} 20 H${x+w-18} L${x+w-4} 70 L${x+w-18} 120 H${x} L${x+14} 70 Z" fill="${i%2?'#ffedd5':'#f3e8ff'}" stroke="#6B21A8" stroke-width="1.5"/><circle cx="${x+30}" cy="36" r="11" fill="#6B21A8"/>`+TX(x+30,40,[String(i+1)],{fs:12,fw:700,fill:'#fff'})+TX(x+w/2+6,62,wrap(p.t,Math.max(10,Math.floor(w/7.5)),4),{fs:11,fw:600,lh:14})});
+ s+=TX(360,146,['Secuencia propuesta (hipotética) — no describe hechos observados'],{fs:10.5,fill:'#475569'});
+ return SV(720,156,'Secuencia visual','Pasos propuestos de cómo ocurriría el fenómeno.',s)}
+function altSec(){const P=ne(S.vis.pasos,'t');return P.length?'Secuencia propuesta en '+P.length+' pasos: '+P.map((p,i)=>(i+1)+') '+p.t).join('; ')+'.':'Sin pasos registrados.'}
+function ciSVG(){
+ const dm=1,xs=[-1,3.2],W=620,H=250,L=150,X=v=>L+(W-L-20)*(v-xs[0])/(xs[1]-xs[0]);let s='';
+ s+=`<rect x="${X(-1)}" y="30" width="${X(0)-X(-1)}" height="150" fill="#fee2e2"/><rect x="${X(0)}" y="30" width="${X(dm)-X(0)}" height="150" fill="#fef3c7"/><rect x="${X(dm)}" y="30" width="${X(3.2)-X(dm)}" height="150" fill="#dcfce7"/>`;
+ s+=TX(X(-.5),24,['contrario'],{fs:10,fill:'#991b1b'})+TX(X(.5),24,['efecto trivial'],{fs:10,fill:'#92400e'})+TX(X(2.1),24,['efecto que importa'],{fs:10,fill:'#166534'});
+ s+=`<line x1="${X(0)}" x2="${X(0)}" y1="30" y2="180" stroke="#475569" stroke-dasharray="4 3"/><line x1="${X(dm)}" x2="${X(dm)}" y1="30" y2="180" stroke="#6B21A8" stroke-dasharray="4 3"/>`;
+ [['A · Compatible con H1',1.55,1.1,2.0,'#166534',60],['B · Mixto / inconcluso',.6,-.3,1.5,'#92400e',105],['C · Cuestiona el efecto',.05,-.4,.5,'#991b1b',150]].forEach(([n,e,lo,hi,col,y])=>{s+=TX(8,y+4,[n],{a:'start',fs:11.5,fw:600})+`<line x1="${X(lo)}" x2="${X(hi)}" y1="${y}" y2="${y}" stroke="${col}" stroke-width="4" stroke-linecap="round"/><circle cx="${X(e)}" cy="${y}" r="6" fill="${col}"/>`});
+ s+=TX(X(0),198,['0 (nada)'],{fs:10})+TX(X(dm),198,['mínimo que importa'],{fs:10,fill:'#6B21A8'})+TX(W/2,236,['Punto = diferencia observada · Línea = incertidumbre · PROYECCIÓN PEDAGÓGICA, no son resultados'],{fs:10.5,fill:'#475569'});
+ return SV(W,H,'Tres resultados posibles (ilustrativo)','Compatible, mixto y que cuestiona, según dónde caiga el intervalo respecto del mínimo relevante.',s)}
+function stripSVG(title,A,B,lo,hi,lab,sub){
+ const W=300,H=270,L=44,T=34,Bt=40,sc=v=>T+(H-T-Bt)*(1-(v-lo)/(hi-lo));let s=TX(W/2,16,[title],{fs:12,fw:700,fill:'#6B21A8'});
+ for(let i=0;i<=4;i++){const v=lo+(hi-lo)*i/4,y=sc(v);s+=`<line x1="${L}" x2="${W-8}" y1="${y}" y2="${y}" stroke="#eee"/>`+TX(L-5,y+4,[v.toFixed(1)],{a:'end',fs:9.5,fill:'#5b5370'})}
+ const R=rng(5);[[A,L+(W-L)*.28,'#94a3b8',lab[0]],[B,L+(W-L)*.72,'#c2410c',lab[1]]].forEach(([d,x,col,l])=>{d.forEach(v=>{s+=`<circle cx="${x+(R()-.5)*50}" cy="${sc(v)}" r="3" fill="${col}" fill-opacity=".6"/>`});s+=`<line x1="${x-32}" x2="${x+32}" y1="${sc(mean(d))}" y2="${sc(mean(d))}" stroke="#1f1630" stroke-width="3"/>`+TX(x,H-Bt+14,wrap(l,16,2),{fs:10,fw:600})});
+ return SV(W,H,title+' (datos sintéticos)','Gráfico de puntos con datos generados por simulación.',s+TX(W/2,H-6,[sub],{fs:10,fill:'#475569'}))}
+function histSVG(r){
+ const W=560,H=250,L=40,Bt=44,T=14,all=r.h1.concat(r.h0),lo=Math.min(...all),hi=Math.max(...all),nb=34,bw=(hi-lo)/nb,b1=Array(nb).fill(0),b0=Array(nb).fill(0),bi=v=>Math.min(nb-1,Math.floor((v-lo)/bw));
+ r.h1.forEach(v=>b1[bi(v)]++);r.h0.forEach(v=>b0[bi(v)]++);const mx=Math.max(...b1,...b0),X=v=>L+(W-L-10)*(v-lo)/(hi-lo),Y=c=>T+(H-T-Bt)*(1-c/mx);let s='';
+ [[b0,'#64748b'],[b1,'#c2410c']].forEach(([b,col])=>b.forEach((c,i)=>{s+=`<rect x="${L+(W-L-10)*i/nb}" y="${Y(c)}" width="${(W-L-10)/nb-1}" height="${H-Bt-Y(c)}" fill="${col}" fill-opacity=".5"/>`}));
+ s+=`<line x1="${X(0)}" x2="${X(0)}" y1="${T}" y2="${H-Bt}" stroke="#475569" stroke-dasharray="4 3"/><line x1="${X(r.P.d)}" x2="${X(r.P.d)}" y1="${T}" y2="${H-Bt}" stroke="#c2410c" stroke-dasharray="4 3"/>`+TX(X(0),H-Bt+14,['0'],{fs:10})+TX(X(r.P.d),H-Bt+14,['efecto supuesto '+r.P.d],{fs:10,fill:'#c2410c'})+TX(W/2,H-6,['Diferencia observada entre grupos (desviaciones estándar) en '+r.P.runs+' estudios SIMULADOS'],{fs:10.5,fill:'#475569'});
+ s+=`<rect x="${W-210}" y="8" width="10" height="10" fill="#c2410c" fill-opacity=".6"/>`+TX(W-196,17,['Si H1 fuera cierta'],{a:'start',fs:10.5})+`<rect x="${W-210}" y="24" width="10" height="10" fill="#64748b" fill-opacity=".6"/>`+TX(W-196,33,['Si H0 fuera cierta'],{a:'start',fs:10.5});
+ return SV(W,H,'Distribución de diferencias simuladas','Dos distribuciones superpuestas, con H1 y con H0 ciertas.',s)}
+function rateSVG(r){const it=[['Poder: detecta un efecto real',r.power,'#166534'],['Falsa alarma (H0 cierta)',r.typeI,'#475569'],['Rechazo con confusora',r.rej3,'#b91c1c']];let s='';
+ it.forEach((x,i)=>{const y=12+i*38;s+=TX(8,y+14,[x[0]],{a:'start',fs:11.5})+`<rect x="230" y="${y}" width="260" height="20" rx="5" fill="#eee"/><rect x="230" y="${y}" width="${260*x[1]}" height="20" rx="5" fill="${x[2]}"/>`+TX(498,y+15,[Math.round(x[1]*100)+'%'],{a:'start',fs:12,fw:700})});
+ return SV(560,130,'Tasas de rechazo simuladas','Poder, falsas alarmas y rechazo con confusora, en estudios simulados.',s)}
+
+/* ================= LIENZO ================= */
+const CT=[['mapa','Mapa del problema'],['vars','Diagrama de variables'],['escena','Escena'],['sec','Secuencia'],['esc','Escenarios'],['evid','Evidencias'],['dim','Dimensiones'],['hist','Historial']];
+const CLASE_CHIP=c=>`<span class="chip ${['Ilustración','Escenario hipotético'].includes(c)?'sim':''}">${esc(c)}</span>`;
+function imgPrompts(){const c=S.c,pob=c.unidad||'[personas]',x=c.x||'[factor]',y=c.y||'[resultado]',d=DIRSYM[c.dir]||'[dirección]',cf=lines(c.conf).slice(0,3).join(', ')||'[confusoras]';
+ const est='Estilo infografía de ilustración plana, fondo claro, acentos púrpura #6B21A8 y naranja #F97316, textos breves en español, máximo 6 elementos.',neg='Negative prompt: fotografía hiperrealista, texto ilegible, marcas de agua, logotipos, más de 6 elementos.';
+ return[{t:'Escena contextual',p:`Escena 16:9: ${pob} en ${S.ctx.donde||'[lugar]'}. Se ve la situación «${trunc(S.p.ocurre||'[problema]',90)}». ${est} ${neg}`,para:'Ilustración del contexto para quienes no leen términos técnicos. Clase: Ilustración.'},
+ {t:'Esquema de la relación propuesta',p:`Diagrama 4:3: «${trunc(x,60)}» → flecha → «${trunc(y,60)}» (${d}). Nodos punteados rojos de ${exp()?'condiciones':'confusoras'}: ${trunc(cf,80)}. Etiqueta «PROPUESTA, NO EVIDENCIA». ${est} ${neg}`,para:'Refuerza el diagrama de variables. Clase: Ilustración.'},
+ {t:'Dos escenarios posibles',p:`Panel doble 16:9: izquierda «Si la propuesta se sostiene»; derecha «Si no se sostiene», comparando «${trunc(x,40)}». Rótulo visible «ESCENARIOS HIPOTÉTICOS». ${est} ${neg}`,para:'Ayuda a anticipar interpretaciones. Clase: Escenario hipotético.'}]}
+function pinsHTML(){const v=S.vis,C={VI:'#6B21A8',Resultado:'#c2410c',Confusora:'#b91c1c',Riesgo:'#854d0e',Otro:'#475569'};
+ if(!v.img)return '<p class="mut">Sube una foto, croquis o ilustración. Luego marca dónde ocurre lo que estudias, dónde se mide el resultado y qué riesgos o confusoras ves.</p>';
+ return `<div class="imgwrap${S.ui.pin?' pin':''}" data-act="imgclick"><img src="${v.img}" alt="${esc(v.imgNota||'Imagen del problema (sin descripción: escríbela abajo)')}">${v.pins.map((p,i)=>`<span class="pn" style="left:${p.x}%;top:${p.y}%;background:${C[p.t]||'#475569'}">${i+1}</span>`).join('')}</div>`
+ +`<div class="row" style="margin:8px 0"><button class="btn sm${S.ui.pin?' acc':''}" data-act="pinmode" aria-pressed="${S.ui.pin}">${S.ui.pin?'Modo marcar activo (clic en la imagen)':'Activar modo marcar con clic'}</button><button class="btn sm gh" data-act="addpin">Agregar marca (sin ratón)</button><button class="btn sm gh" data-act="rmimg">Quitar imagen</button></div>`
+ +v.pins.map((p,i)=>`<div class="row" style="margin-bottom:6px"><span class="chip">${i+1}</span><select data-bind="vis.pins.${i}.t" aria-label="Tipo de marca ${i+1}" style="width:120px">${Object.keys(C).map(k=>`<option${p.t===k?' selected':''}>${k}</option>`).join('')}</select><input type="text" class="sp" data-bind="vis.pins.${i}.l" value="${esc(p.l)}" placeholder="¿Qué pasa aquí?" aria-label="Descripción marca ${i+1}"><label class="mut" style="font-size:.78rem">x%<input type="number" style="width:62px" data-num="1" data-bind="vis.pins.${i}.x" value="${p.x}" min="0" max="100"></label><label class="mut" style="font-size:.78rem">y%<input type="number" style="width:62px" data-num="1" data-bind="vis.pins.${i}.y" value="${p.y}" min="0" max="100"></label><button class="btn sm gh" data-act="rmpin" data-arg="${i}" aria-label="Quitar marca ${i+1}">✕</button></div>`).join('')}
+function escenaHTML(){const pr=imgPrompts();return `<h3>Escena contextual</h3><div class="note">Una imagen aquí <b>no es evidencia</b> del fenómeno ni demuestra un resultado. Debes rotularla.</div>`
+ +`<div class="row"><button class="btn sm" data-act="upimg">Subir imagen propia</button><small class="mut">Se reduce a 800 px y se guarda solo en este navegador.</small></div>`
+ +`<label class="f"><span>Clase de esta imagen (obligatoria)</span><select data-bind="vis.imgTipo">${CLASES.map(c=>`<option${S.vis.imgTipo===c?' selected':''}>${c}</option>`).join('')}</select></label>`
+ +(S.vis.img?`<p>${CLASE_CHIP(S.vis.imgTipo)} ${['Ilustración','Escenario hipotético'].includes(S.vis.imgTipo)?'<b class="no">No es evidencia del fenómeno.</b>':''}</p>`:'')
+ +`<div id="pins">${pinsHTML()}</div>`+FLD('vis.imgNota','Descripción textual de la imagen (alternativa para lectores de pantalla)',{rows:2})
+ +`<h4>Prompts para generar ilustraciones <span class="chip sim">generación no integrada</span></h4><p class="mut">La plataforma no genera imágenes: te da el texto para hacerlo en otra herramienta. Revisa el texto dentro de las imágenes generadas.</p>`
+ +pr.map((p,i)=>`<div class="hint"><b>${p.t}</b><br><small>${p.para}</small><pre class="pr" id="pi${i}">${esc(p.p)}</pre><button class="btn sm gh" data-act="copy" data-arg="pi${i}">Copiar</button></div>`).join('')}
+function escHTML(){
+ const sim=S.sim,sg=sgn(),R=mkN(rng(7)),n=Math.max(5,Math.min(60,+sim.n||30)),d=+sim.d||.6,g=(ef)=>{const a=[],b=[];for(let i=0;i<n;i++){a.push(R());b.push(R()+sg*ef)}return[a,b]},p1=g(d),p0=g(0),A3=[],B3=[];
+ for(let i=0;i<2*n;i++){const z=R(),gi=(z+R())>0?1:0,y=sg*d*gi+0.8*z+R();(gi?B3:A3).push(y)}
+ const all=[...p1[0],...p1[1],...p0[0],...p0[1],...A3,...B3],lo=Math.min(...all),hi=Math.max(...all),la=['Comparación','Con '+trunc(S.c.x||'factor',10)];
+ const df=(a,b)=>{const t=welch(a,b),q=qt975(t.df||30);return 'Dif. '+(t.diff>=0?'+':'')+t.diff.toFixed(1)+' (IC95 % '+(t.diff-q*t.se).toFixed(1)+' a '+(t.diff+q*t.se).toFixed(1)+')'};
+ const card=(k,l,t)=>`<div class="hint"><span class="chip ${k}">${l}</span><br>${esc(t)||'<span class="mut">Sin completar (etapa 9).</span>'}</div>`;
+ return `<h3>Escenarios de resultados</h3><div class="warn">PROYECCIÓN PEDAGÓGICA — nada de esta pestaña es un resultado observado.</div>`
+ +card('ok','Compatibles con la hipótesis',S.esc.compat)+card('at','Que la cuestionan',S.esc.cuestiona)+card('pe','Mixtos o inconclusos',S.esc.mixto)+card('na','Explicaciones alternativas',S.esc.alterna)+card('na','Consecuencias no previstas',S.esc.imprev)
+ +`<h4>Cómo se interpretaría cada tipo de resultado</h4>`+ciSVG()
+ +`<h4>Comparación de situaciones</h4><div class="grid2"><div class="hint"><b>Situación actual</b><br>${esc(S.vis.actual)||'<span class="mut">Sin completar (etapa 8).</span>'}</div><div class="hint"><b>Situación posible</b><br>${esc(S.vis.posible)||'<span class="mut">Sin completar (etapa 8).</span>'}</div></div>`
+ +`<h4>Ilustración con datos sintéticos <span class="chip sim">simulado</span></h4><div class="warn">DATOS SINTÉTICOS ILUSTRATIVOS — no son observaciones ni resultados de tu estudio.</div><div class="row">${[['Si la hipótesis se sostuviera',p1],['Si no hubiera efecto',p0],['Efecto con confusora sin controlar',[A3,B3]]].map(x=>`<div style="flex:1;min-width:220px">${stripSVG(x[0],x[1][0],x[1][1],lo,hi,la,df(x[1][0],x[1][1]))}</div>`).join('')}</div>`}
+function evidHTML(){const ev=ne(S.evid,'desc'),claims=claimOpts().slice(1);
+ return `<h3>Panel de evidencias</h3><p class="mut">Cada afirmación debería poder rastrearse a su respaldo. Se edita en la etapa 3.</p>`
+ +(ev.length?`<table class="t"><tr><th>Antecedente</th><th>Clase</th><th>Fuente</th><th>Vinculado a</th></tr>${ev.map(e=>`<tr><td>${esc(e.desc)}</td><td>${CLASE_CHIP(e.clase)}</td><td>${esc(e.fuente)||'<b class="no">sin fuente</b>'}</td><td>${esc(claimOpts().find(o=>o[0]===e.vinc)?.[1]||'—')}</td></tr>`).join('')}</table>`:'<p class="mut">Sin antecedentes registrados.</p>')
+ +`<h4>Cobertura por afirmación</h4><table class="t"><tr><th>Afirmación</th><th>Antecedentes</th></tr>${claims.map(cl=>{const k=ev.filter(e=>e.vinc===cl[0]).length;return `<tr><td>${esc(cl[1])}</td><td>${k?k+' vinculado(s)':'<span class="no">sin evidencia vinculada</span>'}</td></tr>`}).join('')||'<tr><td colspan="2">Sin afirmaciones.</td></tr>'}</table>`
+ +`<p class="mut"><b>Falta conocer:</b> ${esc(S.falta)||'sin registrar'}</p><div class="note">Clases: <b>dato real</b> (medición efectiva), <b>registro de observación</b>, <b>documento o estudio</b>, <b>ilustración</b> y <b>escenario hipotético</b>. Solo las tres primeras describen el mundo; las dos últimas son recursos pedagógicos.</div>`}
+function dimHTML(){const c=S.c,E=ENF[S.enfoque],A=ne(S.actores,'n'),ev=ne(S.evid,'desc');
+ const D=[['Humana','Experiencias, necesidades y personas afectadas',A.length?A.map(a=>`<li><b>${esc(a.n)}</b>${a.rol?' ('+esc(a.rol)+')':''}: ${esc(a.cons)||'<i>consecuencia sin registrar</i>'}</li>`).join(''):'',0],
+ ['Conceptual','Conceptos y relaciones que se busca comprender',(c.x||c.y)?`<li>${esc(E.x)}: ${esc(c.x)||'—'}</li>${E.y?`<li>${esc(E.y)}: ${esc(c.y)||'—'}</li>`:''}<li>Relación: ${esc(DIRSYM[c.dir]||'sin dirección')}</li>${c.mec?`<li>Mecanismo: ${esc(c.mec)}</li>`:''}`:'',5],
+ ['Empírica','Información disponible y evidencia faltante',(ev.length||S.falta.trim())?`<li>${ev.length} antecedente(s) (${ev.filter(e=>e.fuente.trim()).length} con fuente)</li><li>Falta conocer: ${esc(S.falta)||'sin registrar'}</li>`:'',2],
+ ['Metodológica','Posibilidades de observación, medición y análisis',(c.x_ind||c.y_ind||S.con.muestra||S.con.analisis)?`<li>Indicadores: ${esc(c.x_ind||'—')} / ${esc(c.y_ind||'—')}</li><li>Instrumento: ${esc(c.y_inst||'—')}</li><li>Muestra: ${esc(S.con.muestra||'—')}</li><li>Análisis: ${esc(S.con.analisis||'—')}</li>`:'',8],
+ ['Contextual','Condiciones sociales, institucionales, ambientales o económicas',(S.ctx.donde||S.ctx.cuando||S.ctx.circ)?`<li>Dónde: ${esc(S.ctx.donde||'—')}</li><li>Cuándo: ${esc(S.ctx.cuando||'—')}</li><li>Circunstancias: ${esc(S.ctx.circ||'—')}</li>`:'',1],
+ ['Ética','Riesgos, privacidad y posibles efectos de investigar',(S.con.riesgos||S.con.priv)?`<li>Riesgos: ${esc(S.con.riesgos||'—')}</li><li>Privacidad: ${esc(S.con.priv||'—')}</li>`:'',8]];
+ return `<h3>Vista multidimensional</h3><p class="mut">Se alimenta de lo que registras; solo muestra lo que existe.</p>`+D.map(d=>`<div class="hint"><div class="row"><b>${d[0]}</b><span class="mut sp">${d[1]}</span><button class="btn sm gh" data-act="stage" data-arg="${d[3]}">${d[2]?'Editar':'Completar'}</button></div>${d[2]?`<ul>${d[2]}</ul>`:'<p class="mut">Sin información registrada.</p>'}</div>`).join('')}
+function histHTML(){if(!S.vers.length)return '<h3>Historial visual</h3><p class="mut">Aún no guardas versiones (etapa 10).</p>';
+ return `<h3>Historial visual</h3><ol style="padding-left:18px">${S.vers.map((v,i)=>`<li style="margin-bottom:10px"><b>V${i+1}</b> <small class="mut">${esc(v.ts.slice(0,10))}</small><br><i>${esc(v.snap.texto||v.snap.pregunta||'(sin texto)')}</i><br><small>Cambio: ${esc(v.cambio)}</small><br>${v.rev.map(r=>`<span class="chip ${TONO[r.tono][1]}" title="${esc(r.n)}">${TONO[r.tono][0]} ${esc(r.n.split(' ')[0])}</span>`).join('')}</li>`).join('')}</ol>`}
+function canvasHTML(){
+ const sl=stale();let body='';
+ const alt=(t)=>`<details><summary>Alternativa textual</summary><p>${esc(t)}</p></details>`;
+ if(S.ctab==='mapa')body=`<h3>Mapa del problema</h3>${mapaSVG()}${alt(altMapa())}`;
+ else if(S.ctab==='vars')body=`<h3>Diagrama de variables</h3><p class="mut">${esc(ENF[S.enfoque].n)}</p>${varsSVG()}${alt(altVars())}`;
+ else if(S.ctab==='escena')body=escenaHTML();
+ else if(S.ctab==='sec')body=`<h3>Secuencia visual</h3>${secSVG()||'<p class="mut">Agrega pasos en la etapa 8.</p>'}${alt(altSec())}`;
+ else if(S.ctab==='esc')body=escHTML();
+ else if(S.ctab==='evid')body=evidHTML();
+ else if(S.ctab==='dim')body=dimHTML();
+ else body=histHTML();
+ return `<div class="card"><div class="tabs" role="tablist" aria-label="Recursos visuales">${CT.map(t=>`<button class="ct" role="tab" aria-selected="${S.ctab===t[0]}" data-act="ctab" data-arg="${t[0]}">${t[1]}</button>`).join('')}</div>`
+ +(sl&&sl.length?`<div class="warn" role="alert">Representaciones desactualizadas: ${esc(sl.join('; '))}.</div>`:'')+`<div id="cbody">${body}</div></div>`}
+
+/* ================= ETAPAS (panel de construcción) ================= */
+const HEAD=i=>`<div class="card pri"><h2>Etapa ${i+1} de 10 · ${ST[i].n}</h2><p><b>${ST[i].q}</b></p></div>`;
+const NAV=i=>`<div class="row" style="margin-bottom:14px">${i>0?`<button class="btn gh" data-act="stage" data-arg="${i-1}">← ${ST[i-1].s}</button>`:''}<span class="sp"></span>${i<9?`<button class="btn" data-act="stage" data-arg="${i+1}">${ST[i+1].s} →</button>`:''}</div>`;
+function enfSel(){return SEL('enfoque','Tipo de estudio que imaginas',Object.entries(ENF).map(([k,v])=>[k,v.n]))+`<p class="mut"><small>${esc(ENF[S.enfoque].nota)}</small></p>`}
+function s0(){return HEAD(0)+`<div class="card">${enfSel()}${FLD('p.ocurre','¿Qué ocurre?',{rows:3,h:'hechos observables, sin causa ni solución',ph:'En la bodega, dos operarios por mes piden licencia por dolor de espalda.'})}${FLD('p.porque','¿Por qué merece investigarse?',{rows:2,ph:'Genera costos, riesgo legal y afecta a las personas.'})}</div>`
+ +`<div class="card"><h3>Registro de afirmaciones</h3><p class="mut">Separa lo que se ve, lo que se interpreta, lo que se supone y lo que se predice.</p>${LIST('afirm','Aún no registras afirmaciones.')}</div>`+NAV(0)}
+function s1(){return HEAD(1)+`<div class="card"><div class="grid2">${FLD('ctx.donde','¿Dónde ocurre?',{ph:'Bodega de una constructora mediana, RM'})}${FLD('ctx.cuando','¿Cuándo / con qué frecuencia?',{ph:'Todo el año, más en temporada alta'})}</div>${FLD('ctx.circ','¿En qué circunstancias?',{rows:2,ph:'Turnos de día, carga manual sin ayudas mecánicas'})}${FLD('c.unidad','¿A quiénes afecta? (unidad de análisis)',{ph:'Operarios de bodega'})}</div>`
+ +`<div class="card"><h3>Actores y consecuencias</h3>${LIST('actores','Aún no registras actores.')}</div>`+NAV(1)}
+function s2(){return HEAD(2)+`<div class="card"><h3>Antecedentes disponibles</h3><div class="note">Registra solo lo que tienes. La plataforma <b>no busca ni inventa fuentes</b>; si no tienes una fuente, déjala vacía y quedará señalada.</div>${LIST('evid','Aún no registras antecedentes.')}</div>`+`<div class="card">${FLD('falta','¿Qué falta conocer?',{rows:3,ph:'No sabemos qué tareas concentran los episodios ni si el taller anterior cambió algo.'})}</div>`+NAV(2)}
+function s3(){return HEAD(3)+`<div class="card"><h3>Factores</h3><p class="mut">Cada factor es algo que podría intensificar o atenuar el problema. Marca cuánto sabes: «por explorar» es una respuesta válida.</p>${LIST('factores')}</div><div class="card"><h3>Consecuencias</h3>${LIST('consec')}</div>`+NAV(3)}
+function s4(){const E=ENF[S.enfoque];return HEAD(4)+`<div class="card">${enfSel()}${FLD('pregunta','Tu pregunta de investigación',{rows:3,ph:'¿Difiere la frecuencia de dolor lumbar entre operarios que asisten a un taller de levante y los que no, en 3 meses?'})}${SEL('pregTipo','Tipo de pregunta',[['','—'],['exploratoria','Exploratoria (¿qué ocurre? ¿cómo es?)'],['descriptiva','Descriptiva (¿cuánto? ¿con qué frecuencia?)'],['comparativa','Comparativa (¿difiere?)'],['asociacion','De asociación (¿se relacionan?)'],['explicativa','Explicativa (¿produce? ¿por qué?)']])}`
+ +(E.hip?'<div class="note p">Con este enfoque el siguiente paso es una hipótesis.</div>':'<div class="note p">Con un enfoque exploratorio no se exige hipótesis: tu pregunta es el producto central. Puedes saltar a la etapa 8.</div>')+`</div>`+NAV(4)}
+function altCards(){if(!S.ui.alt)return '';const a=alternativas();if(!a.length)return '<p class="mut">No hay alternativas para este enfoque.</p>';
+ return a.map((x,i)=>`<div class="hint"><b>Alternativa ${i+1}</b><p>${esc(x.t)}</p><p class="mut"><small><b>Qué cambia:</b> ${esc(x.q)}</small></p><div class="row"><button class="btn sm" data-act="altok" data-arg="${i}">Aceptar</button><button class="btn sm gh" data-act="altmod" data-arg="${i}">Modificar</button><button class="btn sm gh" data-act="altno" data-arg="${i}">Rechazar</button></div></div>`).join('')}
+function alternativas(){const c=S.c,e=S.enfoque,u=(c.unidad?c.unidad.charAt(0).toLowerCase()+c.unidad.slice(1):'[unidad]'),x=c.x||'[factor]',y=c.y_ind||c.y||'[resultado]',t=c.tiempo?' '+c.tiempo:'',dn=sgn()<0,cf=lines(c.conf)[0]||'';
+ if(e==='causal')return[{t:`En ${u}, quienes estén expuestos a «${x}» presentarán ${dn?'menor':'mayor'} «${y}» que quienes no lo estén${t}.`,n:`No habrá diferencia en «${y}» entre expuestos y no expuestos a «${x}», o será ${dn?'mayor':'menor'}${t}.`,q:'Direccional: apuesta por un sentido. Es más fácil de refutar (si ocurre lo contrario se cuestiona) pero arriesga más.'},{t:`En ${u}, habrá diferencia en «${y}» entre quienes estén expuestos a «${x}» y quienes no${t}.`,n:`No habrá diferencia en «${y}» entre expuestos y no expuestos${t}.`,q:'No direccional: más segura pero dice menos; casi cualquier resultado la confirma. Úsala si aún no tienes fundamento para el sentido.'},{t:`En ${u}, «${x}» se asociará con ${dn?'menor':'mayor'} «${y}»${t}${c.mec?', a través de «'+c.mec+'»':cf?', una vez considerado «'+cf+'»':''}.`,n:`«${x}» no se asociará con «${y}»${t}${cf?', una vez considerado «'+cf+'»':''}.`,q:'Condicionada: añade un mecanismo o un control. Afina el alcance pero obliga a medir esa pieza adicional.'}];
+ if(e==='asoc')return[{t:`En ${u}, «${x}» y «${y}» estarán asociadas ${c.dir==='neg'?'en sentido contrario':'en el mismo sentido'}${t}.`,n:`«${x}» y «${y}» no estarán asociadas${t}.`,q:'Direccional: define el sentido de la asociación. Sigue sin hablar de causa.'},{t:`En ${u}, existirá asociación entre «${x}» y «${y}»${t}.`,n:`No existirá asociación entre «${x}» y «${y}»${t}.`,q:'No direccional: casi cualquier resultado distinto de cero la confirma.'}];
+ if(e==='comp')return[{t:`En ${u}, el grupo «${x}» tendrá ${dn?'menores':'mayores'} valores de «${y}» que el grupo de comparación${t}.`,n:`No habrá diferencia en «${y}» entre grupos, o será ${dn?'mayor':'menor'} en «${x}»${t}.`,q:'Direccional: apuesta por qué grupo tiene más. Más fácil de refutar.'},{t:`En ${u}, los grupos diferirán en «${y}»${t}.`,n:`No habrá diferencia en «${y}» entre los grupos${t}.`,q:'No direccional: más segura, dice menos.'}];
+ return[]}
+function s5(){const E=ENF[S.enfoque],draft=wc(S.h.texto)>=6;
+ if(!E.hip)return HEAD(5)+`<div class="card"><div class="note p">Tu enfoque es exploratorio: no se exige hipótesis. Define las categorías que explorarás y, si quieres, proposiciones guía.</div>${FLD('c.x','Categorías o dimensiones (una por línea)',{rows:4})}${FLD('h.texto','Proposiciones guía o preguntas específicas (opcional)',{rows:3})}${FLD('c.conf','Condiciones o factores a registrar (una por línea)',{rows:3})}${FLD('c.refuta','¿Qué hallazgo te haría replantear la pregunta?',{rows:2})}</div>`+NAV(5);
+ return HEAD(5)+`<div class="card acc"><h3>1 · Tu intento, con tus palabras</h3><p class="mut">Escribe primero tu versión. Las alternativas de redacción aparecen <b>después</b> de que lo intentes.</p>${FLD('h.texto','Tu hipótesis',{rows:3})}<small id="wcH" class="mut"></small>${FLD('h.nula','Hipótesis nula (qué ocurriría si tu idea fuera falsa)',{rows:2})}${ADV(FLD('h.cot','Versión en palabras cotidianas (≤25 palabras, opcional)',{rows:2}))}<h4>Descomposición de tu texto</h4><div id="hl">${hlHTML()}</div>`
+ +`<div class="row"><button class="btn acc sm" data-act="alt"${draft?'':' disabled'}>Ver alternativas de redacción</button>${draft?'':'<small class="mut">Se habilita cuando escribas un borrador (≥ 6 palabras).</small>'}</div><div id="altc">${altCards()}</div></div>`
+ +`<div class="card"><h3>2 · Piezas de tu hipótesis</h3><p class="mut">Cada pieza responde una decisión. Si te trabas, usa las preguntas del panel derecho.</p><div class="grid2"><div>${FLD('c.unidad','¿En quiénes? (unidad de análisis)')}${FLD('c.tiempo','¿Cuándo / horizonte temporal?')}${FLD('c.x',E.x)}${ADV(FLD('c.x_inst','Cómo se registra / define '+E.x.toLowerCase()))}${FLD('c.x_ind','Indicador de '+E.x.toLowerCase())}</div><div>${FLD('c.y',E.y)}${FLD('c.y_ind','Indicador de '+E.y.toLowerCase())}${FLD('c.y_inst','Instrumento de '+E.y.toLowerCase())}${ADV(FLD('c.y_esc','Escala de '+E.y.toLowerCase(),{ph:'conteo, 1–7, sí/no…'}))}${SEL('c.dir','Dirección esperada',[['','—'],...E.dirs])}</div></div>`
+ +(E.mec?ADV(FLD('c.mec','Mecanismo (cómo se propone que ocurre) · opcional',{rows:2})):'')+FLD('c.conf',E.conf+' (una por línea)',{rows:3})+FLD('c.fund','Fundamento: ¿por qué esperas esta relación?',{rows:3,h:'razón conceptual; no equivale a validez'})+FLD('c.refuta','¿Qué resultado cuestionaría tu hipótesis?',{rows:2,ph:'Si no hay diferencia o es contraria al sentido esperado…'})+ADV(FLD('c.alcance','Alcance de la hipótesis',{rows:2})+FLD('c.limit','Limitaciones previstas',{rows:2}))+`</div>`
+ +`<div class="card"><h3>3 · Supuestos y limitaciones</h3>${LIST('sup','Aún no registras supuestos.')}</div>`
+ +`<div class="card"><h3>Matriz de variables e indicadores</h3><div id="matriz">${matrizHTML()}</div></div>`+NAV(5)}
+function matrizHTML(){const c=S.c,E=ENF[S.enfoque];return `<table class="t"><tr><th>Elemento</th><th>Rol</th><th>Indicador</th><th>Instrumento</th><th>Escala</th></tr><tr><td>${esc(c.x)||'—'}</td><td>${esc(E.x)}</td><td>${esc(c.x_ind)||'—'}</td><td>${esc(c.x_inst)||'—'}</td><td>—</td></tr>${E.y?`<tr><td>${esc(c.y)||'—'}</td><td>${esc(E.y)}</td><td>${esc(c.y_ind)||'—'}</td><td>${esc(c.y_inst)||'—'}</td><td>${esc(c.y_esc)||'—'}</td></tr>`:''}${lines(c.conf).map(k=>`<tr><td>${esc(k)}</td><td>${esc(E.conf.split('(')[0].trim())}</td><td>—</td><td>—</td><td>—</td></tr>`).join('')}</table>`}
+function hlHTML(){const t=S.h.texto;if(!t.trim())return '<p class="mut">Escribe tu hipótesis para ver su descomposición.</p>';
+ const c=S.c,sets=[['Unidad',toks(c.unidad),'#0369a1'],[ENF[S.enfoque].x,toks(c.x+' '+c.x_ind),'#6B21A8'],[ENF[S.enfoque].y||'Resultado',toks(c.y+' '+c.y_ind),'#c2410c'],['Horizonte',toks(c.tiempo),'#854d0e'],['Control',toks(c.conf),'#b91c1c'],['Mecanismo',toks(c.mec),'#0e7490']];const used=new Map();
+ const out=t.split(/(\s+)/).map(w=>{if(!w.trim())return esc(w);const s=toks(w)[0];if(s)for(const [k,set,col] of sets)if(set.includes(s)){used.set(k,col);return `<span class="hl" style="background:${col}22;border-bottom:2px solid ${col}">${esc(w)}</span>`}
+  const nw=norm(w).replace(/[^a-z]/g,'');if(POSW.includes(nw)||NEGW.includes(nw)){used.set('Dirección','#166534');return `<span class="hl" style="background:#16653422;border-bottom:2px solid #166534">${esc(w)}</span>`}return esc(w)}).join('');
+ const need=['Unidad',ENF[S.enfoque].x,ENF[S.enfoque].y||'Resultado','Horizonte','Dirección'].filter(k=>!used.has(k));
+ return `<p style="line-height:2">${out}</p><div>${[...used].map(([k,col])=>`<span class="chip"><i class="sw" style="background:${col}"></i>${esc(k)}</span>`).join('')}</div>`+(need.length?`<div class="note">No aparece en el texto: <b>${esc(need.join(', '))}</b>. ¿Falta realmente o está implícito?</div>`:'<div class="note p">Todas las piezas centrales aparecen en el texto.</div>')}
+function s6(){const R=revisar();const cnt=t=>R.filter(r=>r.tono===t).length;
+ return HEAD(6)+`<div class="card"><div class="warn">Estos estados describen la <u>formulación</u>. No indican que la hipótesis sea verdadera ni que esté validada: eso solo puede decirlo la contrastación con evidencia.</div><p><span class="chip ok">✓ ${cnt('ok')} consistentes</span><span class="chip at">◐ ${cnt('at')} requieren precisión</span><span class="chip pe">○ ${cnt('pe')} con algo por definir</span></p></div>`
+ +R.map(r=>{const d=S.rev[r.id]||{};return `<div class="card"><div class="row"><h3 style="margin:0" class="sp">${r.n}</h3><span class="chip ${TONO[r.tono][1]}">${TONO[r.tono][0]} ${esc(r.estado)}</span></div><dl class="rv"><dt>Qué se está revisando</dt><dd>${esc(r.que)}</dd><dt>Qué requiere atención</dt><dd>${esc(r.aten)}</dd><dt>Por qué es importante</dt><dd>${esc(r.porq)}</dd><dt>Qué cambio se propone</dt><dd>${esc(r.camb)}</dd></dl><fieldset class="li"><legend>Tu decisión</legend><div class="row">${[['acepto','Acepto el cambio'],['pospongo','Lo dejo para después'],['nocomparto','No lo comparto']].map(o=>`<label><input type="radio" name="rv_${r.id}" value="${o[0]}" data-bind="rev.${r.id}.dec"${d.dec===o[0]?' checked':''}> ${o[1]}</label>`).join('')}</div>${FLD('rev.'+r.id+'.nota','Nota o fundamento de tu decisión')}</fieldset></div>`}).join('')+NAV(6)}
+function s7(){const sl=stale();
+ return HEAD(7)+`<div class="card"><p>Mira el <b>lienzo</b>: mapa del problema, diagrama de variables y escena se dibujan con lo que escribiste. Pregúntate qué ves ahí que el texto no decía.</p>${sl&&sl.length?`<div class="warn">Requieren actualización: ${esc(sl.join('; '))}.</div>`:(S.vis.snap?'<div class="note p">Los visuales coinciden con tu última confirmación.</div>':'<div class="note">Aún no confirmas que los visuales reflejan tu formulación.</div>')}<button class="btn" data-act="snap">Confirmar que los visuales están al día</button></div>`
+ +`<div class="card"><h3>Secuencia: ¿cómo se propone que ocurre?</h3><p class="mut">Pasos hipotéticos, uno por caja. No describen hechos.</p>${LIST('vis.pasos')}</div>`
+ +`<div class="card"><h3>Comparación de situaciones</h3>${FLD('vis.actual','Situación actual',{rows:2})}${FLD('vis.posible','Situación posible si la propuesta se sostuviera',{rows:2})}<p class="mut"><small>Se muestran en la pestaña «Escenarios» del lienzo.</small></p></div>`+NAV(7)}
+function simRes(){const r=S.sim.res;if(!r)return '<p class="mut">Aún no corres la simulación.</p>';const p=S.sim.pred,dif=p!=null?Math.abs(p-r.power*100):null;
+ return rateSVG(r)+histSVG(r)+`<div class="warn">SINTÉTICO — NO ES EVIDENCIA EMPÍRICA. Evalúa el <b>diseño</b>, no la hipótesis.</div><table class="t"><tr><th>Pregunta</th><th>Resultado simulado</th></tr><tr><td>¿Detecta el efecto supuesto (${r.P.d} DE) con n=${r.P.n} por grupo?</td><td><b>${Math.round(r.power*100)} %</b> (meta ≥ 80 %)</td></tr><tr><td>Falsas alarmas si H0 fuera cierta (esperado ≈ ${Math.round(r.P.alpha*100)} %)</td><td>${(r.typeI*100).toFixed(1)} %</td></tr><tr><td>n por grupo para poder ≈ 80 % (aprox. normal)</td><td><b>${r.nReq}</b> · simulado: ${Math.round(r.pReq*100)} %</td></tr><tr><td>Si el efecto real fuera 20 % menor / mayor</td><td>poder ${Math.round(r.pLo*100)} % / ${Math.round(r.pHi*100)} %</td></tr><tr><td>Con confusora sin controlar (verdad = ${r.P.d})</td><td>diferencia ingenua <b>${r.naive.toFixed(2)}</b> (sesgo ${r.bias>=0?'+':''}${r.bias.toFixed(2)}) · ajustada <b>${r.adj.toFixed(2)}</b></td></tr></table>`
+ +(dif!=null?`<div class="note p"><b>Tu predicción:</b> ${p} % · <b>simulado:</b> ${Math.round(r.power*100)} % · diferencia ${Math.round(dif)} puntos. ${dif<=10?'Buena intuición.':'Gran diferencia: ¿qué supuesto no habías considerado?'}</div>`:'')+FLD('sim.expl','Explica con tus palabras la diferencia entre tu predicción y lo simulado',{rows:2})}
+function s8(){const s=S.sim;
+ return HEAD(8)+`<div class="card"><h3>Qué datos necesitas y cómo los obtendrías</h3>${FLD('con.datos','Datos, observaciones o mediciones necesarias',{rows:3,ph:'Conteo semanal de episodios de dolor ≥3/10 por operario; asistencia al taller.'})}<div class="grid2">${FLD('con.muestra','¿A quiénes y cuántos?')}${FLD('con.analisis','¿Cómo compararás los resultados?')}</div>${FLD('con.viab','Viabilidad: tiempo, costo, acceso',{rows:2})}</div>`
+ +`<div class="card"><h3>Cómo se interpretarían los resultados</h3><p class="mut">Descríbelo <b>antes</b> de ver datos. Se muestra en la pestaña «Escenarios».</p>${FLD('esc.compat','Resultados compatibles con la hipótesis',{rows:2})}${FLD('esc.cuestiona','Resultados que la cuestionan',{rows:2})}${FLD('esc.mixto','Resultados mixtos o inconclusos',{rows:2})}${FLD('esc.alterna','Explicaciones alternativas',{rows:2})}${FLD('esc.imprev','Consecuencias no previstas',{rows:2})}</div>`
+ +`<div class="card"><h3>Riesgos éticos y privacidad</h3>${FLD('con.riesgos','Riesgos para las personas',{rows:2})}${FLD('con.priv','Privacidad y consentimiento',{rows:2})}</div>`
+ +`<div class="card acc"><details${S.modo==='avanzada'?' open':''}><summary>Opcional · Sensibilidad del diseño con datos sintéticos <span class="chip sim">simulado</span></summary><p>Pregunta qué tan probable sería <i>detectar</i> un efecto si existiera, con supuestos que tú eliges. <b>No contrasta tu hipótesis.</b> Primero predice.</p>`
+ +`<label class="f"><span>Predicción: ¿en qué % de estudios como el tuyo se detectaría un efecto real? <b id="predv">${s.pred==null?'—':s.pred+' %'}</b></span><input type="range" min="0" max="100" step="5" value="${s.pred==null?50:s.pred}" id="predr" aria-label="Predicción de poder en porcentaje"></label><button class="btn sm" data-act="fixpred">Fijar mi predicción</button>`
+ +`<div class="grid2" style="margin-top:8px">${FLD('sim.n','n por grupo',{type:'number',num:1})}${FLD('sim.d','Efecto supuesto (desviaciones estándar)',{type:'number',num:1,step:'0.1',h:'0.2 pequeño · 0.5 medio · 0.8 grande'})}${ADV(FLD('sim.alpha','α',{type:'number',num:1,step:'0.01'})+FLD('sim.gamma','Fuerza de la confusora sobre el resultado',{type:'number',num:1,step:'0.1'})+FLD('sim.kappa','Fuerza de la confusora sobre quién recibe el factor',{type:'number',num:1,step:'0.1'})+FLD('sim.runs','Repeticiones',{type:'number',num:1}))}</div><div class="note"><b>Supuestos:</b> datos normales, varianzas iguales, efecto único y constante.</div><button class="btn acc" data-act="runsim"${s.pred==null?' disabled':''}>Correr simulación</button> ${s.pred==null?'<small class="mut">Fija tu predicción primero.</small>':''}<div id="simres">${simRes()}</div></details></div>`+NAV(8)}
+function diffRows(a,b){const F=[['Enfoque',v=>v.snap.enfoque],['Pregunta',v=>v.snap.pregunta],['Hipótesis / proposición',v=>v.snap.texto],['Hipótesis nula',v=>v.snap.nula],['Unidad',v=>v.snap.c.unidad],['Horizonte',v=>v.snap.c.tiempo],['Factor / elemento 1',v=>v.snap.c.x],['Resultado / elemento 2',v=>v.snap.c.y],['Dirección',v=>v.snap.c.dir],['Mecanismo',v=>v.snap.c.mec],['Confusoras / controles',v=>v.snap.c.conf],['Indicador 1',v=>v.snap.c.x_ind],['Indicador 2',v=>v.snap.c.y_ind],['Instrumento',v=>v.snap.c.y_inst],['Qué la cuestionaría',v=>v.snap.c.refuta],['Supuestos',v=>v.snap.sup]];
+ return F.map(([n,f])=>[n,f(a)||'',f(b)||'']).filter(r=>r[1]!==r[2])}
+function s9(){const V=S.vers,deliv=[['Ficha del problema',!!S.p.ocurre.trim()],['Pregunta de investigación',!!S.pregunta.trim()],['Hipótesis y componentes',!!(S.h.texto.trim()||exp())],['Representación visual',!!S.vis.snap],['Matriz de variables e indicadores',!!(S.c.x_ind||S.c.y_ind)],['Supuestos y limitaciones',ne(S.sup,'t').length>0],['Propuesta de contrastación',!!(S.con.muestra&&S.con.analisis)],['Escenarios de resultados',Object.values(S.esc).some(x=>x.trim())],['Historial de versiones',V.length>0],['Reflexión sobre lo aprendido',Object.values(S.refl).every(x=>x.trim().length>=40)]];
+ const a=V[+S.ui.cmpA],b=V[+S.ui.cmpB];
+ return HEAD(9)+`<div class="card acc"><h3>Guardar versión V${V.length+1}</h3>${FLD('vcambio','¿Qué cambió y por qué?',{rows:2})}${FLD('vcoment','Retroalimentación recibida (de quién y qué dijo)',{rows:2})}${FLD('vfund','Fundamento de la decisión',{rows:2})}<button class="btn" data-act="savever">Guardar versión</button></div>`
+ +`<div class="card"><h3>Comparar versiones</h3>${V.length>=2?`<div class="grid2">${SEL('ui.cmpA','Versión A',V.map((v,i)=>[i,'V'+(i+1)]))}${SEL('ui.cmpB','Versión B',V.map((v,i)=>[i,'V'+(i+1)]))}</div><div id="cmp">${cmpHTML(a,b)}</div>`:'<p class="mut">Guarda al menos dos versiones para compararlas.</p>'}${V.length?`<table class="t"><tr><th>V</th><th>Qué cambió</th><th>Retroalimentación</th><th>Fundamento</th></tr>${V.map((v,i)=>`<tr><td>V${i+1}</td><td>${esc(v.cambio)}</td><td>${esc(v.coment)}</td><td>${esc(v.fund)}</td></tr>`).join('')}</table>`:''}</div>`
+ +`<div class="card pri"><h3>Reflexión: explícalo con tus palabras</h3><p class="mut">Sin mirar la pantalla, ¿podrías responder esto en voz alta?</p>${FLD('refl.a','1 · ¿Qué propongo?',{rows:2})}${FLD('refl.b','2 · ¿Cómo se relaciona con el problema?',{rows:2})}${FLD('refl.c','3 · ¿Qué supuestos contiene?',{rows:2})}${FLD('refl.d','4 · ¿Qué evidencia necesitaría?',{rows:2})}${FLD('refl.e','5 · ¿Qué resultados me llevarían a modificarla?',{rows:2})}</div>`
+ +`<div class="card"><h3>Entregables</h3><ul style="list-style:none;padding:0">${deliv.map(d=>`<li class="${d[1]?'ok':'mut'}">${d[1]?'✓':'○'} ${d[0]}</li>`).join('')}</ul><div class="row"><button class="btn" data-act="exp" data-arg="html">Documento (HTML editable)</button><button class="btn gh" data-act="exp" data-arg="md">Markdown</button><button class="btn gh" data-act="print">Imprimir / PDF</button><button class="btn gh" data-act="png" data-arg="mapa">Mapa PNG</button><button class="btn gh" data-act="png" data-arg="vars">Diagrama PNG</button><button class="btn gh" data-act="svg">SVG (ambos)</button><button class="btn gh" data-act="dljson">JSON</button><button class="btn gh" data-act="ldjson">Cargar JSON</button></div><p class="mut"><small>.docx y .pdf nativos están pendientes: el HTML se abre en Word/Docs y la impresión genera PDF.</small></p></div>`
+ +`<div class="card"><h4>Contexto para continuar con una IA</h4><p class="mut">El tutor de esta app son reglas locales. Para diálogo abierto, copia esto a una sesión con el prompt <code>prompt_diseno_hipotesis_iterativo.txt</code>.</p><pre class="pr" id="ctxia">${esc(ctxIA())}</pre><button class="btn sm gh" data-act="copy" data-arg="ctxia">Copiar</button></div>`+NAV(9)}
+function cmpHTML(a,b){if(!a||!b)return '';const r=diffRows(a,b);return r.length?`<table class="t"><tr><th>Campo</th><th>V${+S.ui.cmpA+1}</th><th>V${+S.ui.cmpB+1}</th></tr>${r.map(x=>`<tr><td>${x[0]}</td><td>${esc(x[1])}</td><td style="background:#fef3c7">${esc(x[2])}</td></tr>`).join('')}</table>`:'<p class="mut">Estas dos versiones no difieren en los campos comparados.</p>'}
+const STAGES=[s0,s1,s2,s3,s4,s5,s6,s7,s8,s9];
+
+/* ================= ACOMPAÑAMIENTO ================= */
+function compHTML(){const i=S.stage,T=ST[i],g=S.modo==='guiada';
+ let h=`<div class="card pri"><h2>${T.n}</h2><p class="mut">${T.q}</p><details${g?' open':''}><summary>Preguntas orientadoras y ejemplo</summary><ul>${T.or.map(q=>`<li>${q}</li>`).join('')}</ul><div class="note"><b>Ejemplo (ficticio):</b> ${esc(T.ej)}</div></details></div>`;
+ const all=tutor(),pend=all.filter(x=>!S.tdec[x.id]),mine=pend.filter(x=>x.st===i),other=pend.length-mine.length,rej=all.filter(x=>S.tdec[x.id]==='rechazada'&&x.st===i);
+ h+=`<div class="card acc"><h3>Tutor</h3><div class="note"><b>Alcance:</b> reglas locales, sin inteligencia artificial generativa. Hace preguntas y señala problemas; no redacta tu hipótesis antes de que lo intentes, no inventa datos ni fuentes y no dice si una hipótesis es verdadera.</div>`
+ +(mine.length?mine.slice(0,4).map(x=>`<div class="hint" role="group" aria-label="Sugerencia: ${esc(x.tipo)}"><span class="chip">${x.tipo}</span> ${esc(x.t)}<details><summary>¿Por qué?</summary><p>${esc(x.why)}</p></details>${x.prop?`<pre class="pr">Propuesta: reemplazar «${esc(x.prop.from)}» por «${esc(x.prop.to)}»</pre>`:''}<div class="row"><button class="btn sm" data-act="tut" data-arg="${x.id}|ok">${x.prop?'Aceptar':'Lo tendré en cuenta'}</button>${x.prop?`<button class="btn sm gh" data-act="tut" data-arg="${x.id}|mod">Modificar</button>`:''}<button class="btn sm gh" data-act="tut" data-arg="${x.id}|no">${x.prop?'Rechazar':'No aplica'}</button></div></div>`).join(''):'<p class="mut">Sin sugerencias pendientes en esta etapa.</p>')
+ +(mine.length>4?`<p class="mut"><small>${mine.length-4} sugerencia(s) más en esta etapa.</small></p>`:'')+(other>0?`<p class="mut"><small>${other} sugerencia(s) pendiente(s) en otras etapas.</small></p>`:'')
+ +(rej.length?`<details><summary>Rechazadas (${rej.length})</summary>${rej.map(x=>`<p><small>${esc(x.t)}</small> <button class="btn sm gh" data-act="tut" data-arg="${x.id}|undo">Reconsiderar</button></p>`).join('')}</details>`:'')+`<p class="mut"><small>Decisiones: ${S.ayuda.ok} aceptadas · ${S.ayuda.mod} modificadas · ${S.ayuda.no} rechazadas.</small></p></div>`;
+ h+=`<div class="card"><h3>Conceptos de esta etapa</h3><div class="row" role="group" aria-label="Nivel de explicación">${[['tec','Técnico'],['cot','Cotidiano'],['sit','Situado']].map(l=>`<button class="btn sm ${S.ui.lvl===l[0]?'':'gh'}" data-act="lvl" data-arg="${l[0]}" aria-pressed="${S.ui.lvl===l[0]}">${l[1]}</button>`).join('')}</div>`
+ +T.cn.map(k=>`<article class="hint"><b>${CONC[k].n}</b><p>${esc(CONC[k][S.ui.lvl])}</p></article>`).join('')+`</div>`;
+ return h}
+
+/* ================= EXPORTACIÓN ================= */
+function ctxIA(){const c=S.c;return `CONTEXTO DEL LABORATORIO DE HIPÓTESIS (ejemplo/datos del usuario)\nEnfoque: ${ENF[S.enfoque].n}\nProblema: ${S.p.ocurre}\nPor qué importa: ${S.p.porque}\nContexto: ${S.ctx.donde} | ${S.ctx.cuando}\nPregunta: ${S.pregunta}\nHipótesis (borrador del usuario): ${S.h.texto}\nH0: ${S.h.nula}\nUnidad: ${c.unidad} | Horizonte: ${c.tiempo}\n${ENF[S.enfoque].x}: ${c.x} (indicador: ${c.x_ind})\n${ENF[S.enfoque].y}: ${c.y} (indicador: ${c.y_ind}; instrumento: ${c.y_inst})\nDirección: ${DIRSYM[c.dir]||''} | Mecanismo: ${c.mec}\nControles/confusoras: ${lines(c.conf).join('; ')}\nEstados de revisión: ${revisar().map(r=>r.n+': '+r.estado).join(' | ')}\nInstrucción: actúa como tutor; pregunta antes de redactar; no inventes datos ni fuentes; no declares validez.`}
+function secciones(){const c=S.c,E=ENF[S.enfoque],R=revisar();
+ const S_=[
+ {h:'Ficha del problema',k:'kv',r:[['Tipo de estudio',E.n],['Qué ocurre',S.p.ocurre],['Por qué importa',S.p.porque],['Dónde',S.ctx.donde],['Cuándo',S.ctx.cuando],['Circunstancias',S.ctx.circ],['Unidad de análisis',c.unidad],['Actores',ne(S.actores,'n').map(a=>a.n+(a.rol?' ('+a.rol+')':'')+(a.cons?': '+a.cons:'')).join(' | ')],['Factores',ne(S.factores,'t').map(f=>f.t+' ['+(RELSYM[f.rel]||'')+']').join(' | ')],['Consecuencias',ne(S.consec,'t').map(f=>f.t+(f.actor?' → '+f.actor:'')).join(' | ')]]},
+ {h:'Registro de afirmaciones',k:'t',th:['Tipo','Afirmación'],r:ne(S.afirm,'t').map(a=>[a.tipo,a.t])},
+ {h:'Pregunta de investigación',k:'p',t:S.pregunta+(S.pregTipo?' ('+S.pregTipo+')':'')},
+ {h:exp()?'Proposiciones guía':'Hipótesis y componentes',k:'kv',r:[['Texto',S.h.texto],['Hipótesis nula',S.h.nula],['Versión cotidiana',S.h.cot],['Unidad',c.unidad],['Horizonte',c.tiempo],[E.x,c.x],[E.y,c.y],['Dirección',DIRSYM[c.dir]||''],['Mecanismo',c.mec],[E.conf,lines(c.conf).join('; ')],['Fundamento',c.fund],['Qué la cuestionaría',c.refuta],['Alcance',c.alcance],['Limitaciones',c.limit]]},
+ {h:'Representación visual',k:'svg',svgs:[mapaSVG(),varsSVG(),secSVG()].filter(Boolean),alt:[altMapa(),altVars(),altSec()].join(' ')},
+ {h:'Matriz de variables e indicadores',k:'t',th:['Elemento','Rol','Indicador','Instrumento','Escala'],r:[[c.x,E.x,c.x_ind,c.x_inst,''],...(E.y?[[c.y,E.y,c.y_ind,c.y_inst,c.y_esc]]:[]),...lines(c.conf).map(k=>[k,'Control','','',''])]},
+ {h:'Supuestos y limitaciones',k:'l',r:ne(S.sup,'t').map(s=>s.tipo+': '+s.t)},
+ {h:'Propuesta inicial de contrastación',k:'kv',r:[['Datos necesarios',S.con.datos],['A quiénes y cuántos',S.con.muestra],['Análisis',S.con.analisis],['Viabilidad',S.con.viab],['Riesgos éticos',S.con.riesgos],['Privacidad y consentimiento',S.con.priv]]},
+ {h:'Escenarios de resultados (proyecciones pedagógicas, no observados)',k:'kv',r:[['Compatibles',S.esc.compat],['Que la cuestionan',S.esc.cuestiona],['Mixtos o inconclusos',S.esc.mixto],['Explicaciones alternativas',S.esc.alterna],['Consecuencias no previstas',S.esc.imprev]]},
+ {h:'Evidencias',k:'t',th:['Antecedente','Clase','Fuente','Vinculado a'],r:ne(S.evid,'desc').map(e=>[e.desc,e.clase,e.fuente||'(sin fuente)',e.vinc||''])},
+ {h:'Revisión técnica (estados descriptivos; no indican validez)',k:'t',th:['Criterio','Estado','Decisión del usuario','Nota'],r:R.map(r=>[r.n,r.estado,(S.rev[r.id]||{}).dec||'sin decidir',(S.rev[r.id]||{}).nota||''])},
+ {h:'Historial de versiones',k:'t',th:['V','Fecha','Texto','Qué cambió','Fundamento'],r:S.vers.map((v,i)=>['V'+(i+1),v.ts.slice(0,10),v.snap.texto||v.snap.pregunta,v.cambio,v.fund])},
+ {h:'Reflexión sobre lo aprendido',k:'kv',r:[['¿Qué propongo?',S.refl.a],['¿Cómo se relaciona con el problema?',S.refl.b],['¿Qué supuestos contiene?',S.refl.c],['¿Qué evidencia necesitaría?',S.refl.d],['¿Qué resultados me llevarían a modificarla?',S.refl.e]]}];
+ return S_}
+function renderDoc(fmt){const cell=s=>fmt==='md'?String(s==null?'':s).replace(/\|/g,'/').replace(/\n/g,' '):esc(s);
+ const parts=secciones().map(s=>{
+  if(fmt==='md'){let o='## '+s.h+'\n\n';if(s.k==='kv')o+='| Campo | Contenido |\n|---|---|\n'+s.r.map(r=>`| ${cell(r[0])} | ${cell(r[1])} |`).join('\n');else if(s.k==='t')o+=s.r.length?'| '+s.th.join(' | ')+' |\n|'+s.th.map(()=>'---').join('|')+'|\n'+s.r.map(r=>'| '+r.map(cell).join(' | ')+' |').join('\n'):'_(sin datos)_';else if(s.k==='l')o+=s.r.length?s.r.map(x=>'- '+x).join('\n'):'_(sin datos)_';else if(s.k==='p')o+=s.t;else o+='_(Las imágenes se exportan desde el lienzo como PNG/SVG.)_\n\n**Alternativa textual:** '+s.alt;return o+'\n'}
+  let o='<h2>'+esc(s.h)+'</h2>';if(s.k==='kv')o+='<table border="1" cellpadding="5" style="border-collapse:collapse;width:100%">'+s.r.map(r=>`<tr><th style="text-align:left;width:28%;background:#f3e8ff">${esc(r[0])}</th><td>${esc(r[1])}</td></tr>`).join('')+'</table>';else if(s.k==='t')o+=s.r.length?'<table border="1" cellpadding="5" style="border-collapse:collapse;width:100%"><tr>'+s.th.map(t=>`<th style="background:#f3e8ff">${esc(t)}</th>`).join('')+'</tr>'+s.r.map(r=>'<tr>'+r.map(x=>`<td>${esc(x)}</td>`).join('')+'</tr>').join('')+'</table>':'<p><i>(sin datos)</i></p>';else if(s.k==='l')o+=s.r.length?'<ul>'+s.r.map(x=>`<li>${esc(x)}</li>`).join('')+'</ul>':'<p><i>(sin datos)</i></p>';else if(s.k==='p')o+='<p>'+esc(s.t)+'</p>';else o+=s.svgs.join('<br>')+'<p><b>Alternativa textual:</b> '+esc(s.alt)+'</p>';return o});
+ const head=fmt==='md'?'# Ficha de hipótesis\n\n_Generada con el Laboratorio de Hipótesis. Los estados de revisión describen la formulación; no indican que la hipótesis sea verdadera ni validada. Los escenarios y datos simulados son proyecciones pedagógicas, no resultados observados._\n\n':'<h1>Ficha de hipótesis</h1><p><i>Generada con el Laboratorio de Hipótesis. Los estados de revisión describen la formulación; no indican que la hipótesis sea verdadera ni validada. Los escenarios y datos simulados son proyecciones pedagógicas, no resultados observados.</i></p>';
+ return head+parts.join(fmt==='md'?'\n':'')}
+function dl(n,t,m){const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([t],{type:m}));a.download=n;document.body.appendChild(a);a.click();setTimeout(()=>{URL.revokeObjectURL(a.href);a.remove()},500)}
+function svgPng(svg,name){const im=new Image();im.onload=()=>{const c=document.createElement('canvas'),k=2;c.width=im.width*k;c.height=im.height*k;const g=c.getContext('2d');g.fillStyle='#fff';g.fillRect(0,0,c.width,c.height);g.drawImage(im,0,0,c.width,c.height);c.toBlob(b=>{const a=document.createElement('a');a.href=URL.createObjectURL(b);a.download=name;document.body.appendChild(a);a.click();setTimeout(()=>{URL.revokeObjectURL(a.href);a.remove()},500)},'image/png')};im.onerror=()=>st('No se pudo generar el PNG');im.src='data:image/svg+xml;charset=utf-8,'+encodeURIComponent(svg)}
+function copyText(t){const ok=()=>st('Copiado');function fb(){const x=document.createElement('textarea');x.value=t;document.body.appendChild(x);x.select();try{document.execCommand('copy');ok()}catch(e){st('No se pudo copiar')}x.remove()}if(navigator.clipboard&&window.isSecureContext)navigator.clipboard.writeText(t).then(ok,fb);else fb()}
+
+/* ================= RENDER Y EVENTOS ================= */
+function stageDone(i){const ob=S.afirm.some(a=>a.t.trim()&&a.tipo==='Observación');return[()=>S.p.ocurre.trim()&&ob,()=>S.ctx.donde.trim()&&ne(S.actores,'n').length,()=>ne(S.evid,'desc').length||S.falta.trim(),()=>ne(S.factores,'t').length,()=>S.pregunta.trim(),()=>exp()?S.c.x.trim():S.h.texto.trim(),()=>Object.keys(S.rev).length,()=>S.vis.snap,()=>S.con.muestra.trim()&&S.con.analisis.trim(),()=>S.vers.length][i]()}
+function renderSteps(){$('#steps').innerHTML=ST.map((t,i)=>{const d=!!stageDone(i);return `<button class="st${S.stage===i?' on':''}${d?' dn':''}" data-act="stage" data-arg="${i}"${S.stage===i?' aria-current="step"':''}>${i+1}. ${t.s}${d?'<span class="sr"> ✓</span>':''}</button>`}).join('');$('#bG').setAttribute('aria-pressed',S.modo==='guiada');$('#bA').setAttribute('aria-pressed',S.modo==='avanzada')}
+function renderView(keep){const y=window.scrollY;$('#view').innerHTML=STAGES[S.stage]();after();if(!keep)window.scrollTo(0,0);else window.scrollTo(0,y)}
+function after(){const e=$('#wcH');if(e)e.textContent=wc(S.h.texto)+' palabras'}
+function renderCanvas(){$('#canvas').innerHTML=canvasHTML()}
+function renderComp(){$('#comp').innerHTML=compHTML()}
+function live(opts={}){renderSteps();if(!opts.noCanvas)renderCanvas();if(!opts.noComp)renderComp();paint('hl',S.stage===5?hlHTML():null);paint('matriz',S.stage===5?matrizHTML():null);after();if(S.stage===9)paint('cmp',cmpHTML(S.vers[+S.ui.cmpA],S.vers[+S.ui.cmpB]))}
+function paint(id,h){if(h==null)return;const e=document.getElementById(id);if(e)e.innerHTML=h}
+function renderAll(keep){renderSteps();renderView(keep);renderCanvas();renderComp();$('#view').setAttribute('aria-label','Panel de construcción: etapa '+(S.stage+1))}
+const ACT={
+ stage(a){S.stage=+a;save();renderAll();$('#view').focus({preventScroll:true})},
+ modo(a){S.modo=a;S.ui.lvl=a==='guiada'?'cot':'tec';save();renderAll(true)},
+ lvl(a){S.ui.lvl=a;renderComp()},
+ ctab(a){S.ctab=a;save();renderCanvas()},
+ add(a){S[a]?S[a].push(newItem(a)):get(a).push(newItem(a));save();renderView(true);live({})},
+ del(a){const [p,i]=a.split('|');get(p).splice(+i,1);save();renderView(true);live()},
+ alt(){S.ui.alt=true;S.ayuda.alt++;save();paint('altc',altCards())},
+ altok(a){const x=alternativas()[+a];if(!x)return;S.h.texto=x.t;if(!S.h.nula.trim())S.h.nula=x.n;S.ayuda.ok++;S.ui.alt=false;save();renderView(true);live()},
+ altmod(a){const x=alternativas()[+a];if(!x)return;const v=prompt('Modifica la redacción:',x.t);if(v==null)return;S.h.texto=v;S.ayuda.mod++;S.ui.alt=false;save();renderView(true);live()},
+ altno(){S.ayuda.no++;S.ui.alt=false;save();paint('altc','')},
+ tut(a){const [id,k]=a.split('|'),x=tutor().find(t=>t.id===id);if(k==='undo'){delete S.tdec[id];save();return live()}
+  if(k==='ok'){S.tdec[id]='aceptada';S.ayuda.ok++;if(x&&x.prop){const cur=S.h.texto,re=new RegExp(x.prop.from.replace(/[.*+?^${}()|[\]\\]/g,'\\$&'),'i');S.h.texto=cur.replace(re,x.prop.to)}}
+  else if(k==='mod'){if(!x||!x.prop)return;const v=prompt('Modifica la sustitución para «'+x.prop.from+'»:',x.prop.to);if(v==null)return;const re=new RegExp(x.prop.from.replace(/[.*+?^${}()|[\]\\]/g,'\\$&'),'i');S.h.texto=S.h.texto.replace(re,v);S.tdec[id]='modificada';S.ayuda.mod++}
+  else{S.tdec[id]='rechazada';S.ayuda.no++}
+  save();renderView(true);live()},
+ snap(){S.vis.snap=visState();save();renderView(true);live()},
+ upimg(){$('#fileImg').click()},
+ pinmode(){S.ui.pin=!S.ui.pin;paint('pins',pinsHTML())},
+ addpin(){S.vis.pins.push({x:50,y:50,t:'VI',l:''});save();paint('pins',pinsHTML())},
+ imgclick(a,t,e){if(!S.ui.pin||e.target.closest('.pn'))return;const r=t.getBoundingClientRect();S.vis.pins.push({x:+(100*(e.clientX-r.left)/r.width).toFixed(1),y:+(100*(e.clientY-r.top)/r.height).toFixed(1),t:'VI',l:''});save();paint('pins',pinsHTML())},
+ rmpin(a){S.vis.pins.splice(+a,1);save();paint('pins',pinsHTML())},
+ rmimg(){S.vis.img='';S.vis.pins=[];save();renderCanvas()},
+ copy(a){const e=document.getElementById(a);copyText(e?e.textContent:'')},
+ fixpred(){S.sim.pred=+$('#predr').value;S.sim.res=null;save();renderView(true)},
+ runsim(){const s=S.sim,P={n:Math.max(5,Math.min(400,+s.n||30)),d:Math.max(.05,+s.d||.5),alpha:Math.min(.2,Math.max(.001,+s.alpha||.05)),gamma:+s.gamma||0,kappa:+s.kappa||0,runs:Math.max(200,Math.min(5000,+s.runs||1500)),seed:+s.seed||11};st('Simulando…');setTimeout(()=>{S.sim.res=simulate(P);save();paint('simres',simRes());st('Simulación lista (sintética)')},30)},
+ savever(){if(S.vcambio.trim().length<10){alert('Describe qué cambió y por qué (mín. 10 caracteres).');return}
+  S.vers.push({ts:new Date().toISOString(),cambio:S.vcambio,coment:S.vcoment,fund:S.vfund,rev:revisar().map(r=>({n:r.n,tono:r.tono,estado:r.estado})),snap:{enfoque:S.enfoque,pregunta:S.pregunta,texto:S.h.texto,nula:S.h.nula,c:{...S.c},sup:ne(S.sup,'t').map(s=>s.t).join(' | ')}});
+  S.vcambio=S.vcoment=S.vfund='';S.ui.cmpA=Math.max(0,S.vers.length-2);S.ui.cmpB=S.vers.length-1;save();renderView(true);live()},
+ exp(a){dl(a==='md'?'ficha_hipotesis.md':'ficha_hipotesis.html',a==='md'?renderDoc('md'):'<!doctype html><html lang="es"><meta charset="utf-8"><title>Ficha de hipótesis</title><body style="font-family:system-ui,Arial;max-width:900px;margin:20px auto">'+renderDoc('html')+'</body></html>',a==='md'?'text/markdown':'text/html')},
+ print(){$('#printdoc').innerHTML=renderDoc('html');setTimeout(()=>window.print(),150)},
+ png(a){svgPng(a==='mapa'?mapaSVG():varsSVG(),a==='mapa'?'mapa_problema.png':'diagrama_variables.png')},
+ svg(){dl('mapa_problema.svg',mapaSVG(),'image/svg+xml');setTimeout(()=>dl('diagrama_variables.svg',varsSVG(),'image/svg+xml'),300)},
+ dljson(){dl('laboratorio_hipotesis.json',JSON.stringify(S,null,1),'application/json')},
+ ldjson(){$('#fileJson').click()},
+ estado(){const d=$('#dlg');d.innerHTML=`<h2>Estado del prototipo</h2><table class="t"><tr><th>Función</th><th>Estado</th></tr>
+<tr><td>Recorrido de 10 etapas, 4 enfoques, vista guiada/avanzada</td><td><span class="chip ok">Implementado</span></td></tr>
+<tr><td>Registro de afirmaciones, descomposición y resaltado del texto</td><td><span class="chip ok">Implementado</span></td></tr>
+<tr><td>Conceptos en 3 niveles, vista multidimensional</td><td><span class="chip ok">Implementado</span></td></tr>
+<tr><td>Mapa, diagrama, escena con marcas, secuencia, evidencias, historial</td><td><span class="chip ok">Implementado</span></td></tr>
+<tr><td>Aviso de visuales desactualizados</td><td><span class="chip ok">Implementado</span></td></tr>
+<tr><td>Revisión con 9 criterios y decisión del usuario</td><td><span class="chip ok">Implementado</span></td></tr>
+<tr><td>Versiones con comparación; exportación HTML, Markdown, PNG, SVG, JSON, impresión</td><td><span class="chip ok">Implementado</span></td></tr>
+<tr><td>Tutor (preguntas, ambigüedades, contradicciones, causalidad)</td><td><span class="chip at">Simulado: reglas locales, sin IA generativa</span></td></tr>
+<tr><td>Gráficos de resultados posibles y sensibilidad del diseño</td><td><span class="chip at">Simulado: datos sintéticos, no son evidencia</span></td></tr>
+<tr><td>Generación de imágenes</td><td><span class="chip pe">Pendiente: solo se entregan prompts</span></td></tr>
+<tr><td>IA generativa, búsqueda de fuentes, análisis de datos reales, colaboración, .docx/.pdf nativos</td><td><span class="chip pe">Pendiente de integración</span></td></tr></table><p class="mut">Ningún botón de esta aplicación es decorativo: lo que no funciona está listado aquí.</p><button class="btn" data-act="cerrar">Cerrar</button>`;d.showModal?d.showModal():d.setAttribute('open','')},
+ cerrar(){const d=$('#dlg');d.close?d.close():d.removeAttribute('open')},
+ demo(){if(!confirm('Esto reemplaza lo que tienes por un EJEMPLO FICTICIO con un primer intento mejorable. ¿Continuar?'))return;S=blank();
+  S.p={ocurre:'En la bodega de una constructora mediana, dos operarios por mes piden licencia por dolor lumbar.',porque:'Genera costos, riesgo de incumplir la Ley 20.949 y afecta a las personas y a la continuidad de la obra.'};
+  S.afirm=[{t:'Entre enero y junio hubo 12 licencias por dolor lumbar en la bodega.',tipo:'Observación'},{t:'Los operarios levantan cargas de más de 25 kg varias veces por turno.',tipo:'Observación'},{t:'Se lesionan porque no usan buena técnica.',tipo:'Interpretación'},{t:'Todos recibieron la misma inducción.',tipo:'Supuesto'},{t:'Un taller práctico reducirá los episodios.',tipo:'Predicción'}];
+  S.ctx={donde:'Bodega central, constructora mediana, Región Metropolitana',cuando:'Todo el año; más en temporada alta',circ:'Turnos de día, carga manual sin ayudas mecánicas'};S.c.unidad='Operarios de bodega';
+  S.actores=[{n:'Operarios',rol:'Mueven cargas',cons:'Dolor, pérdida de ingresos'},{n:'Jefa de bodega',rol:'Organiza turnos',cons:'Reemplazos y retrasos'},{n:'Mutualidad',rol:'Cubre licencias',cons:'Costos'}];
+  S.evid=[{desc:'Registro mensual de licencias 2025',fuente:'Mutualidad (registro interno)',tipo:'Dato',clase:'Dato real',vinc:'A1'},{desc:'Comentario del capataz sobre posturas al levantar',fuente:'',tipo:'Testimonio',clase:'Registro de observación',vinc:'A3'}];S.falta='No sabemos qué tareas concentran los episodios ni si hubo capacitaciones previas.';
+  S.factores=[{t:'Peso de las cargas',rel:'intensifica'},{t:'Técnica de levante',rel:'atenua'},{t:'Antigüedad en el cargo',rel:'asociado'}];S.consec=[{t:'Licencias médicas',actor:'Operarios'},{t:'Costos y reemplazos',actor:'Jefa de bodega'}];
+  S.pregunta='¿Difiere la frecuencia de dolor lumbar entre operarios que asisten a un taller de levante y los que no, en tres meses?';S.pregTipo='comparativa';
+  S.h.texto='El taller mejora la salud de los operarios.';S.c.x='Asistir a un taller práctico de levante seguro (4 h)';S.c.y='Molestias lumbares';S.c.dir='disminuye';S.c.tiempo='durante los 3 meses posteriores';S.c.conf='Antigüedad en el cargo\nPeso de las cargas';
+  S.vis.pasos=[{t:'Se dicta el taller'},{t:'Cambia la técnica de levante'},{t:'Disminuye la sobrecarga lumbar'},{t:'Disminuyen los episodios de dolor'}];S.stage=5;save();renderAll();st('Ejemplo ficticio cargado')},
+ reset(){if(confirm('¿Borrar todo el trabajo guardado en este navegador?')){S=blank();try{localStorage.removeItem(KEY)}catch(e){}renderAll()}}
+};
+document.addEventListener('click',e=>{const t=e.target.closest('[data-act]');if(!t||t.tagName==='INPUT'||t.tagName==='SELECT')return;const f=ACT[t.dataset.act];if(f)f(t.dataset.arg,t,e)});
+function onBind(e){const t=e.target,p=t.dataset&&t.dataset.bind;if(!p)return;if(t.type==='radio'&&!t.checked)return;
+ setp(p,t.dataset.num?(t.value===''?'':+t.value):t.value);save();
+ if(p==='enfoque'){renderAll(true);return}
+ if(p==='ui.cmpA'||p==='ui.cmpB'){live();return}
+ live({noCanvas:!!t.closest('#canvas')&&/^(TEXTAREA|INPUT)$/.test(t.tagName),noComp:!!t.closest('#comp')})}
+document.addEventListener('input',e=>{const t=e.target;if(t.id==='predr'){$('#predv').textContent=t.value+' %';return}if(t.tagName==='SELECT'||t.type==='radio')return;onBind(e)});
+document.addEventListener('change',e=>{const t=e.target;if(t.tagName==='SELECT'||t.type==='radio')onBind(e)});
+$('#fileJson').addEventListener('change',e=>{const f=e.target.files[0];if(!f)return;const r=new FileReader();r.onload=()=>{try{S=merge(blank(),JSON.parse(r.result));save();renderAll()}catch(x){alert('JSON no válido')}};r.readAsText(f);e.target.value=''});
+$('#fileImg').addEventListener('change',e=>{const f=e.target.files[0];if(!f)return;const r=new FileReader();r.onload=()=>{const im=new Image();im.onload=()=>{const k=Math.min(1,800/Math.max(im.width,im.height)),c=document.createElement('canvas');c.width=Math.round(im.width*k);c.height=Math.round(im.height*k);c.getContext('2d').drawImage(im,0,0,c.width,c.height);S.vis.img=c.toDataURL('image/jpeg',.72);S.vis.pins=[];save();renderCanvas();renderComp()};im.onerror=()=>alert('No se pudo leer la imagen');im.src=r.result};r.readAsDataURL(f);e.target.value=''});
+load();renderAll();
+</script>
+</body>
+</html>
