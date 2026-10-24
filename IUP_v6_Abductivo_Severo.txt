@@ -166,5 +166,7 @@ NOTAS DE USO
   "ataca lo anterior". [HIPÓTESIS] Mejora la auditoría; validar con 5–10 casos propios.
 - La potencia calculada por un LLM es orientativa. Para el cálculo definitivo usa G*Power,
   statsmodels.stats.power o simulación en Python.
-- Portabilidad: probado en estructura para Claude y Gemini (sin dependencias de herramientas).
+- Portabilidad: el prompt no depende de herramientas específicas de una plataforma, por lo que
+  debería funcionar en Claude y Gemini. [BRECHA] No se ha ejecutado aún en ninguno de los dos;
+  validar con casos reales antes de darlo por probado.
 ================================================================================
